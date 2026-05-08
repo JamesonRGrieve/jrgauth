@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*",
+    "tests/**/*",
+    "src/**/*.stories.*",
+    "src/**/*.test.*"
+  ],
+  "exclude": ["node_modules", "dist", "storybook-static"]
+}
