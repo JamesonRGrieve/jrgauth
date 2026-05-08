@@ -1,9 +1,9 @@
 'use client';
-import { useAssertion } from '@/components/assert/assert';
-import { Button } from '@/components/ui/button';
-import { DynamicFormFieldValueTypes } from '@/dynamic-form/DynamicForm';
-import { validateURI } from '@/lib/validation';
-import log from '@/next-log/log';
+import { useAssertion } from '../lib/assert';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
+import { validateURI } from '../lib/validation';
+import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';

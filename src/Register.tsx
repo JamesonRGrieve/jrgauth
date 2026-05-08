@@ -1,10 +1,10 @@
 'use client';
-import { useAssertion } from '@/components/assert/assert';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toTitleCase } from '@/dynamic-form/DynamicForm';
-import { validateURI } from '@/lib/validation';
+import { useAssertion } from './lib/assert';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
+import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
+import { validateURI } from './lib/validation';
 import axios, { AxiosError } from 'axios';
 import { CookieValueTypes, deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';

@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -10,8 +10,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+} from '@jgrieve/dynamic-form/components/ui/select';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import {
   SidebarContent,
   SidebarGroup,
@@ -19,21 +19,21 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from '../components/ui/sidebar';
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 import { LuPencil, LuPlus } from 'react-icons/lu';
 import { SYSTEM_TEAM_ID, useTeam } from '../hooks/useTeam';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import { ArrowBigLeft } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
-import { DynamicFormFieldValueTypes } from '@/dynamic-form/DynamicForm';
+import { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
 import { InviteDialog } from './Invite';
 import { useInvitations } from '../hooks/useInvitation';
 import { Team } from '../hooks/z';
-import { Label } from '../../../ui/label';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 
 type User = {
   missing_requirements?: {

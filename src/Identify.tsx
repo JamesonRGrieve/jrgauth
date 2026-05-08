@@ -1,7 +1,7 @@
 'use client';
 
-import { useAssertion } from '@/components/assert/assert';
-import { validateURI } from '@/lib/validation';
+import { useAssertion } from './lib/assert';
+import { validateURI } from './lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
 import { setCookie } from 'cookies-next';
@@ -11,11 +11,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { LuUser } from 'react-icons/lu';
 import { z } from 'zod';
 
-import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+import { Alert } from './components/ui/alert';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
+import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import AuthCard from './AuthCard';
 import { useAuthentication } from './Router';
 import OAuth from './oauth2/OAuth';

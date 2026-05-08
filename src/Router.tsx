@@ -1,7 +1,7 @@
 'use client';
 
-import assert from '@/components/assert/assert';
-import deepMerge from '@/lib/objects';
+import assert from './lib/assert';
+import deepMerge from './lib/objects';
 import { notFound, useSearchParams } from 'next/navigation';
 import { ReactNode, useContext } from 'react';
 import { AuthenticationContext } from './AuthenticationContext';

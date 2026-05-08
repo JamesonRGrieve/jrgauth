@@ -1,6 +1,6 @@
 import React from 'react';
 import AuthCard from './AuthCard';
-import { Button } from '@/components/ui/button';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 
 export default {
   title: 'Components/AuthCard',

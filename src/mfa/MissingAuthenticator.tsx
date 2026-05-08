@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Disclosure, DisclosureContent, DisclosureTrigger } from '@/components/ui/disclosure';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Disclosure, DisclosureContent, DisclosureTrigger } from '../components/ui/disclosure';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useState } from 'react';

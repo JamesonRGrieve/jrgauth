@@ -1,14 +1,14 @@
-import { DataTable } from '../../../wais/data/data-table';
+import { DataTable } from '../components/data/data-table';
 import { ColumnDef } from '@tanstack/react-table';
-import { DataTableColumnHeader } from '../../../wais/data/data-table-column-header';
+import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
-import { Button } from '@/components/ui/button';
-import log from '@/lib/next-log/src/log';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import useSWR, { SWRResponse } from 'swr';
 import { Invitation } from '../hooks/z';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 
 export function InvitationsTable({ userId }: { userId?: string }) {
   const { data: invitations, mutate } = useInvitationsByUserId(userId);

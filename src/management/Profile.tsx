@@ -1,24 +1,24 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import DynamicForm from '@/dynamic-form/DynamicForm';
-import log from '@/next-log/log';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
+import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
+import log from '../lib/log';
 import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import useSWR, { mutate } from 'swr';
 import VerifySMS from '../mfa/SMS';
 import { FormEvent, useEffect, useState } from 'react';
-import { DataTable } from '../../../wais/data/data-table';
+import { DataTable } from '../components/data/data-table';
 import { ColumnDef } from '@tanstack/react-table';
-import { DataTableColumnHeader } from '../../../wais/data/data-table-column-header';
+import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useRouter } from 'next/navigation';
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import { InvitationsTable } from './Invitations';
 import { useTeams } from '../hooks/useTeam';
-import { toast } from '@/hooks/useToast';
+import { toast } from '@jgrieve/dynamic-form/hooks/useToast';
 
 type Team = {
   image_url: string | null;

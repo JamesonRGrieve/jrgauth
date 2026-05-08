@@ -1,4 +1,4 @@
-import z from '@/zod2gql';
+import z from 'zod2gql';
 
 export const RoleSchema = z.enum(['user', 'system', 'assistant', 'function']);
 

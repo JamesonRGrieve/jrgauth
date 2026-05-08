@@ -1,5 +1,5 @@
 'use client';
-import { Separator } from '@/components/ui/separator';
+import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 
 export const Notifications = () => {
   return (

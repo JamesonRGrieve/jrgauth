@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import Field from '@/components/ui/styled/FormControl/Field';
-import log from '@/next-log/log';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import Field from '@jgrieve/dynamic-form/Field';
+import log from '../lib/log';
 import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';

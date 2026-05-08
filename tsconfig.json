@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2020",
     "module": "CommonJS",
     "outDir": "./dist",
+    "rootDir": "./src",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
     "sourceMap": true,
     "noImplicitAny": true,
+    "noEmitOnError": false,
     "jsx": "react-jsx",
     "strict": false, // TODO Make this work.
     "skipLibCheck": true,

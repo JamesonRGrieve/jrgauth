@@ -1,17 +1,17 @@
 'use client';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { Badge } from '../components/ui/badge';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import { cn } from '../lib/utils';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import { LuCheck as CheckIcon, LuMinus as MinusIcon } from 'react-icons/lu';
 // import { Label } from '@/components/ui/label';
 // import { Switch } from '@/components/ui/switch';
-import useProducts from '@/auth/hooks/useProducts';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import useProducts from '../hooks/useProducts';
+import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { useState } from 'react';
 // const defaultPricingData = [
 //   {

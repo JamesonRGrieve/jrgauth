@@ -1,5 +1,5 @@
-import log from '@/next-log/log';
-import '@/zod2gql';
+import log from '../lib/log';
+import 'zod2gql';
 import { getCookie } from 'cookies-next';
 import useSWR, { SWRResponse } from 'swr';
 import { createGraphQLClient } from './lib';

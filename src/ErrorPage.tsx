@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 
 export type ErrorPageProps = {
   redirectTo?: string;

@@ -13,7 +13,21 @@ import {
   RefreshCcw,
   ArrowRightLeft,
 } from 'lucide-react';
-import type { Item } from '@/app/NavMain';
+export type Item = {
+  title: string;
+  url?: string;
+  visible?: boolean;
+  icon?: any;
+  isActive?: boolean;
+  queryParams?: object;
+  items?: {
+    max_role?: number;
+    title: string;
+    icon?: any;
+    url: string;
+    queryParams?: object;
+  }[];
+};
 
 export const items: Item[] = [
   {

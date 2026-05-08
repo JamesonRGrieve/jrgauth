@@ -1,9 +1,9 @@
 'use client';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/useToast';
-import log from '@/next-log/log';
+import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
+import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
+import log from '../lib/log';
 import { ColumnDef } from '@tanstack/react-table';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -11,9 +11,9 @@ import { Check, Mail, MoreHorizontal, X } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '../components/ui/badge';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Checkbox } from '../components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,10 +21,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '../components/ui/dropdown-menu';
 
-import { DataTable } from '@/components/wais/data/data-table';
-import { DataTableColumnHeader } from '@/components/wais/data/data-table-column-header';
+import { DataTable } from '../components/data/data-table';
+import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useInvitations } from '../hooks/useInvitation';
 import { useTeam, useTeams } from '../hooks/useTeam';
 import useTeamUsers from '../hooks/useTeamUsers';

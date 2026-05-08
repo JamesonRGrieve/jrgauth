@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
+import { cn } from './lib/utils';
 import { LuArrowLeft as ArrowLeft } from 'react-icons/lu';
 
 interface AuthCardProps extends React.PropsWithChildren {

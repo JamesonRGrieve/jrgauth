@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -10,14 +10,14 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+} from '@jgrieve/dynamic-form/components/ui/select';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 import { LuUsers } from 'react-icons/lu';
-import { useToast } from '@/hooks/useToast';
+import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import { useInvitations } from '../hooks/useInvitation';
 import { useParams } from 'next/navigation';
 

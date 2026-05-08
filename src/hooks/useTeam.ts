@@ -1,7 +1,7 @@
-import { useToast } from '@/hooks/useToast';
-import log from '@/next-log/log';
-import '@/zod2gql';
-import z, { GQLType } from '@/zod2gql';
+import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
+import log from '../lib/log';
+import 'zod2gql';
+import z, { GQLType } from 'zod2gql';
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import useSWR, { SWRResponse } from 'swr';
