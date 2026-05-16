@@ -31,7 +31,7 @@ import useSWR from 'swr';
 import type { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
 import { InviteDialog } from './Invite';
 import { useInvitations } from '../hooks/useInvitation';
-import { Team } from '../hooks/z';
+import type { Team } from '../hooks/z';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 
 type User = {
@@ -473,5 +473,3 @@ export const CreateDialog = ({
     </>
   );
 };
-
-export default Team;

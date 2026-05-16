@@ -16,5 +16,8 @@
     "tailwindcss-animate",
     "@jgrieve/dynamic-form",
     "zod2gql"
+  ],
+  "ignoreBinaries": [
+    "gh-pages"
   ]
 }

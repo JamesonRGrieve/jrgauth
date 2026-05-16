@@ -564,5 +564,3 @@ export function InviteUsers() {
     </form>
   );
 }
-
-export default Team;
