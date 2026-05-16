@@ -5,10 +5,10 @@ import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { validateURI } from './lib/validation';
-import axios, { AxiosError } from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { FormEvent, ReactNode, useState } from 'react';
+import { type FormEvent, type ReactNode, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { LuCheck as Check, LuCopy as Copy } from 'react-icons/lu';
 import QRCode from 'react-qr-code';
@@ -25,7 +25,7 @@ export default function Login({
 }: { searchParams: any } & LoginProps): ReactNode {
   const [responseMessage, setResponseMessage] = useState('');
   const authConfig = useAuthentication();
-  const router = useRouter();
+  const _router = useRouter();
   const [captcha, setCaptcha] = useState<string | null>(null);
 
   useAssertion(validateURI(authConfig.authServer + userLoginEndpoint), 'Invalid login endpoint.', [

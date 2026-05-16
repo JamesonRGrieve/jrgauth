@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useAuthentication } from './Router';
 
 export type OrganizationalUnitProps = {
@@ -32,7 +32,7 @@ export default function OrganizationalUnit({
   organizationalUnitEndpoint = '/ou',
 }: { searchParams: any } & OrganizationalUnitProps): ReactNode {
   const authConfig = useAuthentication();
-  const router = useRouter();
+  const _router = useRouter();
   const {
     data: ouData,
     error,

@@ -4,7 +4,7 @@ import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import deepMerge from '../lib/objects';
 import log from '../lib/log';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo } from 'react';
 import OAuth2Login from 'react-simple-oauth2-login';
 import providers from './OAuthProviders';
 
@@ -12,18 +12,18 @@ export type OAuthProps = {
   overrides?: any;
 };
 export default function OAuth({ overrides }: OAuthProps): ReactNode {
-  const router = useRouter();
-  const oAuthProviders = useMemo(() => deepMerge(providers, overrides) as typeof providers, [providers, overrides]);
+  const _router = useRouter();
+  const oAuthProviders = useMemo(() => deepMerge(providers, overrides) as typeof providers, [overrides]);
   log(['OAuth Providers: ', oAuthProviders], { client: 3 });
   const onOAuth2 = useCallback(
-    (response: any) => {
+    (_response: any) => {
       document.location.href = `${process.env.NEXT_PUBLIC_APP_URI}/chat`; // This should be fixed properly just low priority.
 
       // const redirect = getCookie('href') ?? '/';
       // deleteCookie('href');
       // router.push(redirect);
     },
-    [router],
+    [],
   );
   /*
   // Eventually automatically launch if it's the only provider.

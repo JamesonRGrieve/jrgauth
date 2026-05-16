@@ -1,8 +1,7 @@
 import log from '../lib/log';
 import 'zod2gql';
-import useSWR, { SWRResponse } from 'swr';
-import { createGraphQLClient } from './lib';
-import { Invitation, InvitationSchema } from './z';
+import useSWR, { type SWRResponse } from 'swr';
+import type { Invitation, } from './z';
 import { getCookie } from 'cookies-next';
 import axios from 'axios';
 /**

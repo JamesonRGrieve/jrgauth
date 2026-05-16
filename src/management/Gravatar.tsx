@@ -1,4 +1,4 @@
-import React from 'react';
+
 import md5 from 'md5';
 import { UserRound } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';

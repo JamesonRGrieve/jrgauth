@@ -7,14 +7,14 @@ import { useState } from 'react';
 
 export type RegisterFormProps = object;
 export default function VerifySMS({ verifiedCallback }: { verifiedCallback: any }): JSX.Element {
-  const [fields, setFields] = useState({
+  const [fields, _setFields] = useState({
     smsCode: '',
   });
   const [errors, setErrors] = useState({
     smsCode: '',
   });
   const [smsVerified, setSMSVerified] = useState(false);
-  async function attemptSMS(): Promise<void> {
+  async function _attemptSMS(): Promise<void> {
     const smsResponse = (
       await axios.post(
         `/api/email`,

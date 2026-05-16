@@ -27,7 +27,7 @@ export const AuthenticatorHelp = () => {
     setLoading((prev) => ({ ...prev, email: false }));
   };
 
-  const handleSMSSend = async () => {
+  const _handleSMSSend = async () => {
     setLoading((prev) => ({ ...prev, sms: true }));
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));

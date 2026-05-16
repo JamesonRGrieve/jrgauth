@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 export default function useLoggedIn() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const router = useRouter();
+  const _router = useRouter();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -28,7 +28,7 @@ export default function useLoggedIn() {
     };
 
     checkAuth();
-  }, [router]);
+  }, []);
 
   return { isLoggedIn };
 }

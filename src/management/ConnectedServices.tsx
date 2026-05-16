@@ -28,7 +28,7 @@ const providerDescriptions = {
 export const ConnectedServices = () => {
   const [connectedServices, setConnectedServices] = useState<ConnectedService[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [disconnectDialog, setDisconnectDialog] = useState<{
     isOpen: boolean;
     provider: string | null;
@@ -80,7 +80,7 @@ export const ConnectedServices = () => {
 
   useEffect(() => {
     fetchConnections();
-  }, []);
+  }, [fetchConnections]);
 
   const handleDisconnect = async (provider: string) => {
     try {

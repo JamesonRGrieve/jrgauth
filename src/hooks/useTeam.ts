@@ -4,9 +4,9 @@ import 'zod2gql';
 import z, { GQLType } from 'zod2gql';
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import useSWR, { SWRResponse } from 'swr';
+import useSWR, { type SWRResponse } from 'swr';
 import { chainMutations, createGraphQLClient } from './lib';
-import { Team, TeamSchema } from './z';
+import { type Team, TeamSchema } from './z';
 
 export const SYSTEM_TEAM_ID = 'FFFFFFFF-FFFF-FFFF-0000-FFFFFFFFFFFF';
 
@@ -17,7 +17,7 @@ export const SYSTEM_TEAM_ID = 'FFFFFFFF-FFFF-FFFF-0000-FFFFFFFFFFFF';
 export function useTeams(): SWRResponse<Team[]> {
   const client = createGraphQLClient();
   const { toast } = useToast();
-  const router = useRouter();
+  const _router = useRouter();
 
   return useSWR<Team[]>(
     '/teams',

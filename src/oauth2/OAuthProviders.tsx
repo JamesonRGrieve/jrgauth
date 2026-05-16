@@ -48,7 +48,6 @@ import {
   RiVideoUploadLine as VideoLibraryOutlined,
   RiBriefcaseLine as WorkOutlineOutlined,
 } from 'react-icons/ri';
-import React from 'react';
 import { GiTesla } from 'react-icons/gi';
 
 const providers = {

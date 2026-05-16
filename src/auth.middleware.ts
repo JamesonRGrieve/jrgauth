@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AuthMode, generateCookieString, getAuthMode, getJWT, getQueryParams, getRequestedURI, verifyJWT } from './utils';
-import axios, { AxiosError } from 'axios';
+import axios, { type AxiosError } from 'axios';
 
 export type MiddlewareHook = (req: NextRequest) => Promise<{
   activated: boolean;
@@ -15,7 +15,7 @@ export const useAuth: MiddlewareHook = async (req) => {
   const requestedURI = getRequestedURI(req);
   const authMode = getAuthMode();
 
-  console.log('Requested: ' + requestedURI);
+  console.log(`Requested: ${requestedURI}`);
   if (process.env.LANDING_ONLY) {
     if (req.nextUrl.pathname !== '/') {
       console.log(`In LANDING_ONLY mode but requested '${req.nextUrl.pathname}', redirecting to '/'`);
@@ -73,7 +73,7 @@ export const useAuth: MiddlewareHook = async (req) => {
         }
 
         try {
-          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URI}/v1/user`, {
+          const _response = await axios.post(`${process.env.NEXT_PUBLIC_API_URI}/v1/user`, {
             user: {
               email: decodeURIComponent(queryParams.email),
             },
@@ -140,7 +140,7 @@ export const useAuth: MiddlewareHook = async (req) => {
               console.log(
                 `Payment required. Redirecting to: ${process.env.AUTH_URI}/subscribe${
                   responseJSON.detail.customer_session.client_secret
-                    ? '?customer_session=' + responseJSON.detail.customer_session.client_secret
+                    ? `?customer_session=${responseJSON.detail.customer_session.client_secret}`
                     : ''
                 }`,
               );
@@ -149,7 +149,7 @@ export const useAuth: MiddlewareHook = async (req) => {
                 new URL(
                   `${process.env.AUTH_URI}/subscribe${
                     responseJSON.detail.customer_session.client_secret
-                      ? '?customer_session=' + responseJSON.detail.customer_session.client_secret
+                      ? `?customer_session=${responseJSON.detail.customer_session.client_secret}`
                       : ''
                   }`,
                 ),
@@ -252,7 +252,7 @@ export const useAuth: MiddlewareHook = async (req) => {
           requestedURI.startsWith(process.env.AUTH_URI || '') &&
           req.nextUrl.pathname !== '/user/manage'
         ) {
-          console.log('Pathname: ' + req.nextUrl.pathname);
+          console.log(`Pathname: ${req.nextUrl.pathname}`);
         } else {
           console.log(
             `Detected unauthenticated user attempting to visit non-auth page, redirecting to authentication at ${process.env.AUTH_URI}...`,
@@ -333,7 +333,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
 };
 export const useJWTQueryParam: MiddlewareHook = async (req) => {
   const queryParams = getQueryParams(req);
-  const requestedURI = getRequestedURI(req);
+  const _requestedURI = getRequestedURI(req);
   const toReturn = {
     activated: false,
     // This should set the cookie and then re-run the middleware (without query params).

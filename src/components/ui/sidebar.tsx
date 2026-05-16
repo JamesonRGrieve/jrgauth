@@ -2,7 +2,7 @@
 
 import { ViewVerticalIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
-import { VariantProps, cva } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import { setCookie } from 'cookies-next';
 import * as React from 'react';
 import { useIsMobile } from '../../hooks/useIsMobile';
@@ -14,12 +14,12 @@ import { Skeleton } from './skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 import { cn } from '../../lib/utils';
 
-const SIDEBAR_COOKIE_NAME = 'sidebar:state';
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
+const _SIDEBAR_COOKIE_NAME = 'sidebar:state';
+const _SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = '16rem';
 const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
-const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
+const _SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 type SidebarContextMap = {
   left?: SidebarContext;
   right?: SidebarContext;
@@ -143,15 +143,15 @@ const SidebarProvider = React.forwardRef<
         },
       }),
       [
-        leftOpen,
-        rightOpen,
-        leftWidth,
-        rightWidth,
-        isMobile,
-        leftOpenMobile,
-        rightOpenMobile,
-        onLeftOpenChange,
-        onRightOpenChange,
+        leftOpen, 
+        rightOpen, 
+        leftWidth, 
+        rightWidth, 
+        isMobile, 
+        leftOpenMobile, 
+        rightOpenMobile, 
+        onLeftOpenChange, 
+        onRightOpenChange, createToggleSidebar, createSetOpen
       ],
     );
 

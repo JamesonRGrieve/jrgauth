@@ -26,10 +26,9 @@ import { useEffect, useState } from 'react';
 import { LuPencil, LuPlus } from 'react-icons/lu';
 import { SYSTEM_TEAM_ID, useTeam } from '../hooks/useTeam';
 import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
-import { ArrowBigLeft } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
-import { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
+import type { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
 import { InviteDialog } from './Invite';
 import { useInvitations } from '../hooks/useInvitation';
 import { Team } from '../hooks/z';
@@ -86,7 +85,7 @@ export const Team = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getUserTeams();
-      if (data && data?.teams?.length) {
+      if (data?.teams?.length) {
         setUserTeams(data.teams);
         const selecetdTeam = data.teams.find((c: { id: string }) => c.id === authTeam);
         setSelected(selecetdTeam);
@@ -96,7 +95,7 @@ export const Team = () => {
     if (data?.user?.id) {
       fetchData();
     }
-  }, [data]);
+  }, [data, getUserTeams, authTeam]);
 
   const selectNewTeam = (teamObj: { id: string }) => {
     if (teamObj?.id) {
@@ -150,12 +149,12 @@ export const Team = () => {
             newName={newName}
             setNewName={setNewName}
             checkTeamNameExists={checkTeamNameExists}
-            onTeamRenamed={async (newTeamName: string) => {
+            onTeamRenamed={async (_newTeamName: string) => {
               const data = await getUserTeams();
-              if (data && data?.teams?.length) {
+              if (data?.teams?.length) {
                 setUserTeams(data.teams);
                 // Find the renamed team and set as selected
-                if (selectedTeam && selectedTeam.id) {
+                if (selectedTeam?.id) {
                   const renamedTeam = data.teams.find((t: any) => t.id === selectedTeam.id);
                   if (renamedTeam) setSelected(renamedTeam);
                 }
@@ -171,7 +170,7 @@ export const Team = () => {
             checkTeamNameExists={checkTeamNameExists}
             onTeamCreated={async (newTeamId?: string) => {
               const data = await getUserTeams();
-              if (data && data?.teams?.length) {
+              if (data?.teams?.length) {
                 setUserTeams(data.teams);
                 // Set the newly created team as selected
                 if (newTeamId) {
@@ -364,7 +363,7 @@ export const CreateDialog = ({
         `${process.env.NEXT_PUBLIC_API_URI}/v1/team`,
         {
           name: newName,
-          agent_name: newName + ' Agent',
+          agent_name: `${newName} Agent`,
           ...(newParent ? { parent_company_id: newParent } : {}),
         },
         {

@@ -4,12 +4,12 @@ import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
 import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import log from '../lib/log';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { Check, Mail, MoreHorizontal, X } from 'lucide-react';
+import { Mail, MoreHorizontal, } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Badge } from '../components/ui/badge';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
@@ -26,7 +26,7 @@ import {
 import { DataTable } from '../components/data/data-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useInvitations } from '../hooks/useInvitation';
-import { useTeam, useTeams } from '../hooks/useTeam';
+import { useTeam, } from '../hooks/useTeam';
 import useTeamUsers from '../hooks/useTeamUsers';
 import { useUser } from '../hooks/useUser';
 
@@ -44,7 +44,7 @@ const ROLES = [
   { id: 'FFFFFFFF-FFFF-FFFF-0000-FFFFFFFFFFFF', name: 'User' },
 ];
 
-const AUTHORIZED_ROLES = [0, 1, 2];
+const _AUTHORIZED_ROLES = [0, 1, 2];
 export interface Invitee {
   invitation_id: string;
   invitation: any | null;
@@ -81,12 +81,12 @@ export interface Invitation {
 }
 
 export const Team = () => {
-  const [email, setEmail] = useState('');
-  const [roleId, setRoleId] = useState('3');
-  const [renaming, setRenaming] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [newParent, setNewParent] = useState('');
-  const [newName, setNewName] = useState('');
+  const [_email, _setEmail] = useState('');
+  const [_roleId, _setRoleId] = useState('3');
+  const [_renaming, _setRenaming] = useState(false);
+  const [_creating, _setCreating] = useState(false);
+  const [_newParent, _setNewParent] = useState('');
+  const [_newName, _setNewName] = useState('');
 
   const params = useParams();
   const { id } = params;
@@ -98,7 +98,7 @@ export const Team = () => {
   const { data: invitationsList, mutate: mutateInvitations } = useInvitations(String(authTeam));
   const invitationsData =
     invitationsList?.filter((invitation: Invitation) => invitation?.created_by_user_id === userData?.id) || [];
-  const [responseMessage, setResponseMessage] = useState('');
+  const [_responseMessage, _setResponseMessage] = useState('');
   const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam as string);
   const { toast } = useToast();
 
@@ -109,7 +109,7 @@ export const Team = () => {
     const list: Invitee[] = [];
     invitationsData.map((data) => {
       if (!Array.isArray(data.invitees)) return;
-      const role_id = data.role_id;
+      const _role_id = data.role_id;
       for (let i = 0; i < data.invitees.length; i++) {
         const newInvitee = {
           ...data.invitees[i],
@@ -232,7 +232,7 @@ export const Team = () => {
               <DropdownMenuItem onSelect={() => router.push(`/users/${row.original.id}`)}>View Details</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={async (e) => {
+                onClick={async (_e) => {
                   if (user.id === row.original.user_id) {
                     toast({
                       title: 'Action not allowed',
@@ -253,7 +253,7 @@ export const Team = () => {
                       description: 'The user has been removed from the team.',
                     });
                     teamUsersMutate();
-                  } catch (error) {
+                  } catch (_error) {
                     toast({
                       title: 'Error deleting user',
                       description: 'Failed to remove the user from the team.',
@@ -465,9 +465,7 @@ export const Team = () => {
         </div>
       ) : (
         invitationsData.length > 0 && (
-          <>
-            <DataTable data={inviteesArray || []} columns={invitations_columns} meta={{ title: 'Pending Invitations' }} />
-          </>
+          <DataTable data={inviteesArray || []} columns={invitations_columns} meta={{ title: 'Pending Invitations' }} />
         )
       )}
     </div>
@@ -477,7 +475,7 @@ export const Team = () => {
 export function InviteUsers() {
   const [email, setEmail] = useState('');
   const [roleId, setRoleId] = useState('3');
-  const [responseMessage, setResponseMessage] = useState('');
+  const [_responseMessage, setResponseMessage] = useState('');
   const { data: activeTeam } = useTeam();
   const { mutate: mutateInvitations } = useInvitations(activeTeam?.id);
   const { toast } = useToast();

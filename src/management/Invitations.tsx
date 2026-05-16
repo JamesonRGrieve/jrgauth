@@ -1,13 +1,12 @@
 import { DataTable } from '../components/data/data-table';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
-import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import useSWR, { SWRResponse } from 'swr';
-import { Invitation } from '../hooks/z';
+import useSWR, { type SWRResponse } from 'swr';
+import type { Invitation } from '../hooks/z';
 import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 
 export function InvitationsTable({ userId }: { userId?: string }) {
@@ -35,7 +34,7 @@ export function InvitationsTable({ userId }: { userId?: string }) {
         title: 'Invitation accepted',
         description: 'You have successfully accepted the invitation.',
       })
-    } catch (e) {
+    } catch (_e) {
       toast({
         title: 'Error accepting invitation',
         description: 'There was an error accepting the invitation. Please try again.',

@@ -5,16 +5,13 @@ import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
 import { validateURI } from './lib/validation';
-import axios, { AxiosError } from 'axios';
-import { CookieValueTypes, deleteCookie, getCookie, setCookie } from 'cookies-next';
+import axios, { type AxiosError } from 'axios';
+import { type CookieValueTypes, deleteCookie, getCookie, } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { FormEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { ReCAPTCHA } from 'react-google-recaptcha';
 import AuthCard from './AuthCard';
-import OAuth from './oauth2/OAuth';
 import { useAuthentication } from './Router';
-import { useTeam } from './hooks/useTeam';
-import useSWR from 'swr';
 
 export type RegisterProps = {
   additionalFields?: string[];
@@ -87,15 +84,15 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
   };
   useEffect(() => {
     // To-Do Assert that there are no dupes or empty strings in additionalFields (after trimming and lowercasing)
-  }, [additionalFields]);
+  }, []);
   useEffect(() => {
     if (!submitted && formRef.current && authConfig.authModes.magical && additionalFields.length === 0) {
       setSubmitted(true);
       formRef.current.requestSubmit();
     }
-  }, []);
+  }, [submitted, authConfig.authModes.magical, additionalFields.length]);
 
-  const [invite, setInvite] = useState<CookieValueTypes | Promise<CookieValueTypes> | undefined>(getCookie('invitation'));
+  const [invite, _setInvite] = useState<CookieValueTypes | Promise<CookieValueTypes> | undefined>(getCookie('invitation'));
   const teamName = getCookie('team') || ""
   // useEffect(() => {
   //   const invitation = String(getCookie('invitation') || '');

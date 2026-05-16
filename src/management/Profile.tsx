@@ -6,15 +6,14 @@ import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
 import log from '../lib/log';
 import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
-import useSWR, { mutate } from 'swr';
+import { mutate } from 'swr';
 import VerifySMS from '../mfa/SMS';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, } from 'react';
 import { DataTable } from '../components/data/data-table';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useRouter } from 'next/navigation';
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import { InvitationsTable } from './Invitations';
 import { useTeams } from '../hooks/useTeam';
@@ -79,7 +78,7 @@ export const Profile = ({
         if (data && data.user && data.user.user && data.user.user[key] !== undefined) return data.user.user[key];
         if (data && data.user && data.user.profile && data.user.profile[key] !== undefined) return data.user.profile[key];
       }
-    } catch (e) {
+    } catch (_e) {
       // ignore
     }
     return undefined;
@@ -118,14 +117,14 @@ export const Profile = ({
           await mutate(userDataSWRKey);
           await mutate('/user');
           // no need to notify the user explicitly here (silent default)
-        } catch (err) {
+        } catch (_err) {
           // failed to persist timezone; swallow silently (optionally investigate server logs)
         }
       })();
-    } catch (err) {
+    } catch (_err) {
       // swallow errors
     }
-  }, [data, authConfig, userUpdateEndpoint, userDataSWRKey]);
+  }, [data, authConfig, userUpdateEndpoint, userDataSWRKey, readUserField]);
 
   const user_teams_columns: ColumnDef<Team>[] = [
     {
@@ -301,7 +300,7 @@ export const Profile = ({
           ) && (
             <DynamicForm
               submitButtonText='Submit Missing Information'
-              fields={Object.entries(data.missing_requirements).reduce((acc, [key, value]) => {
+              fields={Object.entries(data.missing_requirements).reduce((acc, [_key, value]) => {
                 // @ts-expect-error This is a valid assignment.
                 acc[Object.keys(value)[0]] = { type: Object.values(value)[0] };
                 return acc;

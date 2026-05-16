@@ -1,13 +1,13 @@
 'use client';
 import { useAssertion } from '../lib/assert';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
+import type { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
 import { validateURI } from '../lib/validation';
 import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import useSWR from 'swr';
 import { useAuthentication } from '../Router';
 import { Profile } from './Profile';
@@ -29,7 +29,7 @@ export default function Manage({
   userPasswordChangeEndpoint = '/v1/user/password',
 }: ManageProps): ReactNode {
   const [responseMessage, setResponseMessage] = useState('');
-  const [active, setActive] = useState<ActivePage>('Profile');
+  const [_active, _setActive] = useState<ActivePage>('Profile');
   log(['Menu Items', MENU_ITEMS], { client: 3 });
   type User = {
     missing_requirements?: {

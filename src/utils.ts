@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export const AuthMode = {
   None: 0,
@@ -75,7 +75,7 @@ export const getJWT = (req: NextRequest) => {
   return jwt;
 };
 export const verifyJWT = async (jwt: string): Promise<Response> => {
-  const responses = {} as any;
+  const _responses = {} as any;
   const authEndpoint = `${process.env.APP_URI.includes('localhost') ? process.env.API_URI : process.env.SERVERSIDE_API_URI}/v1`;
   let response;
   console.log(`Verifying JWT Bearer ${jwt} with server at ${authEndpoint}...`);

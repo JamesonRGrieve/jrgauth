@@ -1,9 +1,9 @@
 import log from '../lib/log';
 import 'zod2gql';
 import { getCookie } from 'cookies-next';
-import useSWR, { SWRResponse } from 'swr';
+import useSWR, { type SWRResponse } from 'swr';
 import { createGraphQLClient } from './lib';
-import { User, UserSchema } from './z';
+import { type User, UserSchema } from './z';
 /**
  * Hook to fetch and manage current user data
  * @returns SWR response containing user data

@@ -3,7 +3,7 @@ import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import PasswordField from '@jgrieve/dynamic-form/PasswordField';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { FormEvent } from 'react';
+import type { FormEvent } from 'react';
 
 export const Account = ({
   authConfig,

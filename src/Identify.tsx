@@ -3,11 +3,11 @@
 import { useAssertion } from './lib/assert';
 import { validateURI } from './lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios, { AxiosError } from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { setCookie } from 'cookies-next';
 import { usePathname, useRouter } from 'next/navigation';
-import { ReactNode } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import type { ReactNode } from 'react';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { LuUser } from 'react-icons/lu';
 import { z } from 'zod';
 
@@ -60,7 +60,7 @@ export default function Identify({
 
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
-      const response = await axios.post(`${authConfig.authServer}/v1/user`, {
+      const _response = await axios.post(`${authConfig.authServer}/v1/user`, {
         user: {
           email: formData.email.toLowerCase().trim(),
         },

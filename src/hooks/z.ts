@@ -25,7 +25,7 @@ const SimpleUserSchema = z
   .describe('User');
 
 // Define TeamSchema for nested references
-const SimpleTeamSchema = z
+const _SimpleTeamSchema = z
   .object({
     id: z.string().uuid(),
     name: z.string().min(1),
@@ -117,7 +117,7 @@ export const NotificationSchema = z
     role: z.string(),
   })
   .describe('Notification');
-const InviteeSchema = z
+const _InviteeSchema = z
   .object({
     id: z.string().uuid(),
     email: z.string().email(),

@@ -3,18 +3,18 @@
 import assert from './lib/assert';
 import deepMerge from './lib/objects';
 import { notFound, useSearchParams } from 'next/navigation';
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { AuthenticationContext } from './AuthenticationContext';
-import ErrorPage, { ErrorPageProps } from './ErrorPage';
-import User, { IdentifyProps } from './Identify';
-import Login, { LoginProps } from './Login';
-import Logout, { LogoutProps } from './Logout';
-import Manage, { ManageProps } from './management';
-import Close, { CloseProps } from './oauth2/Close';
+import ErrorPage, { type ErrorPageProps } from './ErrorPage';
+import User, { type IdentifyProps } from './Identify';
+import Login, { type LoginProps } from './Login';
+import Logout, { type LogoutProps } from './Logout';
+import Manage, { type ManageProps } from './management';
+import Close, { type CloseProps } from './oauth2/Close';
 import oAuth2Providers from './oauth2/OAuthProviders';
-import OrganizationalUnit, { OrganizationalUnitProps } from './OU';
-import Register, { RegisterProps } from './Register';
-import Subscribe, { SubscribeProps } from './Subscribe';
+import OrganizationalUnit, { type OrganizationalUnitProps } from './OU';
+import Register, { type RegisterProps } from './Register';
+import Subscribe, { type SubscribeProps } from './Subscribe';
 
 type RouterPageProps = {
   path: string;
@@ -103,7 +103,7 @@ const pageConfigDefaults: AuthenticationConfig = {
 };
 
 // Async function to retrieve search params
-async function getSearchParamsAsync() {
+async function _getSearchParamsAsync() {
   // In a real implementation, you might fetch data based on search params
   // This is just a placeholder to demonstrate the pattern
   return new Promise<Record<string, string>>((resolve) => {

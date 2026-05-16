@@ -70,7 +70,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
 
     roleMap.forEach((role: RoleWithChildren) => {
       if (role.parent_id && roleMap.has(role.parent_id)) {
-        roleMap.get(role.parent_id)!.children.push(role);
+        roleMap.get(role.parent_id)?.children.push(role);
       }
     });
 
@@ -99,7 +99,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
         })
         .catch(() => setRoles(ROLES));
     }
-  }, [selectedTeam]);
+  }, [selectedTeam, sortRolesByPermission, fetchRoles]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,7 +130,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
     if (invalidEmails.length > 0) {
       toast({
         title: 'Error',
-        description: 'Invalid emails found: ' + invalidEmails.join(', '),
+        description: `Invalid emails found: ${invalidEmails.join(', ')}`,
         variant: 'destructive',
       });
       return;
