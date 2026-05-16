@@ -28,6 +28,7 @@ export default [
             'coverage/**',
             'src/**/*.stories.*',
             '.storybook/**',
+            'tests/**',
         ],
     },
     js.configs.recommended,
