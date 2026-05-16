@@ -101,15 +101,15 @@ export const Team = () => {
   const [_responseMessage, _setResponseMessage] = useState('');
   const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam as string);
   const { toast } = useToast();
+  const router = useRouter();
 
   const inviteesArray = convertInvitationsData(invitationsData);
 
   function convertInvitationsData(invitationsData: Invitation[]) {
     if (invitationsData.length === 0) return [];
     const list: Invitee[] = [];
-    invitationsData.map((data) => {
-      if (!Array.isArray(data.invitees)) return;
-      const _role_id = data.role_id;
+    for (const data of invitationsData) {
+      if (!Array.isArray(data.invitees)) continue;
       for (let i = 0; i < data.invitees.length; i++) {
         const newInvitee = {
           ...data.invitees[i],
@@ -120,7 +120,7 @@ export const Team = () => {
         };
         list.push(newInvitee);
       }
-    });
+    }
     return list;
   }
 
@@ -211,8 +211,6 @@ export const Team = () => {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const router = useRouter();
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -378,8 +376,6 @@ export const Team = () => {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const router = useRouter();
-
         const copyInviteLink = (invitation: any) => {
           const link = `${process.env.NEXT_PUBLIC_APP_URI}/accept-invitation?code=${invitation?.code}&email=${invitation?.email}&team=${invitation?.team?.name || activeTeam.name}`;
           navigator.clipboard.writeText(link);

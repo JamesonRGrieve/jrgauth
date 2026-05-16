@@ -12,7 +12,6 @@ import { useEffect, } from 'react';
 import { DataTable } from '../components/data/data-table';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
-import { useRouter } from 'next/navigation';
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import { InvitationsTable } from './Invitations';
@@ -162,8 +161,6 @@ export const Profile = ({
       id: 'actions',
       header: ({ column }) => <DataTableColumnHeader column={column} title='Action' />,
       cell: ({ row }) => {
-        const router = useRouter();
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

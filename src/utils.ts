@@ -75,9 +75,8 @@ export const getJWT = (req: NextRequest) => {
   return jwt;
 };
 export const verifyJWT = async (jwt: string): Promise<Response> => {
-  const _responses = {} as any;
   const authEndpoint = `${process.env.APP_URI.includes('localhost') ? process.env.API_URI : process.env.SERVERSIDE_API_URI}/v1`;
-  let response;
+  let response: Response;
   console.log(`Verifying JWT Bearer ${jwt} with server at ${authEndpoint}...`);
   try {
     response = await fetch(authEndpoint, {

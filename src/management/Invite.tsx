@@ -76,7 +76,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
 
     function assignDepth(role: RoleWithChildren, depth: number): void {
       role.depth = depth;
-      role.children.forEach((child: RoleWithChildren) => assignDepth(child, depth + 1));
+      role.children.forEach((child: RoleWithChildren) => { assignDepth(child, depth + 1); });
     }
 
     roleMap.forEach((role: RoleWithChildren) => {
@@ -135,7 +135,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
       });
       return;
     }
-    let body;
+    let body: Record<string, unknown>;
     if(emailArray.length === 1){
       body = {
       invitation: {

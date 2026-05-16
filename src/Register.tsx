@@ -5,7 +5,7 @@ import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
 import { validateURI } from './lib/validation';
-import axios, { type AxiosError } from 'axios';
+import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import { type CookieValueTypes, deleteCookie, getCookie, } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react';
@@ -42,8 +42,8 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     if (getCookie('invitation')) {
       formData['invitation_code'] = String(getCookie('invitation') || '');
     }
-    let registerResponse;
-    let registerResponseData;
+    let registerResponse: AxiosResponse | null | undefined;
+    let registerResponseData: any;
     try {
       registerResponse = await axios
         .post(`${authConfig.authServer}${userRegisterEndpoint}`, {
