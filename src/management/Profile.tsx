@@ -65,17 +65,17 @@ export const Profile = ({
     const camel = field.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
     candidates.push(field, camel, field.replace(/_/g, ''), field.replace('_name', ''), 'name');
     // Common identity keys
-    if (field === 'first_name') candidates.push('given_name', 'givenName');
-    if (field === 'last_name') candidates.push('family_name', 'familyName');
-    if (field === 'display_name') candidates.push('displayName', 'username', 'userName');
+    if (field === 'first_name') {candidates.push('given_name', 'givenName');}
+    if (field === 'last_name') {candidates.push('family_name', 'familyName');}
+    if (field === 'display_name') {candidates.push('displayName', 'username', 'userName');}
 
     try {
       for (const key of candidates) {
         // check several nesting patterns
-        if (data && data.user && data.user[key] !== undefined) return data.user[key];
-        if (data && data[key] !== undefined) return data[key];
-        if (data && data.user && data.user.user && data.user.user[key] !== undefined) return data.user.user[key];
-        if (data && data.user && data.user.profile && data.user.profile[key] !== undefined) return data.user.profile[key];
+        if (data?.user?.[key] !== undefined) {return data.user[key];}
+        if (data?.[key] !== undefined) {return data[key];}
+        if (data?.user?.user?.[key] !== undefined) {return data.user.user[key];}
+        if (data?.user?.profile?.[key] !== undefined) {return data.user.profile[key];}
       }
     } catch (_e) {
       // ignore
@@ -90,10 +90,10 @@ export const Profile = ({
   // the correct timezone. Do NOT overwrite an existing timezone.
   useEffect(() => {
     try {
-      if (typeof window === 'undefined') return; // only client
-      if (!data) return;
+      if (typeof window === 'undefined') {return;} // only client
+      if (!data) {return;}
       const existingTZ = readUserField('timezone');
-      if (existingTZ && String(existingTZ).length > 0) return; // already set, do nothing
+      if (existingTZ && String(existingTZ).length > 0) {return;} // already set, do nothing
 
       const detectedTZ = (typeof Intl !== 'undefined' && Intl.DateTimeFormat)
         ? Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -291,7 +291,7 @@ export const Profile = ({
           {data.missing_requirements.some((obj) => Object.keys(obj).some((key) => key === 'verify_email')) && (
             <p className='text-xl'>Please check your email and verify it using the link provided.</p>
           )}
-          {data.missing_requirements.verify_sms && <VerifySMS verifiedCallback={async () => await mutate(userDataSWRKey)} />}
+          {data.missing_requirements.verify_sms && <VerifySMS verifiedCallback={async () => mutate(userDataSWRKey)} />}
           {data.missing_requirements.some((obj) =>
             Object.keys(obj).some((key) => !['verify_email', 'verify_sms'].includes(key)),
           ) && (

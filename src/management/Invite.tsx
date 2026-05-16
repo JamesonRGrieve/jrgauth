@@ -87,7 +87,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
 
     const sortedRoles = Array.from(roleMap.values()).sort((a, b) => a.depth - b.depth);
 
-    return sortedRoles.map(({ children, depth, ...role }) => role as Role);
+    return sortedRoles.map(({ children, depth, ...role }) => role);
   }
 
   useEffect(() => {

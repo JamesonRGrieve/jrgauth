@@ -67,7 +67,7 @@ export function InvitationsTable({ userId }: { userId?: string }) {
           <Button
             variant="default"
             size="sm"
-            onClick={() => handleAccept(row.original)}
+            onClick={async () => handleAccept(row.original)}
           >
             {'Accept Invitation'}
           </Button>
@@ -86,7 +86,7 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[
   return useSWR<Invitation[]>(
     userId ? [`/user/invitation`, userId] : '/user/invitation',
     async (): Promise<Invitation[]> => {
-      if (!getCookie('jwt') || !userId) return [];
+      if (!getCookie('jwt') || !userId) {return [];}
       try {
         log(['REST useInvitationsByUserId() Fetching', { userId }], {
           client: 1,
@@ -118,7 +118,7 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[
 
 
 function convertInvitationsData(invitationsData: any[],userId:string) {
-  if (invitationsData.length === 0) return [];
+  if (invitationsData.length === 0) {return [];}
   const list: any[] = [];
   invitationsData.forEach((data) => {
     for (let i = 0; i < data.invitees.length; i++) {

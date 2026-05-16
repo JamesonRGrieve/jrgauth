@@ -156,7 +156,7 @@ export const Team = () => {
                 // Find the renamed team and set as selected
                 if (selectedTeam?.id) {
                   const renamedTeam = data.teams.find((t: any) => t.id === selectedTeam.id);
-                  if (renamedTeam) setSelected(renamedTeam);
+                  if (renamedTeam) {setSelected(renamedTeam);}
                 }
               }
             }}
@@ -175,7 +175,7 @@ export const Team = () => {
                 // Set the newly created team as selected
                 if (newTeamId) {
                   const createdTeam = data.teams.find((t: any) => t.id === newTeamId);
-                  if (createdTeam) selectNewTeam(createdTeam);
+                  if (createdTeam) {selectNewTeam(createdTeam);}
                 }
               }
             }}
@@ -274,7 +274,7 @@ export const RenameDialog = ({
         title: 'Success',
         description: 'Team name updated successfully!',
       });
-      if (onTeamRenamed) onTeamRenamed(newName);
+      if (onTeamRenamed) {onTeamRenamed(newName);}
     } catch (error) {
       toast({
         title: 'Error',
@@ -339,7 +339,7 @@ export const CreateDialog = ({
   const [isDuplicate, setIsDuplicate] = useState(false);
 
   const handleConfirmCreate = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    if (e) {e.preventDefault();}
     if (!newName.trim()) {
       toast({
         title: 'Error',
@@ -380,7 +380,7 @@ export const CreateDialog = ({
         title: 'Success',
         description: 'Team created successfully!',
       });
-      if (onTeamCreated) onTeamCreated(response.data?.team?.id);
+      if (onTeamCreated) {onTeamCreated(response.data?.team?.id);}
     } catch (error) {
       toast({
         title: 'Error',

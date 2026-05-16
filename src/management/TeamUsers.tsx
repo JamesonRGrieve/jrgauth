@@ -106,10 +106,10 @@ export const Team = () => {
   const inviteesArray = convertInvitationsData(invitationsData);
 
   function convertInvitationsData(invitationsData: Invitation[]) {
-    if (invitationsData.length === 0) return [];
+    if (invitationsData.length === 0) {return [];}
     const list: Invitee[] = [];
     for (const data of invitationsData) {
-      if (!Array.isArray(data.invitees)) continue;
+      if (!Array.isArray(data.invitees)) {continue;}
       for (let i = 0; i < data.invitees.length; i++) {
         const newInvitee = {
           ...data.invitees[i],

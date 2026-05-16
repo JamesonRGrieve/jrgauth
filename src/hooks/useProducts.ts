@@ -3,7 +3,7 @@ import { getCookie } from 'cookies-next';
 import useSWR, { type SWRResponse } from 'swr';
 
 // Create a custom SWR hook for a specific endpoint
-export default function useProducts(): SWRResponse<any[], any> {
+export default function useProducts(): SWRResponse<any[]> {
   return useSWR(
     '/products',
     async () =>

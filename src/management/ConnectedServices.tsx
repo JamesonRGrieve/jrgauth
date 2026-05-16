@@ -222,7 +222,7 @@ export const ConnectedServices = () => {
             </Button>
             <Button
               variant='destructive'
-              onClick={() => disconnectDialog.provider && handleDisconnect(disconnectDialog.provider)}
+              onClick={async () => disconnectDialog.provider && handleDisconnect(disconnectDialog.provider)}
             >
               Disconnect
             </Button>

@@ -10,7 +10,7 @@ export type MiddlewareHook = (req: NextRequest) => Promise<{
 export const useAuth: MiddlewareHook = async (req) => {
   const toReturn = {
     activated: false,
-    response: NextResponse.redirect(new URL(process.env.AUTH_URI as string), { headers: {} }),
+    response: NextResponse.redirect(new URL(process.env.AUTH_URI), { headers: {} }),
   };
   const requestedURI = getRequestedURI(req);
   const authMode = getAuthMode();
@@ -24,8 +24,7 @@ export const useAuth: MiddlewareHook = async (req) => {
         response: NextResponse.redirect(new URL('/', req.url)),
       };
     }
-  } else {
-    if (authMode) {
+  } else if (authMode) {
       const queryParams = getQueryParams(req);
       if (requestedURI.endsWith('/user/logout')) {
         const response = NextResponse.redirect(new URL('/', req.url));
@@ -44,13 +43,13 @@ export const useAuth: MiddlewareHook = async (req) => {
           response,
         };
       }
-      if (queryParams['verify_email'] && queryParams['email']) {
-        console.log('VERIFYING EMAIL: ', queryParams['email'], queryParams['verify_email']);
+      if (queryParams.verify_email && queryParams.email) {
+        console.log('VERIFYING EMAIL: ', queryParams.email, queryParams.verify_email);
         await fetch(`${process.env.API_URI}/v1/user/verify/email`, {
           method: 'POST',
           body: JSON.stringify({
-            email: queryParams['email'],
-            code: queryParams['verify_email'],
+            email: queryParams.email,
+            code: queryParams.verify_email,
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -244,7 +243,7 @@ export const useAuth: MiddlewareHook = async (req) => {
         }
       } else {
         console.log(
-          `${requestedURI} does ${requestedURI.startsWith(process.env.AUTH_URI as string) ? '' : 'not '}start with ${process.env.AUTH_URI}.`,
+          `${requestedURI} does ${requestedURI.startsWith(process.env.AUTH_URI) ? '' : 'not '}start with ${process.env.AUTH_URI}.`,
         );
 
         if (
@@ -257,7 +256,7 @@ export const useAuth: MiddlewareHook = async (req) => {
           console.log(
             `Detected unauthenticated user attempting to visit non-auth page, redirecting to authentication at ${process.env.AUTH_URI}...`,
           );
-          toReturn.response = NextResponse.redirect(new URL(process.env.AUTH_URI as string), {
+          toReturn.response = NextResponse.redirect(new URL(process.env.AUTH_URI), {
             headers: {
               'Set-Cookie': [
                 generateCookieString('jwt', '', '0'),
@@ -269,7 +268,6 @@ export const useAuth: MiddlewareHook = async (req) => {
         }
       }
     }
-  }
   console.log('Going to:');
   console.log(toReturn);
   return toReturn;

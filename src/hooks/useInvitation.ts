@@ -14,7 +14,7 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
   return useSWR<Invitation[]>(
     teamId ? [`/v1/team/${teamId}/invitation`, teamId] : null,
     async (): Promise<Invitation[]> => {
-      if (!teamId) return [];
+      if (!teamId) {return [];}
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/invitation`,

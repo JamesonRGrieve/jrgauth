@@ -7,11 +7,11 @@ import { getCookie } from 'cookies-next';
  * @param teamId - The ID of the team
  * @returns SWR response containing the users of the team
  */
-export default function useTeamUsers(teamId: string | undefined): SWRResponse<any[], any> {
+export default function useTeamUsers(teamId: string | undefined): SWRResponse<any[]> {
   return useSWR(
     teamId ? [`/v1/team/${teamId}/user`, teamId] : null,
     async () => {
-      if (!teamId) return [];
+      if (!teamId) {return [];}
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/user`, {
         headers: {
           Authorization:`Bearer ${getCookie('jwt')}`,

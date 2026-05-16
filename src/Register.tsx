@@ -38,7 +38,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
       setResponseMessage('Please complete the reCAPTCHA.');
       return;
     }
-    const formData = Object.fromEntries(new FormData((event.currentTarget as HTMLFormElement) ?? undefined));
+    const formData = Object.fromEntries(new FormData((event.currentTarget) ?? undefined));
     if (getCookie('invitation')) {
       formData['invitation_code'] = String(getCookie('invitation') || '');
     }

@@ -26,7 +26,7 @@ export const Account = ({
       {authConfig.authModes.basic && (
         <form
           onSubmit={async (event: FormEvent<HTMLFormElement>): Promise<void> => {
-            const formData = Object.fromEntries(new FormData((event.currentTarget as HTMLFormElement) ?? undefined));
+            const formData = Object.fromEntries(new FormData((event.currentTarget) ?? undefined));
 
             if (!formData['password']) {
               setResponseMessage('Please enter a password.');
