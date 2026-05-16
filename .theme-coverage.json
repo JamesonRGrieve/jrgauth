@@ -1,11 +1,6 @@
 {
-  "generatedAt": "2026-05-16T20:35:04.841Z",
+  "generatedAt": "2026-05-16T22:05:29.295Z",
   "colors": 0,
-  "spacing": 2,
-  "perFile": {
-    "src/app/globals.css": {
-      "colors": 0,
-      "spacing": 2
-    }
-  }
+  "spacing": 0,
+  "perFile": {}
 }
