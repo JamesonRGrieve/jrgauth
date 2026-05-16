@@ -1,0 +1,23 @@
+[
+    { "name": "Login",                          "path": "dist/Login.js",                          "brotli": false, "gzip": false, "limit": "12 KB" },
+    { "name": "Register",                       "path": "dist/Register.js",                       "brotli": false, "gzip": false, "limit": "13 KB" },
+    { "name": "Router",                         "path": "dist/Router.js",                         "brotli": false, "gzip": false, "limit": "12 KB" },
+    { "name": "AuthenticationContext",          "path": "dist/AuthenticationContext.js",          "brotli": false, "gzip": false, "limit": "2 KB" },
+    { "name": "AuthCard",                       "path": "dist/AuthCard.js",                       "brotli": false, "gzip": false, "limit": "4 KB" },
+    { "name": "auth.middleware",                "path": "dist/auth.middleware.js",                "brotli": false, "gzip": false, "limit": "28 KB" },
+    { "name": "Identify",                       "path": "dist/Identify.js",                       "brotli": false, "gzip": false, "limit": "8 KB" },
+    { "name": "Logout",                         "path": "dist/Logout.js",                         "brotli": false, "gzip": false, "limit": "2 KB" },
+    { "name": "NavMenu",                        "path": "dist/NavMenu.js",                        "brotli": false, "gzip": false, "limit": "5 KB" },
+    { "name": "OU",                             "path": "dist/OU.js",                             "brotli": false, "gzip": false, "limit": "4 KB" },
+    { "name": "Subscribe",                      "path": "dist/Subscribe.js",                      "brotli": false, "gzip": false, "limit": "4 KB" },
+    { "name": "ErrorPage",                      "path": "dist/ErrorPage.js",                      "brotli": false, "gzip": false, "limit": "4 KB" },
+    { "name": "oauth2/OAuthProviders",          "path": "dist/oauth2/OAuthProviders.js",          "brotli": false, "gzip": false, "limit": "28 KB" },
+    { "name": "oauth2/OAuth",                   "path": "dist/oauth2/OAuth.js",                   "brotli": false, "gzip": false, "limit": "5 KB" },
+    { "name": "management/Team",                "path": "dist/management/Team.js",                "brotli": false, "gzip": false, "limit": "26 KB" },
+    { "name": "management/TeamUsers",           "path": "dist/management/TeamUsers.js",           "brotli": false, "gzip": false, "limit": "35 KB" },
+    { "name": "management/Profile",             "path": "dist/management/Profile.js",             "brotli": false, "gzip": false, "limit": "23 KB" },
+    { "name": "management/ConnectedServices",   "path": "dist/management/ConnectedServices.js",   "brotli": false, "gzip": false, "limit": "15 KB" },
+    { "name": "mfa/Authenticator",              "path": "dist/mfa/Authenticator.js",              "brotli": false, "gzip": false, "limit": "7 KB" },
+    { "name": "mfa/EMail",                      "path": "dist/mfa/EMail.js",                      "brotli": false, "gzip": false, "limit": "6 KB" },
+    { "name": "mfa/SMS",                        "path": "dist/mfa/SMS.js",                        "brotli": false, "gzip": false, "limit": "4 KB" }
+]

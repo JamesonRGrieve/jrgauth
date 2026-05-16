@@ -30,7 +30,7 @@ try {
             stdio: ['ignore', 'pipe', 'pipe'],
             maxBuffer: 64 * 1024 * 1024,
             shell: '/bin/bash',
-            env: { ...process.env, ESLINT_USE_FLAT_CONFIG: process.env.ESLINT_USE_FLAT_CONFIG ?? 'false' },
+            env: { ...process.env },
         },
     );
 } catch (err) {

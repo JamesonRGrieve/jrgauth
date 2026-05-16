@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-05-16T19:03:08.400Z",
+  "cssFiles": [
+    "/home/jameson/source/auth/src/app/globals.css"
+  ],
+  "colors": 33,
+  "spacing": 6,
+  "perFile": {
+    "/home/jameson/source/auth/src/app/globals.css": {
+      "colors": 33,
+      "spacing": 6
+    }
+  }
+}

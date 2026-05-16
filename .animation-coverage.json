@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-05-16T19:03:07.147Z",
+  "cssFiles": [
+    "/home/jameson/source/auth/src/app/globals.css"
+  ],
+  "css": {
+    "keyframesBlocks": 2,
+    "animationDeclarations": 0
+  },
+  "tailwindConfig": {
+    "keyframes": 2,
+    "animations": 2
+  },
+  "total": 6,
+  "perFile": {
+    "/home/jameson/source/auth/src/app/globals.css": {
+      "keyframes": 2,
+      "animationDeclarations": 0
+    }
+  }
+}
