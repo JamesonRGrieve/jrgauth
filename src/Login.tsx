@@ -1,10 +1,8 @@
 'use client';
 
-import { useAssertion } from './lib/assert';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
-import { validateURI } from './lib/validation';
 import axios, { type AxiosError } from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
@@ -13,6 +11,8 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { LuCheck as Check, LuCopy as Copy } from 'react-icons/lu';
 import QRCode from 'react-qr-code';
 import AuthCard from './AuthCard';
+import { useAssertion } from './lib/assert';
+import { validateURI } from './lib/validation';
 import { AuthenticatorHelp as MissingAuthenticator } from './mfa/MissingAuthenticator';
 import { useAuthentication } from './useAuthentication';
 
@@ -62,6 +62,7 @@ export default function Login({
           const token = response.data.token;
           if (token) {
             // Store the token and redirect
+            // biome-ignore lint/suspicious/noDocumentCookie: CookieStore API not widely available; document.cookie is required for legacy compatibility
             document.cookie = `jwt=${token}; path=/`;
             //If detail property used in future
             // if (validateURI(response.data.detail)) {

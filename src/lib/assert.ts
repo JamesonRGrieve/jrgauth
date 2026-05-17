@@ -9,8 +9,7 @@ export default function assert(test: boolean, message?: string): void {
 export function useAssertion(
   assertion: boolean,
   message: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _dependencies: readonly any[],
+  _dependencies: readonly unknown[],
 ): void {
   useEffect(() => {
     assert(assertion, message);

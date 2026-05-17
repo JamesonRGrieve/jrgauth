@@ -4,9 +4,8 @@ import type { DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
 import * as React from 'react';
 import { LuSearch as Search } from 'react-icons/lu';
-
-import { Dialog, DialogContent } from './dialog';
 import { cn } from '../../lib/utils';
+import { Dialog, DialogContent } from './dialog';
 
 const Command = React.forwardRef<
   React.ComponentRef<typeof CommandPrimitive>,

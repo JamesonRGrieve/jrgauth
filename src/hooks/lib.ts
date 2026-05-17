@@ -21,8 +21,11 @@ export const createGraphQLClient = (): GraphQLClient =>
  * @param parentHook - Parent hook containing mutate function
  * @param currentHook - Current hook's mutate function
  */
-export const chainMutations = (parentHook: any, originalMutate: () => Promise<any>) => {
-  return async () => {
+export const chainMutations = <T>(
+  parentHook: { mutate: () => Promise<unknown> },
+  originalMutate: () => Promise<T>,
+): (() => Promise<T>) => {
+  return async (): Promise<T> => {
     await parentHook.mutate();
     return originalMutate();
   };

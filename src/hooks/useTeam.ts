@@ -1,10 +1,8 @@
-import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import log from '../lib/log';
 import 'zod2gql';
-import z, { GQLType } from 'zod2gql';
 import { getCookie, setCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
 import useSWR, { type SWRResponse } from 'swr';
+import z, { GQLType } from 'zod2gql';
 import { chainMutations, createGraphQLClient } from './lib';
 import { type Team, TeamSchema } from './z';
 
@@ -16,8 +14,6 @@ export const SYSTEM_TEAM_ID = 'FFFFFFFF-FFFF-FFFF-0000-FFFFFFFFFFFF';
  */
 export function useTeams(): SWRResponse<Team[]> {
   const client = createGraphQLClient();
-  const { toast } = useToast();
-  const _router = useRouter();
 
   return useSWR<Team[]>(
     '/teams',
@@ -27,7 +23,7 @@ export function useTeams(): SWRResponse<Team[]> {
         const response = await client.request<{teams:Team[]}>(query);
         const data= response.teams.filter((team)=>team.id !== SYSTEM_TEAM_ID);
         if (response.teams) {
-          if (!getCookie('auth-team') || !data.some((team: any) => team.id === getCookie('auth-team'))) {
+          if (!getCookie('auth-team') || !data.some((team: Team) => team.id === getCookie('auth-team'))) {
             setCookie('auth-team', data[0].id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
           }
         }

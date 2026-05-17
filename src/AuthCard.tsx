@@ -1,7 +1,7 @@
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { LuArrowLeft as ArrowLeft } from 'react-icons/lu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { cn } from './lib/utils';
-import { LuArrowLeft as ArrowLeft } from 'react-icons/lu';
 
 interface AuthCardProps extends React.PropsWithChildren {
   showBackButton?: boolean;

@@ -1,3 +1,4 @@
+import { GiTesla } from 'react-icons/gi';
 import {
   RiUserLine as AccountBoxOutlined,
   RiAppleFill as Apple,
@@ -48,7 +49,6 @@ import {
   RiVideoUploadLine as VideoLibraryOutlined,
   RiBriefcaseLine as WorkOutlineOutlined,
 } from 'react-icons/ri';
-import { GiTesla } from 'react-icons/gi';
 
 const providers = {
   AOL: {

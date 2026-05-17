@@ -1,10 +1,9 @@
 'use client';
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import type { Table } from '@tanstack/react-table';
 import { X } from 'lucide-react';
-
-import { DataTableViewOptions } from './data-table-view-options';
 import { DataTableFilter } from './data-table-filter';
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { DataTableViewOptions } from './data-table-view-options';
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData> & {

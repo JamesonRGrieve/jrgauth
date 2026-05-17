@@ -9,13 +9,14 @@ import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import type { CellContext, Column, ColumnDef } from '@tanstack/react-table';
 import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
-import { useCallback, useEffect, useMemo, type ReactElement } from 'react';
+import { type ReactElement, useCallback, useEffect, useMemo } from 'react';
 import { mutate } from 'swr';
 
 const readJwtString = (): string => {
   const jwt = getCookie('jwt');
   return typeof jwt === 'string' ? jwt : '';
 };
+
 import { DataTable } from '../components/data/data-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useTeams } from '../hooks/useTeam';
@@ -310,7 +311,10 @@ export const Profile = ({
                   {
                     user: {
                       ...Object.entries(formData).reduce<Record<string, unknown>>((acc, [key, value]) => {
-                        return value !== undefined && value !== null && value !== '' ? { ...acc, [key]: value } : acc;
+                        if (value !== undefined && value !== null && value !== '') {
+                          acc[key] = value;
+                        }
+                        return acc;
                       }, {}),
                     },
                   },

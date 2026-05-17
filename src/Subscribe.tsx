@@ -3,8 +3,8 @@
 import { getCookie } from 'cookies-next';
 import type React from 'react';
 import { Suspense } from 'react';
-import { useAuthentication } from './useAuthentication';
 import PricingTable from './Stripe/PricingTable';
+import { useAuthentication } from './useAuthentication';
 
 export type SubscribeProps = { redirectTo?: string };
 

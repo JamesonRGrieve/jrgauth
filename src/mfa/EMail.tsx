@@ -3,12 +3,12 @@
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import Field from '@jgrieve/dynamic-form/Field';
 import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
-import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { CheckCircle } from 'lucide-react';
 import { type ChangeEvent, useState } from 'react';
 import { LuKey } from 'react-icons/lu';
+import log from '../lib/log';
 
 export type RegisterFormProps = object;
 

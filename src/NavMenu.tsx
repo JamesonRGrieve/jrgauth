@@ -1,18 +1,18 @@
 import {
+  ArrowRightLeft,
   BookOpen,
   GraduationCap,
   HelpCircle,
   type LucideIcon,
   Puzzle,
+  RefreshCcw,
   Rocket,
+  Server,
   Settings,
   User,
   Users,
   VenetianMask,
   Workflow,
-  Server,
-  RefreshCcw,
-  ArrowRightLeft,
 } from 'lucide-react';
 export type Item = {
   title: string;

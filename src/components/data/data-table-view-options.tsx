@@ -1,10 +1,10 @@
 'use client';
 
+
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import type { Table } from '@tanstack/react-table';
 import { Settings2 } from 'lucide-react';
-
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,

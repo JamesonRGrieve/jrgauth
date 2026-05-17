@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within, screen } from '@storybook/test';
+import { expect, screen, userEvent, within } from '@storybook/test';
 import {
   Dialog,
   DialogContent,

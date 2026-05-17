@@ -1,22 +1,31 @@
-export function deepMergeJSON(...objects: any[]) {
-  const deepCopyObjects = objects.map((object) => JSON.parse(JSON.stringify(object)));
-  return deepCopyObjects.reduce((merged, current) => ({ ...merged, ...current }), {});
+type PlainObject = Record<string, unknown>;
+
+export function deepMergeJSON(...objects: PlainObject[]): PlainObject {
+  const deepCopyObjects = objects.map((object) => JSON.parse(JSON.stringify(object)) as PlainObject);
+  const result: PlainObject = {};
+  for (const current of deepCopyObjects) {
+    Object.assign(result, current);
+  }
+  return result;
 }
 
-export default function deepMerge(obj1: any, obj2: any) {
-  const result = { ...obj1 };
+export default function deepMerge(obj1: PlainObject, obj2: PlainObject): PlainObject {
+  const result: PlainObject = { ...obj1 };
 
   for (const key in obj2) {
+    const next = obj2[key];
+    const prev = obj1[key];
     if (
-      obj2[key] &&
-      typeof obj2[key] === 'object' &&
-      !Array.isArray(obj2[key]) &&
-      obj1[key] &&
-      typeof obj1[key] === 'object'
+      next &&
+      typeof next === 'object' &&
+      !Array.isArray(next) &&
+      prev &&
+      typeof prev === 'object' &&
+      !Array.isArray(prev)
     ) {
-      result[key] = deepMerge(obj1[key], obj2[key]);
+      result[key] = deepMerge(prev as PlainObject, next as PlainObject);
     } else {
-      result[key] = obj2[key];
+      result[key] = next;
     }
   }
 

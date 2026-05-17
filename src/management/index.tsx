@@ -1,14 +1,14 @@
 'use client';
-import { useAssertion } from '../lib/assert';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import type { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
-import { validateURI } from '../lib/validation';
-import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useState } from 'react';
 import useSWR from 'swr';
+import { useAssertion } from '../lib/assert';
+import log from '../lib/log';
+import { validateURI } from '../lib/validation';
 import { useAuthentication } from '../useAuthentication';
 import { Profile } from './Profile';
 

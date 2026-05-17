@@ -1,16 +1,16 @@
 'use client';
-import { useAssertion } from './lib/assert';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
-import { validateURI } from './lib/validation';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import { type CookieValueTypes, deleteCookie, getCookie, } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { ReCAPTCHA } from 'react-google-recaptcha';
 import AuthCard from './AuthCard';
+import { useAssertion } from './lib/assert';
+import { validateURI } from './lib/validation';
 import { useAuthentication } from './useAuthentication';
 
 export type RegisterProps = {

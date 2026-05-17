@@ -1,9 +1,9 @@
 'use client';
 
-import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useState } from 'react';
+import log from '../lib/log';
 
 export type RegisterFormProps = object;
 export default function VerifySMS({

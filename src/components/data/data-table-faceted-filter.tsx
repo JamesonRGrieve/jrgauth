@@ -1,9 +1,10 @@
+import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import type { Column } from '@tanstack/react-table';
 import { Check, PlusCircle } from 'lucide-react';
 import type * as React from 'react';
-
+import { cn } from '../../lib/utils';
 import { Badge } from '../ui/badge';
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -14,8 +15,6 @@ import {
   CommandSeparator,
 } from '../ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
-import { cn } from '../../lib/utils';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;

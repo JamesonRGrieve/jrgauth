@@ -1,6 +1,6 @@
+import axios, { type AxiosError } from 'axios';
 import { type NextRequest, NextResponse } from 'next/server';
 import { AuthMode, generateCookieString, getAuthMode, getJWT, getQueryParams, getRequestedURI, verifyJWT } from './utils';
-import axios, { type AxiosError } from 'axios';
 
 export type MiddlewareHook = (req: NextRequest) => Promise<{
   activated: boolean;

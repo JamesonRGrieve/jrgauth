@@ -1,18 +1,20 @@
-import useSWR, { type SWRResponse } from 'swr';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
+import useSWR, { type SWRResponse } from 'swr';
 
 /**
  * SWR hook to fetch users for a specific team by teamId
  * @param teamId - The ID of the team
  * @returns SWR response containing the users of the team
  */
-export default function useTeamUsers(teamId: string | undefined): SWRResponse<any[]> {
-  return useSWR(
+type TeamUser = { [key: string]: unknown };
+
+export default function useTeamUsers(teamId: string | undefined): SWRResponse<TeamUser[]> {
+  return useSWR<TeamUser[]>(
     teamId ? [`/v1/team/${teamId}/user`, teamId] : null,
     async () => {
       if (!teamId) {return [];}
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/user`, {
+      const response = await axios.get<{ user_teams: TeamUser[] }>(`${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/user`, {
         headers: {
           Authorization:`Bearer ${getCookie('jwt')}`,
         },

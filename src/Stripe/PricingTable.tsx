@@ -1,18 +1,19 @@
 'use client';
-import { Badge } from '../components/ui/badge';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { cn } from '../lib/utils';
+import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
+import { useState } from 'react';
 import { LuCheck as CheckIcon, LuMinus as MinusIcon } from 'react-icons/lu';
+import { Badge } from '../components/ui/badge';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 // import { Label } from '@/components/ui/label';
 // import { Switch } from '@/components/ui/switch';
 import useProducts from '../hooks/useProducts';
-import { Input } from '@jgrieve/dynamic-form/components/ui/input';
-import { Label } from '@jgrieve/dynamic-form/components/ui/label';
-import { useState } from 'react';
+import { cn } from '../lib/utils';
+
 // const defaultPricingData = [
 //   {
 //     name: 'Free',
@@ -79,7 +80,7 @@ type PricingCardProps = Product & {
 };
 export default function PricingTable() {
   // const [isAnnual, setIsAnnual] = useState(false);
-  const { data: pricingData, isLoading, error } = useProducts();
+  const { data: pricingData } = useProducts();
   return (
     <>
       {/* <div className='flex items-center justify-center'>
@@ -110,7 +111,7 @@ export default function PricingTable() {
 }
 
 export function PricingCard({
-  id,
+  id: _id,
   name,
   description,
   price,

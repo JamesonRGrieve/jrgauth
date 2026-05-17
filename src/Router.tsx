@@ -1,18 +1,20 @@
 'use client';
 
-import deepMerge from './lib/objects';
 import { notFound, useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AuthenticationContext } from './AuthenticationContext';
+import deepMerge from './lib/objects';
+
 export { useAuthentication } from './useAuthentication';
+
 import ErrorPage, { type ErrorPageProps } from './ErrorPage';
 import User, { type IdentifyProps } from './Identify';
 import Login, { type LoginProps } from './Login';
 import Logout, { type LogoutProps } from './Logout';
 import Manage, { type ManageProps } from './management';
+import OrganizationalUnit, { type OrganizationalUnitProps } from './OU';
 import Close, { type CloseProps } from './oauth2/Close';
 import oAuth2Providers from './oauth2/OAuthProviders';
-import OrganizationalUnit, { type OrganizationalUnitProps } from './OU';
 import Register, { type RegisterProps } from './Register';
 import Subscribe, { type SubscribeProps } from './Subscribe';
 

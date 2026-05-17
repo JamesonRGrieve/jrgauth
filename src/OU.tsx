@@ -1,10 +1,9 @@
 'use client';
 
-import useSWR from 'swr';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
+import useSWR from 'swr';
 import { useAuthentication } from './useAuthentication';
 
 export type OrganizationalUnitProps = {
@@ -32,12 +31,7 @@ export default function OrganizationalUnit({
   organizationalUnitEndpoint = '/ou',
 }: { searchParams: Record<string, string | string[] | undefined> } & OrganizationalUnitProps): ReactNode {
   const authConfig = useAuthentication();
-  const _router = useRouter();
-  const {
-    data: ouData,
-    error,
-    isLoading,
-  } = useSWR<OrganizationalUnit[]>(`/ou/${searchParams.ou}`, async () => {
+  useSWR<OrganizationalUnit[]>(`/ou/${searchParams.ou}`, async () => {
     const response = await axios.get(`${authConfig.authServer}${organizationalUnitEndpoint}`, {
       headers: {
         Authorization: `Bearer ${getCookie('jwt')}`,

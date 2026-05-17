@@ -1,9 +1,9 @@
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Disclosure, DisclosureContent, DisclosureTrigger } from '../components/ui/disclosure';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useState } from 'react';
 import { LuLoader as Loader2, LuMail as Mail } from 'react-icons/lu';
+import { Disclosure, DisclosureContent, DisclosureTrigger } from '../components/ui/disclosure';
 
 export const AuthenticatorHelp = () => {
   const [loading, setLoading] = useState({

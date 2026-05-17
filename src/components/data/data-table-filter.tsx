@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { Filter } from 'lucide-react';
-import type { Table } from '@tanstack/react-table';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Label } from '@jgrieve/dynamic-form/components/ui/label';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
+import type { Table } from '@tanstack/react-table';
+import { Filter } from 'lucide-react';
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 interface FilterState {
   column: string;
