@@ -48,6 +48,14 @@ const _AUTHORIZED_ROLES = [0, 1, 2];
 
 type ApiError = { response?: { data?: { detail?: string } } };
 
+const readJwtString = (): string => {
+  const jwt = getCookie('jwt');
+  return typeof jwt === 'string' ? jwt : '';
+};
+
+const apiUri = (): string => process.env.NEXT_PUBLIC_API_URI ?? '';
+const appUri = (): string => process.env.NEXT_PUBLIC_APP_URI ?? '';
+
 export interface Invitee {
   invitation_id: string;
   invitation: Record<string, unknown> | null;
@@ -97,16 +105,19 @@ export const Team = () => {
   const params = useParams();
   const { id } = params;
 
-  const authTeam = id !== undefined ? id : getCookie('auth-team');
+  const rawAuthTeam = id ?? getCookie('auth-team');
+  const authTeam =
+    typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
+  const teamIdString = typeof id === 'string' ? id : Array.isArray(id) ? (id[0] ?? '') : '';
   const { data: user } = useUser();
-  const { data: activeTeam, mutate: _mutate } = useTeam(String(id));
+  const { data: activeTeam, mutate: _mutate } = useTeam(teamIdString);
   const { data: userData } = useUser();
-  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(String(authTeam));
+  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(authTeam);
   const invitationsData = (invitationsList as Invitation[] | undefined)?.filter(
     (invitation) => invitation.created_by_user_id === userData?.id,
   ) ?? [];
   const [_responseMessage, _setResponseMessage] = useState('');
-  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam as string);
+  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -253,11 +264,11 @@ export const Team = () => {
                     }
                     try {
                       await axios.delete(
-                        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/user_team/${row.original.id}`,
+                        `${apiUri()}/v1/user_team/${row.original.id}`,
                         {
                           headers: {
                             'Content-Type': 'application/json',
-                            Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+                            Authorization: `Bearer ${readJwtString()}`,
                           },
                         },
                       );
@@ -393,9 +404,7 @@ export const Team = () => {
       id: 'actions',
       cell: ({ row }) => {
         const copyInviteLink = (invitation: Invitee): void => {
-          const link = `${String(process.env.NEXT_PUBLIC_APP_URI ?? '')}/accept-invitation?code=${String(
-            invitation.code ?? '',
-          )}&email=${invitation.email}&team=${invitation.team?.name ?? activeTeam?.name ?? ''}`;
+          const link = `${appUri()}/accept-invitation?code=${invitation.code ?? ''}&email=${invitation.email}&team=${invitation.team?.name ?? activeTeam?.name ?? ''}`;
           void navigator.clipboard.writeText(link);
           toast({
             title: 'Link copied',
@@ -433,10 +442,10 @@ export const Team = () => {
                     }
                     try {
                       await axios.delete(
-                        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/invitation/${row.original.invitation_id}`,
+                        `${apiUri()}/v1/invitation/${row.original.invitation_id}`,
                         {
                           headers: {
-                            Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+                            Authorization: `Bearer ${readJwtString()}`,
                           },
                         },
                       );
@@ -508,7 +517,7 @@ export function InviteUsers() {
 
     try {
       const response = await axios.post<{ id?: string }>(
-        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/invitation`,
+        `${apiUri()}/v1/invitation`,
         {
           invitation: {
             email: email,
@@ -519,7 +528,7 @@ export function InviteUsers() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+            Authorization: `Bearer ${readJwtString()}`,
           },
         },
       );
@@ -533,9 +542,7 @@ export function InviteUsers() {
         });
         if (response.data.id !== undefined && response.data.id !== '') {
           setResponseMessage(
-            `Invitation sent successfully! The invite link is ${String(
-              process.env.NEXT_PUBLIC_APP_URI ?? '',
-            )}/?invitation_id=${response.data.id}&email=${email}`,
+            `Invitation sent successfully! The invite link is ${appUri()}/?invitation_id=${response.data.id}&email=${email}`,
           );
         } else {
           setResponseMessage('Invitation sent successfully!');

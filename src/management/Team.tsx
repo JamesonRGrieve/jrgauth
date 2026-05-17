@@ -39,6 +39,13 @@ type TeamWithExtras = TeamRecord & {
 
 type ApiError = { response?: { data?: { detail?: string } } };
 
+const readJwtString = (): string => {
+  const jwt = getCookie('jwt');
+  return typeof jwt === 'string' ? jwt : '';
+};
+
+const apiUri = (): string => process.env.NEXT_PUBLIC_API_URI ?? '';
+
 export const Team = () => {
   const [newName, setNewName] = useState('');
   const [userTeams, setUserTeams] = useState<TeamWithExtras[]>([]);
@@ -46,10 +53,12 @@ export const Team = () => {
   const router = useRouter();
   const params = useParams();
   const { id } = params;
-  const authTeam = id !== undefined ? id : getCookie('auth-team');
+  const rawAuthTeam = id ?? getCookie('auth-team');
+  const authTeam =
+    typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
 
   const { data: activeTeam, mutate: _mutate } = useTeam();
-  const { mutate: inviteMutate } = useInvitations(String(authTeam));
+  const { mutate: inviteMutate } = useInvitations(authTeam);
   const userDataEndpoint = '/v1/user';
   const userDataSWRKey = '/user';
 
@@ -58,11 +67,11 @@ export const Team = () => {
     userDataSWRKey,
     async () => {
       const response = await axios.get<UserDataResponse>(
-        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}${userDataEndpoint}`,
+        `${apiUri()}${userDataEndpoint}`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+            Authorization: `Bearer ${readJwtString()}`,
           },
           validateStatus: (status) => [200, 403].includes(status),
         },
@@ -73,11 +82,11 @@ export const Team = () => {
 
   const getUserTeams = useCallback(async (): Promise<{ teams: TeamWithExtras[] } & Record<string, unknown>> => {
     const response = await axios.get<{ teams?: TeamWithExtras[] } & Record<string, unknown>>(
-      `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/team`,
+      `${apiUri()}/v1/team`,
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+          Authorization: `Bearer ${readJwtString()}`,
         },
         validateStatus: (status) => [200, 403].includes(status),
       },
@@ -270,13 +279,12 @@ export const RenameDialog = ({
       return;
     }
     try {
-      const jwt = getCookie('jwt') as string;
       await axios.put(
-        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/team/${String(activeTeam?.id ?? '')}`,
+        `${apiUri()}/v1/team/${activeTeam?.id ?? ''}`,
         { team: { name: newName } },
         {
           headers: {
-            Authorization: `Bearer ${jwt}`,
+            Authorization: `Bearer ${readJwtString()}`,
             'Content-Type': 'application/json',
           },
         },
@@ -358,7 +366,7 @@ export const CreateDialog = ({
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
 
-  const handleConfirmCreate = async (e?: React.FormEvent): Promise<void> => {
+  const handleConfirmCreate = async (e?: React.SyntheticEvent): Promise<void> => {
     if (e !== undefined) {
       e.preventDefault();
     }
@@ -375,9 +383,8 @@ export const CreateDialog = ({
       return;
     }
     try {
-      const jwt = getCookie('jwt') as string;
       const response = await axios.post<{ team?: { id?: string } }>(
-        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/team`,
+        `${apiUri()}/v1/team`,
         {
           name: newName,
           agent_name: `${newName} Agent`,
@@ -385,7 +392,7 @@ export const CreateDialog = ({
         },
         {
           headers: {
-            Authorization: `Bearer ${jwt}`,
+            Authorization: `Bearer ${readJwtString()}`,
             'Content-Type': 'application/json',
           },
         },
@@ -436,7 +443,7 @@ export const CreateDialog = ({
           <DialogHeader>
             <DialogTitle>Create New Team</DialogTitle>
           </DialogHeader>
-          <form onSubmit={(e: React.FormEvent) => void handleConfirmCreate(e)}>
+          <form onSubmit={(e: React.SyntheticEvent) => void handleConfirmCreate(e)}>
             <div className='grid gap-4 py-4'>
               <Input
                 value={newName}

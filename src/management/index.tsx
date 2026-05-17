@@ -51,10 +51,12 @@ export default function Manage({
     userUpdateEndpoint,
   ]);
   const { data, error, isLoading } = useSWR<User, Error, string>(userDataSWRKey, async () => {
+    const jwt = getCookie('jwt');
+    const bearer = typeof jwt === 'string' ? jwt : '';
     const response = await axios.get<User>(`${authConfig.authServer}${userDataEndpoint}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+        Authorization: `Bearer ${bearer}`,
       },
       validateStatus: (status) => [200, 403].includes(status),
     });

@@ -7,12 +7,31 @@ import { LuPlus as Plus, LuUnlink as Unlink } from 'react-icons/lu';
 import OAuth2Login from 'react-simple-oauth2-login';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import oAuth2Providers from '../oauth2/OAuthProviders';
+import oAuth2ProvidersRaw from '../oauth2/OAuthProviders';
+import type { ReactNode } from 'react';
+
+interface OAuth2Provider {
+  client_id?: string;
+  scope: string;
+  uri: string;
+  params: Record<string, unknown>;
+  icon: ReactNode;
+}
+
+const oAuth2Providers = oAuth2ProvidersRaw as unknown as Record<string, OAuth2Provider>;
 
 interface ConnectedService {
   provider: string;
   connected: boolean;
 }
+
+const readJwt = (): string => {
+  const jwt = getCookie('jwt');
+  return typeof jwt === 'string' ? jwt : '';
+};
+
+const apiUri = (): string => process.env.NEXT_PUBLIC_API_URI ?? '';
+const authUri = (): string => process.env.NEXT_PUBLIC_AUTH_URI ?? '';
 
 const providerDescriptions: Record<string, string> = {
   Google:
@@ -53,9 +72,9 @@ export const ConnectedServices = () => {
     setConnectedServices(baseServices);
 
     try {
-      const response = await axios.get<string[]>(`${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/oauth2`, {
+      const response = await axios.get<string[]>(`${apiUri()}/v1/oauth2`, {
         headers: {
-          Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+          Authorization: `Bearer ${readJwt()}`,
         },
       });
 
@@ -71,7 +90,6 @@ export const ConnectedServices = () => {
     } catch (err) {
       const e = err as OAuthErrorLike;
       if (e.response?.status === 404) {
-        console.debug('OAuth2 endpoint not found (404) — treating as no connected services.');
         setError(null);
       } else {
         console.error('Error fetching connections:', err);
@@ -88,9 +106,9 @@ export const ConnectedServices = () => {
 
   const handleDisconnect = async (provider: string): Promise<void> => {
     try {
-      await axios.delete(`${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/oauth2/${provider.toLowerCase()}`, {
+      await axios.delete(`${apiUri()}/v1/oauth2/${provider.toLowerCase()}`, {
         headers: {
-          Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+          Authorization: `Bearer ${readJwt()}`,
         },
       });
       await fetchConnections();
@@ -104,43 +122,28 @@ export const ConnectedServices = () => {
   const onSuccess = async (response: OAuthSuccessResponse): Promise<void> => {
     const provider = disconnectDialog.provider?.toLowerCase() ?? '';
     try {
-      const jwt = getCookie('jwt');
-      console.log('Full OAuth response:', response);
-      console.log('Code from response:', response.code);
-      console.log('Provider:', provider);
-
       if (response.code === undefined || response.code === '') {
         console.error('No code received in OAuth response');
         await fetchConnections();
         return;
       }
 
-      const result = await axios.post(
-        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/oauth2/${provider}`,
+      await axios.post(
+        `${apiUri()}/v1/oauth2/${provider}`,
         {
           code: response.code,
-          referrer: `${String(process.env.NEXT_PUBLIC_AUTH_URI ?? '')}/close/${provider}`,
+          referrer: `${authUri()}/close/${provider}`,
         },
         {
           headers: {
-            Authorization: `Bearer ${String(jwt ?? '')}`,
+            Authorization: `Bearer ${readJwt()}`,
           },
         },
       );
-      console.log('OAuth API response:', result);
       await fetchConnections();
     } catch (err) {
       await fetchConnections();
       console.error('OAuth error:', err);
-      const e = err as OAuthErrorLike;
-      if (e.config !== undefined) {
-        console.log('Failed request details:', {
-          url: e.config.url,
-          method: e.config.method,
-          headers: e.config.headers,
-          data: e.config.data,
-        });
-      }
     }
   };
 
@@ -185,9 +188,9 @@ export const ConnectedServices = () => {
                   <OAuth2Login
                     authorizationUrl={provider.uri}
                     responseType='code'
-                    clientId={provider.client_id}
-                    state={String(getCookie('jwt') ?? '')}
-                    redirectUri={`${String(process.env.NEXT_PUBLIC_AUTH_URI ?? '')}/close/${service.provider.toLowerCase()}`}
+                    clientId={provider.client_id ?? ''}
+                    state={readJwt()}
+                    redirectUri={`${authUri()}/close/${service.provider.toLowerCase()}`}
                     scope={provider.scope}
                     onSuccess={(r) => void onSuccess(r as OAuthSuccessResponse)}
                     onFailure={(r) => void onSuccess(r as OAuthSuccessResponse)}

@@ -6,11 +6,16 @@ import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
 import { toast } from '@jgrieve/dynamic-form/hooks/useToast';
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { CellContext, Column, ColumnDef } from '@tanstack/react-table';
 import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, type ReactElement } from 'react';
 import { mutate } from 'swr';
+
+const readJwtString = (): string => {
+  const jwt = getCookie('jwt');
+  return typeof jwt === 'string' ? jwt : '';
+};
 import { DataTable } from '../components/data/data-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useTeams } from '../hooks/useTeam';
@@ -43,6 +48,26 @@ type ProfileUserData = {
 } & Record<string, unknown>;
 
 type ProfileRouter = { push: (path: string) => void };
+
+const TeamNameHeader = ({ column }: { column: Column<Team> }): ReactElement => (
+  <DataTableColumnHeader column={column} title='Team' />
+);
+const TeamNameCell = ({ row }: CellContext<Team, unknown>): ReactElement => (
+  <div className='flex space-x-2'>
+    <span className='max-w-[500px] truncate font-medium'>{row.getValue('name')}</span>
+  </div>
+);
+const TeamRoleHeader = ({ column }: { column: Column<Team> }): ReactElement => (
+  <DataTableColumnHeader column={column} title='Role' />
+);
+const TeamRoleCell = ({ row }: CellContext<Team, unknown>): ReactElement => (
+  <div className='flex w-[100px] items-center'>
+    <span>{row.getValue('role')}</span>
+  </div>
+);
+const TeamActionHeader = ({ column }: { column: Column<Team> }): ReactElement => (
+  <DataTableColumnHeader column={column} title='Action' />
+);
 
 export const Profile = ({
   isLoading,
@@ -143,7 +168,7 @@ export const Profile = ({
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+                Authorization: `Bearer ${readJwtString()}`,
               },
             },
           );
@@ -158,63 +183,44 @@ export const Profile = ({
     }
   }, [data, authConfig, userUpdateEndpoint, userDataSWRKey, readUserField]);
 
-  const user_teams_columns: ColumnDef<Team>[] = [
-    {
-      accessorKey: 'name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title='Team' />,
-      cell: ({ row }) => {
-        return (
-          <div className='flex space-x-2'>
-            <span className='max-w-[500px] truncate font-medium'>{row.getValue('name')}</span>
-          </div>
-        );
+  const user_teams_columns: ColumnDef<Team>[] = useMemo(() => {
+    const TeamActionCell = ({ row }: CellContext<Team, unknown>): ReactElement => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant='ghost'
+            className='flex h-8 w-8 p-0'
+            onClick={() => router.push(`/team/${row.original.id}`)}
+          >
+            <ArrowTopRightIcon />
+          </Button>
+        </DropdownMenuTrigger>
+      </DropdownMenu>
+    );
+    return [
+      {
+        accessorKey: 'name',
+        header: TeamNameHeader,
+        cell: TeamNameCell,
+        meta: { headerName: 'team' },
       },
-      meta: {
-        headerName: 'team',
+      {
+        accessorKey: 'role',
+        header: TeamRoleHeader,
+        cell: TeamRoleCell,
+        filterFn: (row, id, value: string[]) => value.includes(row.getValue(id)),
+        meta: { headerName: 'role' },
       },
-    },
-    {
-      accessorKey: 'role',
-      header: ({ column }) => <DataTableColumnHeader column={column} title='Role' />,
-      cell: ({ row }) => {
-        return (
-          <div className='flex w-[100px] items-center'>
-            <span>{row.getValue('role')}</span>
-          </div>
-        );
+      {
+        id: 'actions',
+        header: TeamActionHeader,
+        cell: TeamActionCell,
+        enableHiding: true,
+        enableSorting: false,
+        meta: { headerName: 'Actions' },
       },
-      filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id));
-      },
-      meta: {
-        headerName: 'role',
-      },
-    },
-    {
-      id: 'actions',
-      header: ({ column }) => <DataTableColumnHeader column={column} title='Action' />,
-      cell: ({ row }) => {
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant='ghost'
-                className='flex h-8 w-8 p-0'
-                onClick={() => router.push(`/team/${row.original.id}`)}
-              >
-                <ArrowTopRightIcon />
-              </Button>
-            </DropdownMenuTrigger>
-          </DropdownMenu>
-        );
-      },
-      enableHiding: true,
-      enableSorting: false,
-      meta: {
-        headerName: 'Actions',
-      },
-    },
-  ];
+    ];
+  }, [router]);
 
   return (
     <div>
@@ -311,7 +317,7 @@ export const Profile = ({
                   {
                     headers: {
                       'Content-Type': 'application/json',
-                      Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+                      Authorization: `Bearer ${readJwtString()}`,
                     },
                   },
                 )
@@ -375,7 +381,7 @@ export const Profile = ({
                           {
                             headers: {
                               'Content-Type': 'application/json',
-                              Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+                              Authorization: `Bearer ${readJwtString()}`,
                             },
                           },
                         )

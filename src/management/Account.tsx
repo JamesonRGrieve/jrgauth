@@ -3,10 +3,15 @@ import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import PasswordField from '@jgrieve/dynamic-form/PasswordField';
 import axios, { type AxiosError } from 'axios';
 import { getCookie } from 'cookies-next';
-import type { FormEvent } from 'react';
+import type { SyntheticEvent } from 'react';
 import type { AuthenticationConfig } from '../Router';
 
 type PasswordChangeResponseBody = { detail?: string };
+
+const readJwtString = (): string => {
+  const jwt = getCookie('jwt');
+  return typeof jwt === 'string' ? jwt : '';
+};
 
 export const Account = ({
   authConfig,
@@ -28,41 +33,42 @@ export const Account = ({
       <Separator className='my-4' />
       {authConfig.authModes.basic && (
         <form
-          onSubmit={async (event: FormEvent<HTMLFormElement>): Promise<void> => {
-            const formData = Object.fromEntries(new FormData((event.currentTarget) ?? undefined));
+          onSubmit={(event: SyntheticEvent<HTMLFormElement>): void => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            void (async (): Promise<void> => {
+              const formData = Object.fromEntries(new FormData(form));
 
-            if (!formData['password']) {
-              setResponseMessage('Please enter a password.');
-            }
-            if (!formData['password-again']) {
-              setResponseMessage('Please enter your password again.');
-            }
-            if (formData['password'] !== formData['password-again']) {
-              setResponseMessage('Passwords do not match.');
-            }
-            const passwordResetResponse = await axios
-              .put<PasswordChangeResponseBody>(
-                `${authConfig.authServer}${userPasswordChangeEndpoint}`,
-                {
-                  ...data,
-                },
-                {
-                  headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+              if (formData['password'] === undefined || formData['password'] === '') {
+                setResponseMessage('Please enter a password.');
+              }
+              if (formData['password-again'] === undefined || formData['password-again'] === '') {
+                setResponseMessage('Please enter your password again.');
+              }
+              if (formData['password'] !== formData['password-again']) {
+                setResponseMessage('Passwords do not match.');
+              }
+              const passwordResetResponse = await axios
+                .put<PasswordChangeResponseBody>(
+                  `${authConfig.authServer}${userPasswordChangeEndpoint}`,
+                  {
+                    ...data,
                   },
-                },
-              )
-              .catch(
-                (exception: AxiosError<PasswordChangeResponseBody>) =>
-                  exception.response,
-              );
-            if (passwordResetResponse.data.detail !== undefined) {
-              setResponseMessage(passwordResetResponse.data.detail);
-            }
-            if (passwordResetResponse.status === 200) {
-              window.location.reload();
-            }
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${readJwtString()}`,
+                    },
+                  },
+                )
+                .catch((exception: AxiosError<PasswordChangeResponseBody>) => exception.response);
+              if (passwordResetResponse?.data.detail !== undefined) {
+                setResponseMessage(passwordResetResponse.data.detail);
+              }
+              if (passwordResetResponse?.status === 200) {
+                window.location.reload();
+              }
+            })();
           }}
         >
           <PasswordField id='old-password' name='old-password' label='Your Old Password' />
