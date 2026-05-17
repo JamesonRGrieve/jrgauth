@@ -14,7 +14,7 @@ import { LuCheck as Check, LuCopy as Copy } from 'react-icons/lu';
 import QRCode from 'react-qr-code';
 import AuthCard from './AuthCard';
 import { AuthenticatorHelp as MissingAuthenticator } from './mfa/MissingAuthenticator';
-import { useAuthentication } from './Router';
+import { useAuthentication } from './useAuthentication';
 
 export type LoginProps = {
   userLoginEndpoint?: string;

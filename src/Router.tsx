@@ -1,10 +1,10 @@
 'use client';
 
-import assert from './lib/assert';
 import deepMerge from './lib/objects';
 import { notFound, useSearchParams } from 'next/navigation';
-import { type ReactNode, useContext } from 'react';
+import type { ReactNode } from 'react';
 import { AuthenticationContext } from './AuthenticationContext';
+export { useAuthentication } from './useAuthentication';
 import ErrorPage, { type ErrorPageProps } from './ErrorPage';
 import User, { type IdentifyProps } from './Identify';
 import Login, { type LoginProps } from './Login';
@@ -41,15 +41,6 @@ export type AuthenticationConfig = {
   authBaseURI: string;
   recaptchaSiteKey?: string;
   enableOU: boolean;
-};
-
-export const useAuthentication = () => {
-  const context = useContext(AuthenticationContext);
-  assert(!context.authModes.basic || !context.authModes.magical, 'Basic and Magical modes cannot both be enabled.');
-  if (context === undefined) {
-    throw new Error('useAuthentication must be used within an AuthenticationProvider');
-  }
-  return context;
 };
 
 const pageConfigDefaults: AuthenticationConfig = {

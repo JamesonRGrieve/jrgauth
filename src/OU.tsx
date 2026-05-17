@@ -5,7 +5,7 @@ import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { useAuthentication } from './Router';
+import { useAuthentication } from './useAuthentication';
 
 export type OrganizationalUnitProps = {
   organizationalUnitEndpoint?: string;

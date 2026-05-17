@@ -4,9 +4,13 @@ module.exports = {
     {
       name: 'no-circular',
       severity: 'error',
-      comment: 'Circular dependencies are forbidden — refactor to break the cycle.',
+      comment:
+        'Circular dependencies are forbidden — refactor to break the cycle. Type-only imports are exempt; cycles composed entirely of them have no runtime effect.',
       from: {},
-      to: { circular: true },
+      to: {
+        circular: true,
+        viaOnly: { dependencyTypesNot: ['type-only'] },
+      },
     },
     {
       name: 'no-orphans',

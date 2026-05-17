@@ -17,7 +17,7 @@ import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import AuthCard from './AuthCard';
-import { useAuthentication } from './Router';
+import { useAuthentication } from './useAuthentication';
 import OAuth from './oauth2/OAuth';
 
 const schema = z.object({

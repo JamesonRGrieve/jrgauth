@@ -1,7 +1,7 @@
 {
-  "componentsTotal": 54,
+  "componentsTotal": 53,
   "sourcesTotal": 72,
-  "componentsMissingStoriesCount": 53,
+  "componentsMissingStoriesCount": 52,
   "sourcesMissingTestsCount": 72,
   "componentsMissingStories": [
     "src/AuthenticationContext.tsx",
@@ -46,7 +46,6 @@
     "src/management/Invite.tsx",
     "src/management/Notifications.tsx",
     "src/management/Profile.tsx",
-    "src/management/Quotas.tsx",
     "src/management/Team.tsx",
     "src/management/TeamUsers.tsx",
     "src/management/index.tsx",
@@ -118,7 +117,6 @@
     "src/management/Invite.tsx",
     "src/management/Notifications.tsx",
     "src/management/Profile.tsx",
-    "src/management/Quotas.tsx",
     "src/management/Team.tsx",
     "src/management/TeamUsers.tsx",
     "src/management/index.tsx",
@@ -130,6 +128,7 @@
     "src/oauth2/OAuth.tsx",
     "src/oauth2/OAuthProviders.tsx",
     "src/types/MiddlewareHook.ts",
+    "src/useAuthentication.ts",
     "src/utils.ts"
   ]
 }

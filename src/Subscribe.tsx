@@ -3,7 +3,7 @@
 import { getCookie } from 'cookies-next';
 import type React from 'react';
 import { Suspense } from 'react';
-import { useAuthentication } from './Router';
+import { useAuthentication } from './useAuthentication';
 import PricingTable from './Stripe/PricingTable';
 
 export type SubscribeProps = { redirectTo?: string };

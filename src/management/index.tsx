@@ -9,7 +9,7 @@ import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useState } from 'react';
 import useSWR from 'swr';
-import { useAuthentication } from '../Router';
+import { useAuthentication } from '../useAuthentication';
 import { Profile } from './Profile';
 
 export type ManageProps = {

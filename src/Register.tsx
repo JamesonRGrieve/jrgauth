@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react';
 import { ReCAPTCHA } from 'react-google-recaptcha';
 import AuthCard from './AuthCard';
-import { useAuthentication } from './Router';
+import { useAuthentication } from './useAuthentication';
 
 export type RegisterProps = {
   additionalFields?: string[];
