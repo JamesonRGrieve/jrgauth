@@ -35,10 +35,11 @@ if (cssFiles.length === 0) {
 
 let output;
 try {
-    output = execSync(
-        `./node_modules/.bin/stylelint --formatter json "src/**/*.css" "src/**/*.scss"`,
+    const stdout = execSync(
+        `./node_modules/.bin/stylelint --formatter json "src/**/*.css" "src/**/*.scss" 2>&1`,
         { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 },
     );
+    output = stdout;
 } catch (err) {
     output = (err.stdout?.toString() || '') + (err.stderr?.toString() || '');
 }
