@@ -82,40 +82,46 @@ const SidebarProvider = React.forwardRef<
     const [leftOpen, setLeftOpen] = React.useState(defaultLeftOpen);
     const [rightOpen, setRightOpen] = React.useState(defaultRightOpen);
 
-    const createSetOpen = (side: SidebarSide, onOpenChange?: (open: boolean) => void) => {
-      return (value: boolean | ((value: boolean) => boolean)) => {
-        const openState = typeof value === 'function' ? value(side === 'left' ? leftOpen : rightOpen) : value;
+    const createSetOpen = React.useCallback(
+      (side: SidebarSide, onOpenChange?: (open: boolean) => void) => {
+        return (value: boolean | ((value: boolean) => boolean)) => {
+          const openState = typeof value === 'function' ? value(side === 'left' ? leftOpen : rightOpen) : value;
 
-        if (onOpenChange) {
-          onOpenChange(openState);
-        } else if (side === 'left') {
-          setLeftOpen(openState);
-        } else {
-          setRightOpen(openState);
-        }
-
-        setCookie(`sidebar-${side}-state`, openState, {
-          path: '/',
-          maxAge: 60 * 60 * 24 * 7,
-          domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN,
-        });
-      };
-    };
-
-    const createToggleSidebar = (side: SidebarSide) => {
-      return () => {
-        if (isMobile) {
-          if (side === 'left') {
-            setLeftOpenMobile((prev) => !prev);
+          if (onOpenChange) {
+            onOpenChange(openState);
+          } else if (side === 'left') {
+            setLeftOpen(openState);
           } else {
-            setRightOpenMobile((prev) => !prev);
+            setRightOpen(openState);
           }
-        } else {
-          const setOpen = createSetOpen(side, side === 'left' ? onLeftOpenChange : onRightOpenChange);
-          setOpen((prev) => !prev);
-        }
-      };
-    };
+
+          setCookie(`sidebar-${side}-state`, openState, {
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7,
+            domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN,
+          });
+        };
+      },
+      [leftOpen, rightOpen],
+    );
+
+    const createToggleSidebar = React.useCallback(
+      (side: SidebarSide) => {
+        return () => {
+          if (isMobile) {
+            if (side === 'left') {
+              setLeftOpenMobile((prev) => !prev);
+            } else {
+              setRightOpenMobile((prev) => !prev);
+            }
+          } else {
+            const setOpen = createSetOpen(side, side === 'left' ? onLeftOpenChange : onRightOpenChange);
+            setOpen((prev) => !prev);
+          }
+        };
+      },
+      [isMobile, createSetOpen, onLeftOpenChange, onRightOpenChange],
+    );
 
     const contextValue = React.useMemo<SidebarContextMap>(
       () => ({

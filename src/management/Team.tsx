@@ -22,7 +22,7 @@ import {
 } from '../components/ui/sidebar';
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LuPencil, LuPlus } from 'react-icons/lu';
 import { SYSTEM_TEAM_ID, useTeam } from '../hooks/useTeam';
 import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
@@ -70,7 +70,7 @@ export const Team = () => {
     ).data;
   });
 
-  const getUserTeams = async () => {
+  const getUserTeams = useCallback(async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/team`, {
       headers: {
         'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export const Team = () => {
     });
     const filteredTeams = response.data?.teams ? response.data.teams.filter((team: Team) => team.id !== SYSTEM_TEAM_ID) : [];
     return { ...response.data, teams: filteredTeams };
-  };
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {

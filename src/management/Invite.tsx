@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LuUsers } from 'react-icons/lu';
 import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import { useInvitations } from '../hooks/useInvitation';
@@ -38,6 +38,34 @@ interface RoleWithChildren extends Role {
   depth: number;
 }
 
+function sortRolesByPermission(roles: Role[]): Role[] {
+  const roleMap = new Map<number, RoleWithChildren>();
+  roles.forEach((role: Role) => {
+    roleMap.set(role.id, { ...role, children: [], depth: -1 });
+  });
+
+  roleMap.forEach((role: RoleWithChildren) => {
+    if (role.parent_id && roleMap.has(role.parent_id)) {
+      roleMap.get(role.parent_id)?.children.push(role);
+    }
+  });
+
+  function assignDepth(role: RoleWithChildren, depth: number): void {
+    role.depth = depth;
+    role.children.forEach((child: RoleWithChildren) => { assignDepth(child, depth + 1); });
+  }
+
+  roleMap.forEach((role: RoleWithChildren) => {
+    if (!role.parent_id) {
+      assignDepth(role, 0);
+    }
+  });
+
+  const sortedRoles = Array.from(roleMap.values()).sort((a, b) => a.depth - b.depth);
+
+  return sortedRoles.map(({ children, depth, ...role }) => role);
+}
+
 export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [email, setEmail] = useState('');
@@ -50,7 +78,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
   const authTeam = id ? id : getCookie('auth-team');
   const {mutate:inviteMutate} = useInvitations(String(authTeam))
 
-  const fetchRoles = async () => {
+  const fetchRoles = useCallback(async () => {
     return (
       await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/team/${selectedTeam.id}/role`, {
         headers: {
@@ -60,35 +88,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
         validateStatus: (status) => [200, 403].includes(status),
       })
     ).data;
-  };
-
-  function sortRolesByPermission(roles: Role[]): Role[] {
-    const roleMap = new Map<number, RoleWithChildren>();
-    roles.forEach((role: Role) => {
-      roleMap.set(role.id, { ...role, children: [], depth: -1 });
-    });
-
-    roleMap.forEach((role: RoleWithChildren) => {
-      if (role.parent_id && roleMap.has(role.parent_id)) {
-        roleMap.get(role.parent_id)?.children.push(role);
-      }
-    });
-
-    function assignDepth(role: RoleWithChildren, depth: number): void {
-      role.depth = depth;
-      role.children.forEach((child: RoleWithChildren) => { assignDepth(child, depth + 1); });
-    }
-
-    roleMap.forEach((role: RoleWithChildren) => {
-      if (!role.parent_id) {
-        assignDepth(role, 0);
-      }
-    });
-
-    const sortedRoles = Array.from(roleMap.values()).sort((a, b) => a.depth - b.depth);
-
-    return sortedRoles.map(({ children, depth, ...role }) => role);
-  }
+  }, [selectedTeam]);
 
   useEffect(() => {
     if (selectedTeam) {
@@ -99,7 +99,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
         })
         .catch(() => setRoles(ROLES));
     }
-  }, [selectedTeam, sortRolesByPermission, fetchRoles]);
+  }, [selectedTeam, fetchRoles]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

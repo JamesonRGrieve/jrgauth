@@ -8,7 +8,7 @@ import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { mutate } from 'swr';
 import VerifySMS from '../mfa/SMS';
-import { useEffect, } from 'react';
+import { useCallback, useEffect, } from 'react';
 import { DataTable } from '../components/data/data-table';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
@@ -59,29 +59,32 @@ export const Profile = ({
   const { data: userTeams } = useTeams();
   // Use `data` passed from parent Manage component as the authoritative user object.
   // But be resilient to different API shapes. Try several common locations for fields.
-  const readUserField = (field: string) => {
-    // Try several common keys and shapes to be resilient to API variations.
-    const candidates = [] as string[];
-    const camel = field.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
-    candidates.push(field, camel, field.replace(/_/g, ''), field.replace('_name', ''), 'name');
-    // Common identity keys
-    if (field === 'first_name') {candidates.push('given_name', 'givenName');}
-    if (field === 'last_name') {candidates.push('family_name', 'familyName');}
-    if (field === 'display_name') {candidates.push('displayName', 'username', 'userName');}
+  const readUserField = useCallback(
+    (field: string) => {
+      // Try several common keys and shapes to be resilient to API variations.
+      const candidates = [] as string[];
+      const camel = field.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+      candidates.push(field, camel, field.replace(/_/g, ''), field.replace('_name', ''), 'name');
+      // Common identity keys
+      if (field === 'first_name') {candidates.push('given_name', 'givenName');}
+      if (field === 'last_name') {candidates.push('family_name', 'familyName');}
+      if (field === 'display_name') {candidates.push('displayName', 'username', 'userName');}
 
-    try {
-      for (const key of candidates) {
-        // check several nesting patterns
-        if (data?.user?.[key] !== undefined) {return data.user[key];}
-        if (data?.[key] !== undefined) {return data[key];}
-        if (data?.user?.user?.[key] !== undefined) {return data.user.user[key];}
-        if (data?.user?.profile?.[key] !== undefined) {return data.user.profile[key];}
+      try {
+        for (const key of candidates) {
+          // check several nesting patterns
+          if (data?.user?.[key] !== undefined) {return data.user[key];}
+          if (data?.[key] !== undefined) {return data[key];}
+          if (data?.user?.user?.[key] !== undefined) {return data.user.user[key];}
+          if (data?.user?.profile?.[key] !== undefined) {return data.user.profile[key];}
+        }
+      } catch (_e) {
+        // ignore
       }
-    } catch (_e) {
-      // ignore
-    }
-    return undefined;
-  };
+      return undefined;
+    },
+    [data],
+  );
 
   // Debug: (removed runtime console output) - kept comment for dev reference
 

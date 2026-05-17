@@ -4,7 +4,7 @@ import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LuPlus as Plus, LuUnlink as Unlink } from 'react-icons/lu';
 import OAuth2Login from 'react-simple-oauth2-login';
 import oAuth2Providers from '../oauth2/OAuthProviders';
@@ -37,7 +37,7 @@ export const ConnectedServices = () => {
     provider: null,
   });
 
-  const fetchConnections = async () => {
+  const fetchConnections = useCallback(async () => {
     setLoading(true);
     // Prepare a base list of providers (default: not connected) so the UI can render
     const baseServices = Object.keys(oAuth2Providers)
@@ -76,7 +76,7 @@ export const ConnectedServices = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchConnections();
