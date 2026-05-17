@@ -39,8 +39,53 @@ let keyframesBlocks = 0;
 let animationDeclarations = 0;
 const perFile = {};
 
+/**
+ * Strip top-level `@theme { ... }` blocks before counting.
+ *
+ * In Tailwind v4, `@theme {}` is the CSS-first equivalent of the legacy
+ * `tailwind.config.js` `theme.extend` — its `@keyframes` and
+ * `--animate-*` custom-property declarations are *token definitions*, not
+ * inline animation usage. Counting them here would double-charge for the
+ * same animation that's tracked in `tailwind.config.js` (when present) and
+ * would block the ratchet from reaching zero in v4 repos that have
+ * correctly migrated their animation tokens into `@theme`.
+ */
+function stripThemeBlocks(text) {
+    let out = '';
+    let i = 0;
+    while (i < text.length) {
+        const themeIdx = text.indexOf('@theme', i);
+        if (themeIdx === -1) {
+            out += text.slice(i);
+            break;
+        }
+        out += text.slice(i, themeIdx);
+        const braceStart = text.indexOf('{', themeIdx);
+        if (braceStart === -1) {
+            i = text.length;
+            break;
+        }
+        let depth = 0;
+        let end = text.length;
+        for (let j = braceStart; j < text.length; j += 1) {
+            const ch = text[j];
+            if (ch === '{') depth += 1;
+            else if (ch === '}') {
+                depth -= 1;
+                if (depth === 0) {
+                    end = j + 1;
+                    break;
+                }
+            }
+        }
+        i = end;
+    }
+    return out;
+}
+
 for (const path of cssFiles) {
-    const text = readFileSync(path, 'utf8');
+    const raw = readFileSync(path, 'utf8');
+    const text = stripThemeBlocks(raw);
     const kf = (text.match(/@keyframes\s+[A-Za-z0-9_-]+\s*\{/g) ?? []).length;
     const decls = (text.match(/^\s*animation(?:-[a-z-]+)?\s*:/gm) ?? []).length;
     if (kf || decls) {

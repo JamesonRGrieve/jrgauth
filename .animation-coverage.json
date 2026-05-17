@@ -1,21 +1,16 @@
 {
-  "generatedAt": "2026-05-17T18:07:18.530Z",
+  "generatedAt": "2026-05-17T18:15:33.112Z",
   "cssFiles": [
     "/home/jameson/source/auth/src/app/globals.css"
   ],
   "css": {
-    "keyframesBlocks": 2,
+    "keyframesBlocks": 0,
     "animationDeclarations": 0
   },
   "tailwindConfig": {
-    "keyframes": 2,
-    "animations": 2
+    "keyframes": 0,
+    "animations": 0
   },
-  "total": 6,
-  "perFile": {
-    "/home/jameson/source/auth/src/app/globals.css": {
-      "keyframes": 2,
-      "animationDeclarations": 0
-    }
-  }
+  "total": 0,
+  "perFile": {}
 }
