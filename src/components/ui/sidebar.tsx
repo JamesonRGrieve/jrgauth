@@ -21,13 +21,13 @@ const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
 const _SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 type SidebarContextMap = {
-  left?: SidebarContext;
-  right?: SidebarContext;
+  left?: SidebarContextValue;
+  right?: SidebarContextValue;
 };
 
 type SidebarSide = 'left' | 'right';
 
-type SidebarContext = {
+type SidebarContextValue = {
   state: 'expanded' | 'collapsed';
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -95,7 +95,7 @@ const SidebarProvider = React.forwardRef<
             setRightOpen(openState);
           }
 
-          setCookie(`sidebar-${side}-state`, openState, {
+          void setCookie(`sidebar-${side}-state`, openState, {
             path: '/',
             maxAge: 60 * 60 * 24 * 7,
             domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN,
@@ -283,7 +283,7 @@ const Sidebar = React.forwardRef<
 Sidebar.displayName = 'Sidebar';
 
 const SidebarTrigger = React.forwardRef<
-  React.ElementRef<typeof Button>,
+  React.ComponentRef<typeof Button>,
   React.ComponentProps<typeof Button> & { side?: SidebarSide }
 >(({ side = 'left', className, onClick, ...props }, ref) => {
   const { toggleSidebar } = useSidebar(side);
@@ -423,7 +423,7 @@ const SidebarInset = React.forwardRef<HTMLDivElement, React.ComponentProps<'main
 });
 SidebarInset.displayName = 'SidebarInset';
 
-const SidebarInput = React.forwardRef<React.ElementRef<typeof Input>, React.ComponentProps<typeof Input>>(
+const SidebarInput = React.forwardRef<React.ComponentRef<typeof Input>, React.ComponentProps<typeof Input>>(
   ({ className, ...props }, ref) => {
     return (
       <Input
@@ -459,7 +459,7 @@ const SidebarFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<'div
 });
 SidebarFooter.displayName = 'SidebarFooter';
 
-const SidebarSeparator = React.forwardRef<React.ElementRef<typeof Separator>, React.ComponentProps<typeof Separator>>(
+const SidebarSeparator = React.forwardRef<React.ComponentRef<typeof Separator>, React.ComponentProps<typeof Separator>>(
   ({ className, ...props }, ref) => {
     return (
       <Separator ref={ref} data-sidebar='separator' className={cn('mx-2 w-auto bg-sidebar-border', className)} {...props} />
@@ -605,20 +605,16 @@ const SidebarMenuButton = React.forwardRef<
       />
     );
 
-    if (!tooltip) {
+    if (tooltip === undefined || tooltip === null) {
       return button;
     }
 
-    if (typeof tooltip === 'string') {
-      tooltip = {
-        children: tooltip,
-      };
-    }
+    const tooltipProps = typeof tooltip === 'string' ? { children: tooltip } : tooltip;
 
     return (
       <Tooltip>
         <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent side='right' align='center' hidden={state !== 'collapsed' || isMobile} {...tooltip} />
+        <TooltipContent side='right' align='center' hidden={state !== 'collapsed' || isMobile} {...tooltipProps} />
       </Tooltip>
     );
   },

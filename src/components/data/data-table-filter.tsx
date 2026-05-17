@@ -9,19 +9,19 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
 
-interface Filter {
+interface FilterState {
   column: string;
   value: string;
 }
 
 export function DataTableFilter<TData>({ table }: { table: Table<TData> }) {
   const columns = table.getAllColumns().filter((col) => col.getCanFilter());
-  const [filter, setFilter] = useState<Filter>({
+  const [filter, setFilter] = useState<FilterState>({
     column: '',
     value: '',
   });
 
-  const updateFilter = (key: keyof Filter, value: string) => {
+  const updateFilter = (key: keyof FilterState, value: string) => {
     setFilter((prev) => ({
       ...prev,
       [key]: value,

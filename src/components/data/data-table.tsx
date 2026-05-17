@@ -23,7 +23,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
   onRowClick?: (row: TData) => void;
   rowClassName?: (row: TData) => string;
 }
