@@ -2,14 +2,14 @@ type LogOptions = { client?: number; server?: number };
 
 const clientVerbosity = (() => {
   if (typeof process === 'undefined') {return 3;}
-  const raw = process.env?.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT;
+  const raw = process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT;
   const n = raw ? Number(raw) : 3;
   return Number.isFinite(n) ? n : 3;
 })();
 
 const serverVerbosity = (() => {
   if (typeof process === 'undefined') {return 3;}
-  const raw = process.env?.LOG_VERBOSITY_SERVER ?? process.env?.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT;
+  const raw = process.env.LOG_VERBOSITY_SERVER ?? process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT;
   const n = raw ? Number(raw) : 3;
   return Number.isFinite(n) ? n : 3;
 })();

@@ -33,10 +33,14 @@ export default function Subscribe({
           <div id='stripe-box'>
             <script async src='https://js.stripe.com/v3/pricing-table.js' />
             <stripe-pricing-table
-              pricing-table-id={process.env.NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID ?? ''}
-              publishable-key={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''}
-              customer-session-client-secret={searchParams?.customer_session}
-              customer-email={searchParams?.customer_session ? undefined : searchParams?.email || getCookie('email')}
+              pricing-table-id={process.env.NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID}
+              publishable-key={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+              customer-session-client-secret={searchParams.customer_session as string | undefined}
+              customer-email={
+                searchParams.customer_session !== undefined
+                  ? undefined
+                  : ((searchParams.email as string | undefined) ?? getCookie('email'))
+              }
             />
           </div>
         </Suspense>

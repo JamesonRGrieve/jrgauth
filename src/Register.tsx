@@ -8,7 +8,7 @@ import { validateURI } from './lib/validation';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import { type CookieValueTypes, deleteCookie, getCookie, } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { ReCAPTCHA } from 'react-google-recaptcha';
 import AuthCard from './AuthCard';
 import { useAuthentication } from './useAuthentication';
@@ -19,7 +19,7 @@ export type RegisterProps = {
 };
 
 export default function Register({ additionalFields = [], userRegisterEndpoint = '/v1/user' }: RegisterProps): ReactNode {
-  const formRef = useRef(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
   const router = useRouter();
   const [captcha, setCaptcha] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -32,18 +32,21 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     authConfig.authServer,
     userRegisterEndpoint,
   ]);
-  const submitForm = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const submitForm = async (event: SyntheticEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    if (authConfig.recaptchaSiteKey && !captcha) {
+    if (authConfig.recaptchaSiteKey && captcha === null) {
       setResponseMessage('Please complete the reCAPTCHA.');
       return;
     }
-    const formData = Object.fromEntries(new FormData((event.currentTarget) ?? undefined));
-    if (getCookie('invitation')) {
-      formData['invitation_code'] = String(getCookie('invitation') || '');
+    const formData = Object.fromEntries(new FormData(event.currentTarget));
+    const invitationCookie = getCookie('invitation');
+    if (typeof invitationCookie === 'string' && invitationCookie !== '') {
+      formData['invitation_code'] = invitationCookie;
     }
     let registerResponse: AxiosResponse | null | undefined;
-    let registerResponseData: { detail?: string; otp_uri?: string; verify_email?: boolean; verify_sms?: boolean } | undefined;
+    let registerResponseData:
+      | { detail?: string; otp_uri?: string; verify_email?: boolean; verify_sms?: boolean }
+      | undefined;
     try {
       registerResponse = await axios
         .post(`${authConfig.authServer}${userRegisterEndpoint}`, {
@@ -55,21 +58,21 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
           console.error(exception);
           return exception.response;
         });
-      if (registerResponse.status === 200 || registerResponse.status === 201) {
-        deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
-        deleteCookie('team', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+      if (registerResponse && (registerResponse.status === 200 || registerResponse.status === 201)) {
+        void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+        void deleteCookie('team', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       }
-      registerResponseData = registerResponse?.data;
+      registerResponseData = registerResponse?.data as typeof registerResponseData;
     } catch (exception) {
       console.error(exception);
       registerResponse = null;
     }
 
     // TODO Check for status 418 which is app disabled by admin.
-    setResponseMessage(registerResponseData?.detail);
-    const loginParams = [];
+    setResponseMessage(registerResponseData?.detail ?? '');
+    const loginParams: string[] = [];
     if (registerResponseData?.otp_uri) {
-      loginParams.push(`otp_uri=${registerResponseData?.otp_uri}`);
+      loginParams.push(`otp_uri=${registerResponseData.otp_uri}`);
     }
     if (registerResponseData?.verify_email) {
       loginParams.push(`verify_email=true`);
@@ -77,9 +80,8 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     if (registerResponseData?.verify_sms) {
       loginParams.push(`verify_sms=true`);
     }
-    if ([200, 201].includes(registerResponse?.status || 500)) {
+    if ([200, 201].includes(registerResponse?.status ?? 500)) {
       router.push(loginParams.length > 0 ? `/user/login?${loginParams.join('&')}` : '/user/login');
-    } else {
     }
   };
   useEffect(() => {
@@ -92,8 +94,11 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     }
   }, [submitted, authConfig.authModes.magical, additionalFields.length]);
 
-  const [invite, _setInvite] = useState<CookieValueTypes | Promise<CookieValueTypes> | undefined>(getCookie('invitation'));
-  const teamName = getCookie('team') || ""
+  const [invite, _setInvite] = useState<CookieValueTypes | Promise<CookieValueTypes> | undefined>(
+    getCookie('invitation'),
+  );
+  const teamNameCookie = getCookie('team');
+  const teamName = typeof teamNameCookie === 'string' ? teamNameCookie : '';
   // useEffect(() => {
   //   const invitation = String(getCookie('invitation') || '');
   //   if (invitation) {
@@ -116,7 +121,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
   const inviteHeader = {
     title: 'Accept Invitation',
     description: invite
-      ? `You've been invited to join ${String(teamName)}. Please complete your registration to join the team.`
+      ? `You've been invited to join ${teamName}. Please complete your registration to join the team.`
       : `You've been invited to join a team. Please complete your registration to join the team.`,
   };
 
@@ -127,8 +132,19 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
         description={invite ? inviteHeader.description : registerHeader.description}
         showBackButton
       >
-        <form onSubmit={submitForm} className='flex flex-col gap-4' ref={formRef}>
-          <input type='hidden' id='email' name='email' value={(String(getCookie('email')).toLowerCase().trim() || '')} />
+        <form
+          onSubmit={(e) => {
+            void submitForm(e);
+          }}
+          className='flex flex-col gap-4'
+          ref={formRef}
+        >
+          <input
+            type='hidden'
+            id='email'
+            name='email'
+            value={String(getCookie('email') ?? '').toLowerCase().trim()}
+          />
           {authConfig.authModes.basic && (
             <>
               <Label htmlFor='password'>Password</Label>

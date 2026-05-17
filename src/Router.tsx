@@ -136,8 +136,8 @@ export default function AuthRouter({
     Object.assign(searchParamsObject, searchParams);
   }
 
-  console.log('AuthRouter searchParams:', searchParamsObject);
-  console.log('AuthRouter params:', params);
+  console.warn('AuthRouter searchParams:', searchParamsObject);
+  console.warn('AuthRouter params:', params);
 
   // Merge configs - ensure deep merge works with partial config
   const mergedConfig = deepMerge(pageConfigDefaults, corePagesConfig || {}) as AuthenticationConfig;
@@ -172,28 +172,28 @@ export default function AuthRouter({
     }
   }
 
-  console.log('Raw path from params:', path);
-  console.log('Parsed params:', params);
+  console.warn('Raw path from params:', path);
+  console.warn('Parsed params:', params);
 
   // Special handling for register path
   if (path === '/register' || path.endsWith('/register')) {
     path = mergedConfig.register.path;
   }
 
-  console.log('Final path to render:', path);
-  console.log('Available paths in router:', Object.keys(pages));
+  console.warn('Final path to render:', path);
+  console.warn('Available paths in router:', Object.keys(pages));
 
   // Render appropriate component based on path
   if (path in pages || path.startsWith(mergedConfig.close.path)) {
-    console.log('Rendering component for path:', path);
+    console.warn('Rendering component for path:', path);
     return (
       <AuthenticationContext.Provider value={mergedConfig}>
         {path.startsWith(mergedConfig.close.path) ? pages[mergedConfig.close.path] : pages[path]}
       </AuthenticationContext.Provider>
     );
   } else {
-    console.log('Path not found in pages, returning 404. Path:', path);
-    console.log('Available paths:', Object.keys(pages));
+    console.warn('Path not found in pages, returning 404. Path:', path);
+    console.warn('Available paths:', Object.keys(pages));
     return notFound();
   }
 }

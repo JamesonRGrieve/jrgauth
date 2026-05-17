@@ -21,7 +21,7 @@ import { useAuthentication } from './useAuthentication';
 import OAuth from './oauth2/OAuth';
 
 const schema = z.object({
-  email: z.string().email({ message: 'Please enter a valid E-Mail address.' }),
+  email: z.email({ message: 'Please enter a valid E-Mail address.' }),
   redirectTo: z.string().optional(),
 });
 
@@ -65,17 +65,17 @@ export default function Identify({
           email: formData.email.toLowerCase().trim(),
         },
       });
-      setCookie('email', formData.email, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+      void setCookie('email', formData.email, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       router.push(`${pathname}${redirectToOnNotExists}`);
     } catch (exception) {
       const axiosError = exception as AxiosError;
       if (axiosError.response?.status === 409) {
         // User exists
-        setCookie('email', formData.email, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+        void setCookie('email', formData.email, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
         router.push(`${pathname}${redirectToOnExists}`);
       } else if (axiosError.response?.status === 422) {
         // User doesn't exist
-        setCookie('email', formData.email, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+        void setCookie('email', formData.email, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
         router.push(`${pathname}${redirectToOnNotExists}`);
       } else {
         setError('email', { type: 'server', message: axiosError.message });
@@ -91,7 +91,12 @@ export default function Identify({
 
   return (
     <AuthCard title='Welcome' description={description}>
-      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
+      <form
+        onSubmit={(e) => {
+          void handleSubmit(onSubmit)(e);
+        }}
+        className='flex flex-col gap-4'
+      >
         {showEmail && (
           <>
             <Label htmlFor='E-Mail Address'>E-Mail Address</Label>

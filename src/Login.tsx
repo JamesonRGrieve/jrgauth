@@ -8,7 +8,7 @@ import { validateURI } from './lib/validation';
 import axios, { type AxiosError } from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { type FormEvent, type ReactNode, useState } from 'react';
+import { type ReactNode, type SyntheticEvent, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { LuCheck as Check, LuCopy as Copy } from 'react-icons/lu';
 import QRCode from 'react-qr-code';
@@ -32,7 +32,7 @@ export default function Login({
     authConfig.authServer,
     userLoginEndpoint,
   ]);
-  const submitForm = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const submitForm = async (event: SyntheticEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     if (authConfig.recaptchaSiteKey && !captcha) {
       setResponseMessage('Please complete the reCAPTCHA.');
@@ -69,15 +69,17 @@ export default function Login({
             // } else {
             //   setResponseMessage(response.data.detail);
             // }
-            if (getCookie('invitation')) {
-              const invitation = getCookie('invitation');
-              deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
-              window.location.href = `${process.env.NEXT_PUBLIC_APP_URI}/invite/${invitation}`;
+            const invitation = getCookie('invitation');
+            if (typeof invitation === 'string' && invitation !== '') {
+              void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+              window.location.href = `${process.env.NEXT_PUBLIC_APP_URI ?? ''}/invite/${invitation}`;
               return;
             }
-            const href = await getCookie('href');
-            const href2 =process.env.NEXT_PUBLIC_APP_URI ? `${process.env.NEXT_PUBLIC_APP_URI}/user`: `${window.location.protocol}//${window.location.hostname}/user`
-            window.location.href = href || href2;
+            const hrefCookie = await getCookie('href');
+            const href2 = process.env.NEXT_PUBLIC_APP_URI
+              ? `${process.env.NEXT_PUBLIC_APP_URI}/user`
+              : `${window.location.protocol}//${window.location.hostname}/user`;
+            window.location.href = typeof hrefCookie === 'string' && hrefCookie !== '' ? hrefCookie : href2;
           } else {
             setResponseMessage('Login failed: No token received');
           }
@@ -90,7 +92,12 @@ export default function Login({
   const otp_uri = searchParams.otp_uri;
   return (
     <AuthCard title='Login' description='Please login to your account.' showBackButton>
-      <form onSubmit={submitForm} className='flex flex-col gap-4'>
+      <form
+        onSubmit={(e) => {
+          void submitForm(e);
+        }}
+        className='flex flex-col gap-4'
+      >
         {otp_uri && (
           <div className='flex flex-col max-w-xs gap-2 mx-auto text-center'>
             <div
@@ -113,7 +120,7 @@ export default function Login({
             <CopyButton content={otp_uri} label={'Copy Link'} />
           </div>
         )}
-        <input type='hidden' id='email' name='email' value={getCookie('email') || ''} />
+        <input type='hidden' id='email' name='email' value={String(getCookie('email') ?? '')} />
         {authConfig.authModes.basic && (
           <>
             <Label htmlFor='password'>Password</Label>
@@ -169,7 +176,7 @@ export const CopyButton = ({ content, label = 'Copy' }: { content: string; label
       className='flex items-center gap-2 mx-auto'
       onClick={() => {
         setIsCopied(true);
-        navigator.clipboard.writeText(content);
+        void navigator.clipboard.writeText(content);
         setTimeout(() => setIsCopied(false), 2000);
       }}
     >

@@ -34,9 +34,9 @@ export const getQueryParams = (req: NextRequest): Record<string, string | undefi
     : {};
 
 export const getRequestedURI = (req: NextRequest): string => {
-  console.log(`Processing: ${req.url}`);
+  console.warn(`Processing: ${req.url}`);
 
-  const appUri = process.env.APP_URI || '';
+  const appUri = process.env.APP_URI ?? '';
   const singleWordDomainRegex = /^[a-zA-Z\d-]+$/; // Match single word domains (no TLD)
 
   // Parse the URL
@@ -67,17 +67,19 @@ export const getRequestedURI = (req: NextRequest): string => {
   return `${processedUrl}${url.search}`;
 };
 
-export const getJWT = (req: NextRequest) => {
+export const getJWT = (req: NextRequest): string => {
   const rawJWT = req.cookies.get('jwt')?.value;
   // Strip any and all 'Bearer 's off of JWT.
-  const jwt = rawJWT?.split(' ')[rawJWT?.split(' ').length - 1] ?? rawJWT ?? '';
-  console.log('JWT:', jwt);
+  const parts = rawJWT ? rawJWT.split(' ') : [];
+  const jwt = parts.length > 0 ? (parts[parts.length - 1] ?? rawJWT ?? '') : (rawJWT ?? '');
+  console.warn('JWT:', jwt);
   return jwt;
 };
 export const verifyJWT = async (jwt: string): Promise<Response> => {
-  const authEndpoint = `${process.env.APP_URI.includes('localhost') ? process.env.API_URI : process.env.SERVERSIDE_API_URI}/v1`;
+  const appUri = process.env.APP_URI ?? '';
+  const authEndpoint = `${appUri.includes('localhost') ? process.env.API_URI : process.env.SERVERSIDE_API_URI}/v1`;
   let response: Response;
-  console.log(`Verifying JWT Bearer ${jwt} with server at ${authEndpoint}...`);
+  console.warn(`Verifying JWT Bearer ${jwt} with server at ${authEndpoint}...`);
   try {
     response = await fetch(authEndpoint, {
       headers: {
@@ -86,10 +88,10 @@ export const verifyJWT = async (jwt: string): Promise<Response> => {
       },
     });
 
-    console.log(`Successfully contacted server at ${authEndpoint}!`);
+    console.warn(`Successfully contacted server at ${authEndpoint}!`);
     return response;
   } catch (exception) {
-    console.log(`Failed to contact server at ${authEndpoint} - ${exception}.`);
+    console.warn(`Failed to contact server at ${authEndpoint} - ${String(exception)}.`);
     return new Response();
   }
 };

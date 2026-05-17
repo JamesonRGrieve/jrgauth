@@ -15,10 +15,10 @@ export const useAuth: MiddlewareHook = async (req) => {
   const requestedURI = getRequestedURI(req);
   const authMode = getAuthMode();
 
-  console.log(`Requested: ${requestedURI}`);
+  console.warn(`Requested: ${requestedURI}`);
   if (process.env.LANDING_ONLY) {
     if (req.nextUrl.pathname !== '/') {
-      console.log(`In LANDING_ONLY mode but requested '${req.nextUrl.pathname}', redirecting to '/'`);
+      console.warn(`In LANDING_ONLY mode but requested '${req.nextUrl.pathname}', redirecting to '/'`);
       return {
         activated: true,
         response: NextResponse.redirect(new URL('/', req.url)),
@@ -44,7 +44,7 @@ export const useAuth: MiddlewareHook = async (req) => {
         };
       }
       if (queryParams.verify_email && queryParams.email) {
-        console.log('VERIFYING EMAIL: ', queryParams.email, queryParams.verify_email);
+        console.warn('VERIFYING EMAIL: ', queryParams.email, queryParams.verify_email);
         await fetch(`${process.env.API_URI}/v1/user/verify/email`, {
           method: 'POST',
           body: JSON.stringify({
@@ -56,10 +56,10 @@ export const useAuth: MiddlewareHook = async (req) => {
           },
         });
       }
-      console.log('-Query Params-');
-      console.log(queryParams);
+      console.warn('-Query Params-');
+      console.warn(queryParams);
       if (queryParams.code && queryParams.email) {
-        console.log(
+        console.warn(
           `DETECTED INVITE - ${process.env.AUTH_URI}/register - SETTINGS COOKIES ${queryParams.email} ${queryParams.code} ${queryParams.team_id}`,
         );
         const cookieArray = [
@@ -110,11 +110,11 @@ export const useAuth: MiddlewareHook = async (req) => {
         !process.env.PRIVATE_ROUTES?.split(',').some((path) => req.nextUrl.pathname.startsWith(path)) &&
         !req.nextUrl.pathname.startsWith('/user')
       ) {
-        console.log('Private routes: ', process.env.PRIVATE_ROUTES?.split(','));
-        console.log('Public route: ', req.nextUrl.pathname);
+        console.warn('Private routes: ', process.env.PRIVATE_ROUTES?.split(','));
+        console.warn('Public route: ', req.nextUrl.pathname);
         const token = getJWT(req);
         if (req.nextUrl.pathname.startsWith('/accept-invitation') && token.length > 0) {
-          console.log('Its only supposed to log when user clicked invite link and is logged in.');
+          console.warn('Its only supposed to log when user clicked invite link and is logged in.');
         } else {
           return toReturn;
         }
@@ -127,43 +127,38 @@ export const useAuth: MiddlewareHook = async (req) => {
       if (jwt) {
         try {
           const response = await verifyJWT(jwt);
-          console.log('Response Status: ', response.status);
-          const responseJSON = response.status === 204 ? {} : await response.json();
-          console.log(responseJSON);
+          console.warn('Response Status: ', response.status);
+          type MiddlewareResponseJSON = {
+            detail?: { customer_session?: { client_secret?: string } } & Record<string, unknown>;
+            missing_requirements?: unknown;
+          };
+          const responseJSON: MiddlewareResponseJSON =
+            response.status === 204 ? {} : ((await response.json()) as MiddlewareResponseJSON);
+          console.warn(responseJSON);
           if (response.status === 402) {
-            console.log('- NO SUBSCRIPTION GUARD CLAUSE INVOKED -');
+            console.warn('- NO SUBSCRIPTION GUARD CLAUSE INVOKED -');
             // Payment Required
             // No body = no stripe ID present for user.
             // Body = that is the session ID for the user to get a new subscription.
             if (!requestedURI.startsWith(`${process.env.AUTH_URI}/subscribe`)) {
-              console.log(
-                `Payment required. Redirecting to: ${process.env.AUTH_URI}/subscribe${
-                  responseJSON.detail.customer_session.client_secret
-                    ? `?customer_session=${responseJSON.detail.customer_session.client_secret}`
-                    : ''
-                }`,
-              );
+              const clientSecret = responseJSON.detail?.customer_session?.client_secret;
+              const sessionSuffix = clientSecret ? `?customer_session=${clientSecret}` : '';
+              console.warn(`Payment required. Redirecting to: ${process.env.AUTH_URI}/subscribe${sessionSuffix}`);
 
               toReturn.response = NextResponse.redirect(
-                new URL(
-                  `${process.env.AUTH_URI}/subscribe${
-                    responseJSON.detail.customer_session.client_secret
-                      ? `?customer_session=${responseJSON.detail.customer_session.client_secret}`
-                      : ''
-                  }`,
-                ),
+                new URL(`${process.env.AUTH_URI}/subscribe${sessionSuffix}`),
               );
               toReturn.activated = true;
             }
-          } else if (responseJSON?.missing_requirements || response.status === 403) {
-            console.log('- MISSING REQUIREMENTS GUARD CLAUSE INVOKED -');
+          } else if (responseJSON.missing_requirements !== undefined || response.status === 403) {
+            console.warn('- MISSING REQUIREMENTS GUARD CLAUSE INVOKED -');
             // Forbidden (Missing Values for User)
             if (!requestedURI.startsWith(`${process.env.AUTH_URI}/manage`)) {
               toReturn.response = NextResponse.redirect(new URL(`${process.env.AUTH_URI}/manage`));
               toReturn.activated = true;
             }
           } else if (response.status === 502) {
-            console.log('- SERVER DOWN GUARD CLAUSE INVOKED -');
+            console.warn('- SERVER DOWN GUARD CLAUSE INVOKED -');
             const cookieArray = [generateCookieString('href', requestedURI, (86400).toString())];
             toReturn.activated = true;
             toReturn.response = NextResponse.redirect(new URL(`${process.env.AUTH_URI}/down`, req.url), {
@@ -173,46 +168,49 @@ export const useAuth: MiddlewareHook = async (req) => {
               },
             });
           } else if (response.status >= 500 && response.status < 600) {
-            console.log('- SERVER ERROR GUARD CLAUSE INVOKED -');
+            console.warn('- SERVER ERROR GUARD CLAUSE INVOKED -');
             // Internal Server Error
             // This should not delete the JWT.
             console.error(
-              `Invalid token response, status ${response.status}, detail ${responseJSON.detail}. Server error, please try again later.`,
+              `Invalid token response, status ${response.status}, detail ${JSON.stringify(responseJSON.detail)}. Server error, please try again later.`,
             );
 
             toReturn.response = NextResponse.redirect(new URL(`${process.env.AUTH_URI}/error`, req.url));
             toReturn.activated = true;
           } else if (response.status !== 204) {
-            console.log('- UNKNOWN RESPONSE CODE GUARD CLAUSE INVOKED -');
+            console.warn('- UNKNOWN RESPONSE CODE GUARD CLAUSE INVOKED -');
             // @ts-expect-error NextJS' types are wrong.
             toReturn.response.headers.set('Set-Cookie', [
               generateCookieString('jwt', '', (0).toString()),
               generateCookieString('href', requestedURI, (86400).toString()),
             ]);
-            throw new Error(`Invalid token response, status ${response.status}, detail ${responseJSON.detail}.`);
+            throw new Error(
+              `Invalid token response, status ${response.status}, detail ${JSON.stringify(responseJSON.detail)}.`,
+            );
           } else if (
             authMode === AuthMode.MagicalAuth &&
-            requestedURI.startsWith(process.env.AUTH_URI || '') &&
+            requestedURI.startsWith(process.env.AUTH_URI ?? '') &&
             jwt.length > 0 &&
             !['/user/manage'].includes(req.nextUrl.pathname)
           ) {
-            console.log('- AUTHED USER TO UNAUTHED PATH GUARD CLAUSE INVOKED -');
-            console.log(
+            console.warn('- AUTHED USER TO UNAUTHED PATH GUARD CLAUSE INVOKED -');
+            console.warn(
               `Detected authenticated user attempting to visit non-management page. Redirecting to ${process.env.AUTH_URI}/manage...`,
             );
             toReturn.response = NextResponse.redirect(new URL(`${process.env.AUTH_URI}/manage`));
             toReturn.activated = true;
           } else {
-            console.log('JWT is valid and no guard clauses tripped.');
+            console.warn('JWT is valid and no guard clauses tripped.');
           }
-          console.log('JWT is valid (or server was unable to verify it).');
-           if (queryParams.code && queryParams.email) {
+          console.warn('JWT is valid (or server was unable to verify it).');
+          if (queryParams.code && queryParams.email) {
             const redirect = new URL(`${process.env.APP_URI}/invite/${queryParams.code}`);
-            toReturn.response = NextResponse.redirect(redirect,{
+            const teamParam = (queryParams.team ?? '').replaceAll('+', ' ');
+            toReturn.response = NextResponse.redirect(redirect, {
               headers: {
-                'Set-Cookie': [generateCookieString('team', queryParams.team.replaceAll("+"," "), (86400).toString())],
+                'Set-Cookie': [generateCookieString('team', teamParam, (86400).toString())],
               },
-            })
+            });
           }
         } catch (exception) {
           if (exception instanceof TypeError && exception.cause instanceof AggregateError) {
@@ -242,18 +240,18 @@ export const useAuth: MiddlewareHook = async (req) => {
           toReturn.activated = true;
         }
       } else {
-        console.log(
+        console.warn(
           `${requestedURI} does ${requestedURI.startsWith(process.env.AUTH_URI) ? '' : 'not '}start with ${process.env.AUTH_URI}.`,
         );
 
         if (
           authMode === AuthMode.MagicalAuth &&
-          requestedURI.startsWith(process.env.AUTH_URI || '') &&
+          requestedURI.startsWith(process.env.AUTH_URI ?? '') &&
           req.nextUrl.pathname !== '/user/manage'
         ) {
-          console.log(`Pathname: ${req.nextUrl.pathname}`);
+          console.warn(`Pathname: ${req.nextUrl.pathname}`);
         } else {
-          console.log(
+          console.warn(
             `Detected unauthenticated user attempting to visit non-auth page, redirecting to authentication at ${process.env.AUTH_URI}...`,
           );
           toReturn.response = NextResponse.redirect(new URL(process.env.AUTH_URI), {
@@ -268,8 +266,8 @@ export const useAuth: MiddlewareHook = async (req) => {
         }
       }
     }
-  console.log('Going to:');
-  console.log(toReturn);
+  console.warn('Going to:');
+  console.warn(toReturn);
   return toReturn;
 };
 
@@ -282,11 +280,11 @@ export const useOAuth2: MiddlewareHook = async (req) => {
   };
   const queryParams = getQueryParams(req);
   if (queryParams.code) {
-    const oAuthEndpoint = `${process.env.API_URI || ''.replace('localhost', (process.env.SERVERSIDE_API_URI || '').split(',')[0])}/v1/oauth2/${provider}`;
+    const oAuthEndpoint = `${process.env.API_URI ?? ''.replace('localhost', (process.env.SERVERSIDE_API_URI ?? '').split(',')[0])}/v1/oauth2/${provider}`;
 
     // Use the state parameter as the JWT if present
-    const jwt = queryParams.state || getJWT(req);
-    console.log('Using JWT from state:', jwt);
+    const jwt = queryParams.state ?? getJWT(req);
+    console.warn('Using JWT from state:', jwt);
 
     try {
       const response = await fetch(oAuthEndpoint, {
@@ -299,13 +297,13 @@ export const useOAuth2: MiddlewareHook = async (req) => {
         }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: jwt || '',
+          Authorization: jwt ?? '',
         },
       });
 
-      console.log('Middleware OAuth2 response status:', response.status);
-      const auth = await response.json();
-      console.log('Middleware OAuth2 response:', auth);
+      console.warn('Middleware OAuth2 response status:', response.status);
+      const auth = (await response.json()) as { detail?: string };
+      console.warn('Middleware OAuth2 response:', auth);
 
       if (response.status !== 200) {
         throw new Error(`Invalid token response, status ${response.status}.`);
@@ -319,7 +317,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
 
       toReturn = {
         activated: true,
-        response: NextResponse.redirect(auth.detail, {
+        response: NextResponse.redirect(auth.detail ?? '', {
           headers: headers,
         }),
       };
@@ -329,9 +327,11 @@ export const useOAuth2: MiddlewareHook = async (req) => {
   }
   return toReturn;
 };
+// eslint-disable-next-line @typescript-eslint/require-await
 export const useJWTQueryParam: MiddlewareHook = async (req) => {
   const queryParams = getQueryParams(req);
   const _requestedURI = getRequestedURI(req);
+  const jwtValue = queryParams.token ?? queryParams.jwt ?? '';
   const toReturn = {
     activated: false,
     // This should set the cookie and then re-run the middleware (without query params).
@@ -339,20 +339,20 @@ export const useJWTQueryParam: MiddlewareHook = async (req) => {
       ? NextResponse.next({
           // @ts-expect-error NextJS' types are wrong.
           headers: {
-            'Set-Cookie': [generateCookieString('jwt', queryParams.token ?? queryParams.jwt, (86400 * 7).toString())],
+            'Set-Cookie': [generateCookieString('jwt', jwtValue, (86400 * 7).toString())],
           },
         })
       : NextResponse.redirect(req.cookies.get('href')?.value ?? process.env.APP_URI ?? '', {
           // @ts-expect-error NextJS' types are wrong.
           headers: {
             'Set-Cookie': [
-              generateCookieString('jwt', queryParams.token ?? queryParams.jwt, (86400 * 7).toString()),
+              generateCookieString('jwt', jwtValue, (86400 * 7).toString()),
               generateCookieString('href', '', (0).toString()),
             ],
           },
         }),
   };
-  if (queryParams.token || queryParams.jwt) {
+  if (queryParams.token !== undefined || queryParams.jwt !== undefined) {
     toReturn.activated = true;
   }
   return toReturn;
