@@ -15,8 +15,8 @@ export interface OrganizationalUnit {
   name: string;
   stripe_id: string;
   enabled: boolean;
-  properties: Record<string, any>; // This indicates an object with dynamic keys and any values
-  subscriptions: any[]; // Assuming subscriptions is an array of any type
+  properties: Record<string, unknown>; // This indicates an object with dynamic keys and unknown values
+  subscriptions: unknown[]; // Assuming subscriptions is an array of unknown type
   companies: object[];
   quotas: Quotas;
 }
@@ -30,7 +30,7 @@ export interface Quotas {
 export default function OrganizationalUnit({
   searchParams,
   organizationalUnitEndpoint = '/ou',
-}: { searchParams: any } & OrganizationalUnitProps): ReactNode {
+}: { searchParams: Record<string, string | string[] | undefined> } & OrganizationalUnitProps): ReactNode {
   const authConfig = useAuthentication();
   const _router = useRouter();
   const {

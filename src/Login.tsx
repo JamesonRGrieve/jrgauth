@@ -22,7 +22,7 @@ export type LoginProps = {
 export default function Login({
   searchParams,
   userLoginEndpoint = '/v1/user/authorize',
-}: { searchParams: any } & LoginProps): ReactNode {
+}: { searchParams: Record<string, string | string[] | undefined> } & LoginProps): ReactNode {
   const [responseMessage, setResponseMessage] = useState('');
   const authConfig = useAuthentication();
   const _router = useRouter();

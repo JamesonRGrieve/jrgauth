@@ -2,6 +2,7 @@ import {
   BookOpen,
   GraduationCap,
   HelpCircle,
+  type LucideIcon,
   Puzzle,
   Rocket,
   Settings,
@@ -17,13 +18,13 @@ export type Item = {
   title: string;
   url?: string;
   visible?: boolean;
-  icon?: any;
+  icon?: LucideIcon;
   isActive?: boolean;
   queryParams?: object;
   items?: {
     max_role?: number;
     title: string;
-    icon?: any;
+    icon?: LucideIcon;
     url: string;
     queryParams?: object;
   }[];

@@ -7,7 +7,7 @@ export type ErrorPageProps = {
   redirectTo?: string;
 };
 
-export default function ErrorPage({ redirectTo = '/' }: ErrorPageProps) {
+export default function ErrorPage({ redirectTo: _redirectTo = '/' }: ErrorPageProps) {
   const router = useRouter();
 
   const logout = () => {

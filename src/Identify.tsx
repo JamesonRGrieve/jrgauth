@@ -31,7 +31,7 @@ export type IdentifyProps = {
   identifyEndpoint?: string;
   redirectToOnExists?: string;
   redirectToOnNotExists?: string;
-  oAuthOverrides?: any;
+  oAuthOverrides?: Record<string, unknown>;
 };
 
 export default function Identify({

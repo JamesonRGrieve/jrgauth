@@ -17,7 +17,11 @@ declare global {
   }
 }
 
-export default function Subscribe({ searchParams }: { searchParams: any }): JSX.Element {
+export default function Subscribe({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}): JSX.Element {
   const authConfig = useAuthentication();
 
   return (

@@ -140,7 +140,7 @@ export default function AuthRouter({
   console.log('AuthRouter params:', params);
 
   // Merge configs - ensure deep merge works with partial config
-  const mergedConfig = deepMerge(pageConfigDefaults, corePagesConfig || {});
+  const mergedConfig = deepMerge(pageConfigDefaults, corePagesConfig || {}) as AuthenticationConfig;
 
   // Define pages with components
   const pages = {

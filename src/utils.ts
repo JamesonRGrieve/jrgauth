@@ -22,15 +22,15 @@ export const getAuthMode = (): number => {
 export const generateCookieString = (key: string, value: string, age: string): string =>
   `${key}=${value}; Domain=${process.env.NEXT_PUBLIC_COOKIE_DOMAIN}; Path=/; Max-Age=${age}; SameSite=strict;`;
 
-export const getQueryParams = (req: NextRequest): any =>
+export const getQueryParams = (req: NextRequest): Record<string, string | undefined> =>
   req.url.includes('?')
-    ? Object.assign(
+    ? (Object.assign(
         {},
         ...req.url
           .split('?')[1]
           .split('&')
           .map((param) => ({ [param.split('=')[0]]: param.split('=')[1] })),
-      )
+      ) as Record<string, string | undefined>)
     : {};
 
 export const getRequestedURI = (req: NextRequest): string => {

@@ -43,7 +43,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
       formData['invitation_code'] = String(getCookie('invitation') || '');
     }
     let registerResponse: AxiosResponse | null | undefined;
-    let registerResponseData: any;
+    let registerResponseData: { detail?: string; otp_uri?: string; verify_email?: boolean; verify_sms?: boolean } | undefined;
     try {
       registerResponse = await axios
         .post(`${authConfig.authServer}${userRegisterEndpoint}`, {
