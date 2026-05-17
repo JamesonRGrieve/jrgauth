@@ -11,15 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@jgrieve/dynamic-form/components/ui/select';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
+import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
+import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { LuUsers } from 'react-icons/lu';
-import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
 import { useInvitations } from '../hooks/useInvitation';
-import { useParams } from 'next/navigation';
 
 const ROLES = [
   { id: 'FFFFFFFF-0000-0000-AAAA-FFFFFFFFFFFF', name: 'Admin' },
@@ -30,13 +30,14 @@ interface Role {
   id: number;
   name: string;
   parent_id?: number;
-  [key: string]: any;
 }
 
 interface RoleWithChildren extends Role {
   children: RoleWithChildren[];
   depth: number;
 }
+
+type ApiError = { response?: { data?: { detail?: string } } };
 
 function sortRolesByPermission(roles: Role[]): Role[] {
   const roleMap = new Map<number, RoleWithChildren>();
@@ -45,28 +46,30 @@ function sortRolesByPermission(roles: Role[]): Role[] {
   });
 
   roleMap.forEach((role: RoleWithChildren) => {
-    if (role.parent_id && roleMap.has(role.parent_id)) {
+    if (role.parent_id !== undefined && roleMap.has(role.parent_id)) {
       roleMap.get(role.parent_id)?.children.push(role);
     }
   });
 
   function assignDepth(role: RoleWithChildren, depth: number): void {
     role.depth = depth;
-    role.children.forEach((child: RoleWithChildren) => { assignDepth(child, depth + 1); });
+    role.children.forEach((child: RoleWithChildren) => {
+      assignDepth(child, depth + 1);
+    });
   }
 
   roleMap.forEach((role: RoleWithChildren) => {
-    if (!role.parent_id) {
+    if (role.parent_id === undefined) {
       assignDepth(role, 0);
     }
   });
 
   const sortedRoles = Array.from(roleMap.values()).sort((a, b) => a.depth - b.depth);
 
-  return sortedRoles.map(({ children, depth, ...role }) => role);
+  return sortedRoles.map(({ children: _children, depth: _depth, ...role }) => role);
 }
 
-export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
+export const InviteDialog = ({ selectedTeam }: { selectedTeam: { id: string; name?: string } | null }) => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [roleId, setRoleId] = useState(ROLES[1].id);
@@ -75,41 +78,49 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
 
   const params = useParams();
   const { id } = params;
-  const authTeam = id ? id : getCookie('auth-team');
-  const {mutate:inviteMutate} = useInvitations(String(authTeam))
+  const authTeam = id !== undefined ? id : getCookie('auth-team');
+  const { mutate: inviteMutate } = useInvitations(String(authTeam));
 
-  const fetchRoles = useCallback(async () => {
-    return (
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/team/${selectedTeam.id}/role`, {
+  const fetchRoles = useCallback(async (): Promise<{ roles: Role[] }> => {
+    if (selectedTeam === null) {
+      return { roles: [] };
+    }
+    const response = await axios.get<{ roles: Role[] }>(
+      `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/team/${selectedTeam.id}/role`,
+      {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${getCookie('jwt')}`,
+          Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
         },
         validateStatus: (status) => [200, 403].includes(status),
-      })
-    ).data;
+      },
+    );
+    return response.data;
   }, [selectedTeam]);
 
   useEffect(() => {
-    if (selectedTeam) {
+    if (selectedTeam !== null) {
       fetchRoles()
         .then((data) => {
           const sortedRoles = sortRolesByPermission(data.roles);
-          setRoles([...ROLES, ...sortedRoles]);
+          setRoles([...ROLES, ...sortedRoles.map((r) => ({ id: String(r.id), name: r.name }))]);
         })
         .catch(() => setRoles(ROLES));
     }
   }, [selectedTeam, fetchRoles]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
-    if (!email) {
+    if (email === '') {
       toast({
         title: 'Error',
         description: 'Please enter an email to invite.',
         variant: 'destructive',
       });
+      return;
+    }
+    if (selectedTeam === null) {
       return;
     }
 
@@ -136,28 +147,27 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
       return;
     }
     let body: Record<string, unknown>;
-    if(emailArray.length === 1){
+    if (emailArray.length === 1) {
       body = {
-      invitation: {
-        email:emailArray[0].trim(),
-        role_id: roleId,
-        team_id: selectedTeam.id,
-      }
-    };
-    }
-    else{
+        invitation: {
+          email: emailArray[0].trim(),
+          role_id: roleId,
+          team_id: selectedTeam.id,
+        },
+      };
+    } else {
       body = {
-        invitations: emailArray.map((email) => ({
-          email: email.trim(),
+        invitations: emailArray.map((emailStr) => ({
+          email: emailStr.trim(),
           role_id: roleId,
           team_id: selectedTeam.id,
         })),
-     };
+      };
     }
 
     try {
       const jwt = getCookie('jwt') as string;
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URI}/v1/invitation`, body, {
+      const response = await axios.post(`${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/invitation`, body, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${jwt}`,
@@ -171,12 +181,13 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
         });
         setEmail('');
         setIsInviteDialogOpen(false);
-        inviteMutate();
+        void inviteMutate();
       }
     } catch (error) {
+      const err = error as ApiError;
       toast({
         title: 'Error',
-        description: error.response?.data?.detail || 'Failed to send invitation',
+        description: err.response?.data?.detail ?? 'Failed to send invitation',
         variant: 'destructive',
       });
     }
@@ -206,7 +217,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
             <Input
               type='email'
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               placeholder='Enter email address'
               required
             />
@@ -230,7 +241,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: any }) => {
             <Button variant='outline' onClick={() => setIsInviteDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSubmit}>Send Invitation</Button>
+            <Button onClick={(e: React.MouseEvent) => void handleSubmit(e)}>Send Invitation</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

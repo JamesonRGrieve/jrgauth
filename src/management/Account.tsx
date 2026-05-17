@@ -1,9 +1,12 @@
 'use client';
 import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import PasswordField from '@jgrieve/dynamic-form/PasswordField';
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { getCookie } from 'cookies-next';
 import type { FormEvent } from 'react';
+import type { AuthenticationConfig } from '../Router';
+
+type PasswordChangeResponseBody = { detail?: string };
 
 export const Account = ({
   authConfig,
@@ -11,8 +14,8 @@ export const Account = ({
   userPasswordChangeEndpoint = '/v1/user/password',
   setResponseMessage,
 }: {
-  authConfig: any;
-  data: any;
+  authConfig: AuthenticationConfig;
+  data: Record<string, unknown>;
   userPasswordChangeEndpoint?: string;
   setResponseMessage: (message: string) => void;
 }) => {
@@ -38,7 +41,7 @@ export const Account = ({
               setResponseMessage('Passwords do not match.');
             }
             const passwordResetResponse = await axios
-              .put(
+              .put<PasswordChangeResponseBody>(
                 `${authConfig.authServer}${userPasswordChangeEndpoint}`,
                 {
                   ...data,
@@ -46,13 +49,16 @@ export const Account = ({
                 {
                   headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${getCookie('jwt')}`,
+                    Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
                   },
                 },
               )
-              .catch((exception: any) => exception.response);
-            if (passwordResetResponse.data.detail) {
-              setResponseMessage(passwordResetResponse.data.detail.toString());
+              .catch(
+                (exception: AxiosError<PasswordChangeResponseBody>) =>
+                  exception.response,
+              );
+            if (passwordResetResponse.data.detail !== undefined) {
+              setResponseMessage(passwordResetResponse.data.detail);
             }
             if (passwordResetResponse.status === 200) {
               window.location.reload();

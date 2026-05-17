@@ -26,7 +26,7 @@ export default function Manage({
   userDataSWRKey = '/user',
   userDataEndpoint = '/v1/user',
   userUpdateEndpoint = '/v1/user',
-  userPasswordChangeEndpoint = '/v1/user/password',
+  userPasswordChangeEndpoint: _userPasswordChangeEndpoint = '/v1/user/password',
 }: ManageProps): ReactNode {
   const [responseMessage, setResponseMessage] = useState('');
   const [_active, _setActive] = useState<ActivePage>('Profile');
@@ -50,16 +50,15 @@ export default function Manage({
     authConfig.authServer,
     userUpdateEndpoint,
   ]);
-  const { data, error, isLoading } = useSWR<User, any, string>(userDataSWRKey, async () => {
-    return (
-      await axios.get(`${authConfig.authServer}${userDataEndpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${getCookie('jwt')}`,
-        },
-        validateStatus: (status) => [200, 403].includes(status),
-      })
-    ).data;
+  const { data, error, isLoading } = useSWR<User, Error, string>(userDataSWRKey, async () => {
+    const response = await axios.get<User>(`${authConfig.authServer}${userDataEndpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+      },
+      validateStatus: (status) => [200, 403].includes(status),
+    });
+    return response.data;
   });
 
   return (

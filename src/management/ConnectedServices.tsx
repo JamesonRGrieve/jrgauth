@@ -1,12 +1,12 @@
 'use client';
-import { Alert, AlertDescription } from '../components/ui/alert';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useCallback, useEffect, useState } from 'react';
 import { LuPlus as Plus, LuUnlink as Unlink } from 'react-icons/lu';
 import OAuth2Login from 'react-simple-oauth2-login';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import oAuth2Providers from '../oauth2/OAuthProviders';
 
 interface ConnectedService {
@@ -14,7 +14,7 @@ interface ConnectedService {
   connected: boolean;
 }
 
-const providerDescriptions = {
+const providerDescriptions: Record<string, string> = {
   Google:
     'Connect your Google account to enable AI interactions with Gmail and Google Calendar. This allows agents to read and send emails, manage your calendar events, and help organize your digital life.',
   Microsoft:
@@ -24,6 +24,13 @@ const providerDescriptions = {
   Tesla:
     'Link your Tesla account to enable AI control of your vehicle. Agents can help manage charging, climate control, and other vehicle settings.',
 };
+
+type OAuthErrorLike = {
+  response?: { status?: number };
+  config?: { url?: string; method?: string; headers?: unknown; data?: unknown };
+};
+
+type OAuthSuccessResponse = { code?: string };
 
 export const ConnectedServices = () => {
   const [connectedServices, setConnectedServices] = useState<ConnectedService[]>([]);
@@ -37,20 +44,18 @@ export const ConnectedServices = () => {
     provider: null,
   });
 
-  const fetchConnections = useCallback(async () => {
+  const fetchConnections = useCallback(async (): Promise<void> => {
     setLoading(true);
-    // Prepare a base list of providers (default: not connected) so the UI can render
     const baseServices = Object.keys(oAuth2Providers)
-      .filter((key) => oAuth2Providers[key].client_id)
+      .filter((key) => oAuth2Providers[key].client_id !== undefined && oAuth2Providers[key].client_id !== '')
       .map((key) => ({ provider: key, connected: false }));
 
-    // Show base list optimistically; if the endpoint is missing we'll keep these as not connected
     setConnectedServices(baseServices);
 
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/oauth2`, {
+      const response = await axios.get<string[]>(`${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/oauth2`, {
         headers: {
-          Authorization: `Bearer ${getCookie('jwt')}`,
+          Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
         },
       });
 
@@ -63,10 +68,9 @@ export const ConnectedServices = () => {
 
       setConnectedServices(allServices);
       setError(null);
-    } catch (err: any) {
-      // If the endpoint doesn't exist (404) treat it as no connected services rather than an error
-      if (err?.response?.status === 404) {
-        // Quietly ignore 404 — backend may not expose this endpoint in some environments
+    } catch (err) {
+      const e = err as OAuthErrorLike;
+      if (e.response?.status === 404) {
         console.debug('OAuth2 endpoint not found (404) — treating as no connected services.');
         setError(null);
       } else {
@@ -79,14 +83,14 @@ export const ConnectedServices = () => {
   }, []);
 
   useEffect(() => {
-    fetchConnections();
+    void fetchConnections();
   }, [fetchConnections]);
 
-  const handleDisconnect = async (provider: string) => {
+  const handleDisconnect = async (provider: string): Promise<void> => {
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URI}/v1/oauth2/${provider.toLowerCase()}`, {
+      await axios.delete(`${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/oauth2/${provider.toLowerCase()}`, {
         headers: {
-          Authorization: `Bearer ${getCookie('jwt')}`,
+          Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
         },
       });
       await fetchConnections();
@@ -97,43 +101,44 @@ export const ConnectedServices = () => {
     }
   };
 
-  const onSuccess = async (response: any) => {
-    const provider = disconnectDialog.provider?.toLowerCase() || '';
+  const onSuccess = async (response: OAuthSuccessResponse): Promise<void> => {
+    const provider = disconnectDialog.provider?.toLowerCase() ?? '';
     try {
       const jwt = getCookie('jwt');
-      console.log('Full OAuth response:', response); // See everything in the response
+      console.log('Full OAuth response:', response);
       console.log('Code from response:', response.code);
       console.log('Provider:', provider);
 
-      if (!response.code) {
+      if (response.code === undefined || response.code === '') {
         console.error('No code received in OAuth response');
         await fetchConnections();
         return;
       }
 
       const result = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URI}/v1/oauth2/${provider}`,
+        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/oauth2/${provider}`,
         {
           code: response.code,
-          referrer: `${process.env.NEXT_PUBLIC_AUTH_URI}/close/${provider}`,
+          referrer: `${String(process.env.NEXT_PUBLIC_AUTH_URI ?? '')}/close/${provider}`,
         },
         {
           headers: {
-            Authorization: `Bearer ${jwt}`,
+            Authorization: `Bearer ${String(jwt ?? '')}`,
           },
         },
       );
       console.log('OAuth API response:', result);
       await fetchConnections();
-    } catch (err: any) {
+    } catch (err) {
       await fetchConnections();
       console.error('OAuth error:', err);
-      if (err.config) {
+      const e = err as OAuthErrorLike;
+      if (e.config !== undefined) {
         console.log('Failed request details:', {
-          url: err.config.url,
-          method: err.config.method,
-          headers: err.config.headers,
-          data: err.config.data,
+          url: e.config.url,
+          method: e.config.method,
+          headers: e.config.headers,
+          data: e.config.data,
         });
       }
     }
@@ -141,7 +146,7 @@ export const ConnectedServices = () => {
 
   return (
     <>
-      {error && (
+      {error !== null && (
         <Alert variant='destructive'>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -181,11 +186,11 @@ export const ConnectedServices = () => {
                     authorizationUrl={provider.uri}
                     responseType='code'
                     clientId={provider.client_id}
-                    state={getCookie('jwt')}
-                    redirectUri={`${process.env.NEXT_PUBLIC_AUTH_URI}/close/${service.provider.toLowerCase()}`}
+                    state={String(getCookie('jwt') ?? '')}
+                    redirectUri={`${String(process.env.NEXT_PUBLIC_AUTH_URI ?? '')}/close/${service.provider.toLowerCase()}`}
                     scope={provider.scope}
-                    onSuccess={onSuccess}
-                    onFailure={onSuccess}
+                    onSuccess={(r) => void onSuccess(r as OAuthSuccessResponse)}
+                    onFailure={(r) => void onSuccess(r as OAuthSuccessResponse)}
                     isCrossOrigin
                     render={(renderProps) => (
                       <Button variant='outline' onClick={renderProps.onClick} className='space-x-1'>
@@ -197,7 +202,7 @@ export const ConnectedServices = () => {
                 )}
               </div>
               <p className='text-sm text-muted-foreground'>
-                {providerDescriptions[service.provider] || 'Connect this service to enable AI integration.'}
+                {providerDescriptions[service.provider] ?? 'Connect this service to enable AI integration.'}
               </p>
             </div>
           );
@@ -222,7 +227,11 @@ export const ConnectedServices = () => {
             </Button>
             <Button
               variant='destructive'
-              onClick={async () => disconnectDialog.provider && handleDisconnect(disconnectDialog.provider)}
+              onClick={() => {
+                if (disconnectDialog.provider !== null) {
+                  void handleDisconnect(disconnectDialog.provider);
+                }
+              }}
             >
               Disconnect
             </Button>

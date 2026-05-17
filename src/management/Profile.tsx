@@ -3,28 +3,29 @@
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
-import log from '../lib/log';
-import axios from 'axios';
-import { deleteCookie, getCookie } from 'cookies-next';
-import { mutate } from 'swr';
-import VerifySMS from '../mfa/SMS';
-import { useCallback, useEffect, } from 'react';
-import { DataTable } from '../components/data/data-table';
-import type { ColumnDef } from '@tanstack/react-table';
-import { DataTableColumnHeader } from '../components/data/data-table-column-header';
+import { toast } from '@jgrieve/dynamic-form/hooks/useToast';
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
-import { InvitationsTable } from './Invitations';
+import type { ColumnDef } from '@tanstack/react-table';
+import axios from 'axios';
+import { deleteCookie, getCookie } from 'cookies-next';
+import { useCallback, useEffect } from 'react';
+import { mutate } from 'swr';
+import { DataTable } from '../components/data/data-table';
+import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useTeams } from '../hooks/useTeam';
-import { toast } from '@jgrieve/dynamic-form/hooks/useToast';
+import log from '../lib/log';
+import VerifySMS from '../mfa/SMS';
+import type { AuthenticationConfig } from '../Router';
+import { InvitationsTable } from './Invitations';
 
 type Team = {
   image_url: string | null;
   name: string;
   parent_id: string | null;
   parent: string | null;
-  children: any[]; // You can replace `any` with a more specific type if known
-  updated_at: string; // ISO date string, you could also use `Date` if parsing
+  children: unknown[];
+  updated_at: string;
   updated_by_user_id: string | null;
   id: string;
   created_at: string;
@@ -34,6 +35,14 @@ type Team = {
   token: string | null;
   training_data: string | null;
 };
+
+type MissingRequirements = Record<string, unknown> | Array<Record<string, unknown>>;
+type ProfileUserData = {
+  user?: Record<string, unknown> & { id?: string };
+  missing_requirements?: MissingRequirements;
+} & Record<string, unknown>;
+
+type ProfileRouter = { push: (path: string) => void };
 
 export const Profile = ({
   isLoading,
@@ -47,10 +56,10 @@ export const Profile = ({
   setResponseMessage,
 }: {
   isLoading: boolean;
-  error: any;
-  data: any;
-  router: any;
-  authConfig: any;
+  error: Error | undefined;
+  data: ProfileUserData | undefined;
+  router: ProfileRouter;
+  authConfig: AuthenticationConfig;
   userDataSWRKey: string;
   responseMessage: string;
   userUpdateEndpoint: string;
@@ -60,23 +69,40 @@ export const Profile = ({
   // Use `data` passed from parent Manage component as the authoritative user object.
   // But be resilient to different API shapes. Try several common locations for fields.
   const readUserField = useCallback(
-    (field: string) => {
+    (field: string): unknown => {
       // Try several common keys and shapes to be resilient to API variations.
-      const candidates = [] as string[];
+      const candidates: string[] = [];
       const camel = field.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
       candidates.push(field, camel, field.replace(/_/g, ''), field.replace('_name', ''), 'name');
       // Common identity keys
-      if (field === 'first_name') {candidates.push('given_name', 'givenName');}
-      if (field === 'last_name') {candidates.push('family_name', 'familyName');}
-      if (field === 'display_name') {candidates.push('displayName', 'username', 'userName');}
+      if (field === 'first_name') {
+        candidates.push('given_name', 'givenName');
+      }
+      if (field === 'last_name') {
+        candidates.push('family_name', 'familyName');
+      }
+      if (field === 'display_name') {
+        candidates.push('displayName', 'username', 'userName');
+      }
 
       try {
+        const root = data as Record<string, unknown> | undefined;
+        const user = root?.user as Record<string, unknown> | undefined;
+        const userUser = user?.user as Record<string, unknown> | undefined;
+        const userProfile = user?.profile as Record<string, unknown> | undefined;
         for (const key of candidates) {
-          // check several nesting patterns
-          if (data?.user?.[key] !== undefined) {return data.user[key];}
-          if (data?.[key] !== undefined) {return data[key];}
-          if (data?.user?.user?.[key] !== undefined) {return data.user.user[key];}
-          if (data?.user?.profile?.[key] !== undefined) {return data.user.profile[key];}
+          if (user?.[key] !== undefined) {
+            return user[key];
+          }
+          if (root?.[key] !== undefined) {
+            return root[key];
+          }
+          if (userUser?.[key] !== undefined) {
+            return userUser[key];
+          }
+          if (userProfile?.[key] !== undefined) {
+            return userProfile[key];
+          }
         }
       } catch (_e) {
         // ignore
@@ -93,17 +119,23 @@ export const Profile = ({
   // the correct timezone. Do NOT overwrite an existing timezone.
   useEffect(() => {
     try {
-      if (typeof window === 'undefined') {return;} // only client
-      if (!data) {return;}
+      if (typeof window === 'undefined') {
+        return;
+      }
+      if (data === undefined) {
+        return;
+      }
       const existingTZ = readUserField('timezone');
-      if (existingTZ && String(existingTZ).length > 0) {return;} // already set, do nothing
+      if (existingTZ !== undefined && existingTZ !== null && String(existingTZ).length > 0) {
+        return;
+      }
 
-      const detectedTZ = (typeof Intl !== 'undefined' && Intl.DateTimeFormat)
-        ? Intl.DateTimeFormat().resolvedOptions().timeZone
-        : 'UTC';
+      const detectedTZ =
+        typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function'
+          ? Intl.DateTimeFormat().resolvedOptions().timeZone
+          : 'UTC';
 
-      // Persist the timezone so it becomes the user's saved preference.
-      (async () => {
+      void (async () => {
         try {
           await axios.put(
             `${authConfig.authServer}${userUpdateEndpoint}`,
@@ -111,16 +143,14 @@ export const Profile = ({
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${getCookie('jwt')}`,
+                Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
               },
             },
           );
-          // Refresh SWR cache
           await mutate(userDataSWRKey);
           await mutate('/user');
-          // no need to notify the user explicitly here (silent default)
         } catch (_err) {
-          // failed to persist timezone; swallow silently (optionally investigate server logs)
+          // failed to persist timezone; swallow silently
         }
       })();
     } catch (_err) {
@@ -167,7 +197,11 @@ export const Profile = ({
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='ghost' className='flex h-8 w-8 p-0' onClick={() => router.push(`/team/${row?.original?.id}`)}>
+              <Button
+                variant='ghost'
+                className='flex h-8 w-8 p-0'
+                onClick={() => router.push(`/team/${row.original.id}`)}
+              >
                 <ArrowTopRightIcon />
               </Button>
             </DropdownMenuTrigger>
@@ -191,10 +225,11 @@ export const Profile = ({
       <Separator className='my-4' />
       {isLoading ? (
         <p>Loading Current Data...</p>
-      ) : error ? (
+      ) : error !== undefined ? (
         <p>{error.message}</p>
-      ) : (data.missing_requirements && Object.keys(data.missing_requirements).length === 0) ||
-        !data.missing_requirements ? (
+      ) : data === undefined ||
+        data.missing_requirements === undefined ||
+        Object.keys(data.missing_requirements).length === 0 ? (
         <DynamicForm
           fields={{
             first_name: {
@@ -214,26 +249,36 @@ export const Profile = ({
               display: 'Display Name',
               validation: (value: string) => value.length > 0,
               // Prefer explicit display_name, otherwise compose from first+last if available
-              value:
-                readUserField('display_name') ??
-                (readUserField('first_name') || readUserField('last_name')
-                  ? `${readUserField('first_name') ?? ''} ${readUserField('last_name') ?? ''}`.trim()
-                  : ''),
+              value: (() => {
+                const displayName = readUserField('display_name');
+                if (displayName !== undefined && displayName !== null) {
+                  return displayName;
+                }
+                const first = readUserField('first_name');
+                const last = readUserField('last_name');
+                if ((first !== undefined && first !== null) || (last !== undefined && last !== null)) {
+                  return `${String(first ?? '')} ${String(last ?? '')}`.trim();
+                }
+                return '';
+              })(),
             },
             timezone: {
               type: 'text',
               display: 'Timezone',
               validation: (value: string) => value.length > 0,
               // Use server value if present; otherwise fall back to browser timezone or UTC.
-              value:
-                (readUserField('timezone') && String(readUserField('timezone')).length > 0
-                  ? String(readUserField('timezone'))
-                  : (typeof Intl !== 'undefined' && Intl.DateTimeFormat)
+              value: (() => {
+                const tz = readUserField('timezone');
+                if (tz !== undefined && tz !== null && String(tz).length > 0) {
+                  return String(tz);
+                }
+                return typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function'
                   ? Intl.DateTimeFormat().resolvedOptions().timeZone
-                  : 'UTC'),
+                  : 'UTC';
+              })(),
             },
           }}
-          toUpdate={data.user}
+          toUpdate={data?.user}
           submitButtonText='Update'
           excludeFields={[
             'id',
@@ -248,42 +293,44 @@ export const Profile = ({
           readOnlyFields={['input_tokens', 'output_tokens']}
           additionalButtons={[
             <div key='teams-table' className='col-span-4'>
-              <DataTable data={userTeams || []} columns={user_teams_columns} meta={{ title: 'Teams' }} />
+              <DataTable data={(userTeams as Team[] | undefined) ?? []} columns={user_teams_columns} meta={{ title: 'Teams' }} />
             </div>,
           ]}
-          onConfirm={async (data) => {
+          onConfirm={async (formData: Record<string, unknown>) => {
             try {
-              const updateResponse = (
-                await axios
-                  .put(
-                    `${authConfig.authServer}${userUpdateEndpoint}`,
-                    {
-                      user: {
-                        ...Object.entries(data).reduce((acc, [key, value]) => {
-                          return value ? { ...acc, [key]: value } : acc;
-                        }, {}),
-                      },
+              const putResponse = await axios
+                .put<{ detail?: string }>(
+                  `${authConfig.authServer}${userUpdateEndpoint}`,
+                  {
+                    user: {
+                      ...Object.entries(formData).reduce<Record<string, unknown>>((acc, [key, value]) => {
+                        return value !== undefined && value !== null && value !== '' ? { ...acc, [key]: value } : acc;
+                      }, {}),
                     },
-                    {
-                      headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${getCookie('jwt')}`,
-                      },
+                  },
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
                     },
-                  )
-                  .catch((exception: any) => exception.response)
-              ).data;
+                  },
+                )
+                .catch((exception: { response?: { data?: { detail?: string } } }) => ({
+                  data: exception.response?.data ?? {},
+                }));
+              const updateResponse = putResponse.data;
               log(['Update Response', updateResponse], { client: 2 });
-              setResponseMessage(updateResponse.detail ? updateResponse.detail.toString() : 'Update successful.');
+              setResponseMessage(updateResponse.detail !== undefined ? updateResponse.detail : 'Update successful.');
               await mutate('/user');
               toast({
                 title: 'Profile updated',
                 description: 'Your profile was updated successfully.',
               });
-            } catch (err: any) {
+            } catch (err) {
+              const message = err instanceof Error ? err.message : 'There was an error updating your profile.';
               toast({
                 title: 'Profile update failed',
-                description: err?.message || 'There was an error updating your profile.',
+                description: message,
                 variant: 'destructive',
               });
             }
@@ -291,55 +338,73 @@ export const Profile = ({
         />
       ) : (
         <>
-          {data.missing_requirements.some((obj) => Object.keys(obj).some((key) => key === 'verify_email')) && (
-            <p className='text-xl'>Please check your email and verify it using the link provided.</p>
-          )}
-          {data.missing_requirements.verify_sms && <VerifySMS verifiedCallback={async () => mutate(userDataSWRKey)} />}
-          {data.missing_requirements.some((obj) =>
-            Object.keys(obj).some((key) => !['verify_email', 'verify_sms'].includes(key)),
-          ) && (
-            <DynamicForm
-              submitButtonText='Submit Missing Information'
-              fields={Object.entries(data.missing_requirements).reduce((acc, [_key, value]) => {
-                // @ts-expect-error This is a valid assignment.
-                acc[Object.keys(value)[0]] = { type: Object.values(value)[0] };
-                return acc;
-              }, {})}
-              excludeFields={['verify_email', 'verify_sms']}
-              onConfirm={async (data) => {
-                const updateResponse = (
-                  await axios
-                    .put(
-                      `${authConfig.authServer}${userUpdateEndpoint}`,
-                      {
-                        ...data,
-                      },
-                      {
-                        headers: {
-                          'Content-Type': 'application/json',
-                          Authorization: `Bearer ${getCookie('jwt')}`,
-                        },
-                      },
-                    )
-                    .catch((exception: any) => exception.response)
-                ).data;
-                if (updateResponse.detail) {
-                  setResponseMessage(updateResponse.detail.toString());
-                }
-                await mutate(userDataSWRKey);
-                if (data.missing_requirements && Object.keys(data.missing_requirements).length === 0) {
-                  const redirect = getCookie('href') ?? '/';
-                  deleteCookie('href');
-                  router.push(redirect);
-                }
-              }}
-            />
-          )}
-          {responseMessage && <p>{responseMessage}</p>}
+          {(() => {
+            const reqs = data?.missing_requirements;
+            const reqsArray = Array.isArray(reqs) ? reqs : [];
+            const reqsRecord = reqs !== undefined && !Array.isArray(reqs) ? reqs : {};
+            const hasVerifyEmail = reqsArray.some((obj) => Object.keys(obj).some((key) => key === 'verify_email'));
+            const verifySms = reqsRecord['verify_sms'];
+            const hasOther = reqsArray.some((obj) =>
+              Object.keys(obj).some((key) => !['verify_email', 'verify_sms'].includes(key)),
+            );
+            return (
+              <>
+                {hasVerifyEmail && (
+                  <p className='text-xl'>Please check your email and verify it using the link provided.</p>
+                )}
+                {verifySms !== undefined && verifySms !== null && verifySms !== false && (
+                  <VerifySMS verifiedCallback={async () => mutate(userDataSWRKey)} />
+                )}
+                {hasOther && (
+                  <DynamicForm
+                    submitButtonText='Submit Missing Information'
+                    fields={Object.entries(reqsRecord).reduce<Record<string, { type: unknown }>>((acc, [_key, value]) => {
+                      const v = value as Record<string, unknown>;
+                      const fieldKey = Object.keys(v)[0];
+                      acc[fieldKey] = { type: Object.values(v)[0] };
+                      return acc;
+                    }, {})}
+                    excludeFields={['verify_email', 'verify_sms']}
+                    onConfirm={async (formData: Record<string, unknown>) => {
+                      const putResponse = await axios
+                        .put<{ detail?: string }>(
+                          `${authConfig.authServer}${userUpdateEndpoint}`,
+                          {
+                            ...formData,
+                          },
+                          {
+                            headers: {
+                              'Content-Type': 'application/json',
+                              Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+                            },
+                          },
+                        )
+                        .catch((exception: { response?: { data?: { detail?: string } } }) => ({
+                          data: exception.response?.data ?? {},
+                        }));
+                      const updateResponse = putResponse.data;
+                      if (updateResponse.detail !== undefined) {
+                        setResponseMessage(updateResponse.detail);
+                      }
+                      await mutate(userDataSWRKey);
+                      const newReqs = (formData as { missing_requirements?: Record<string, unknown> })
+                        .missing_requirements;
+                      if (newReqs !== undefined && Object.keys(newReqs).length === 0) {
+                        const redirect = (getCookie('href') as string | undefined) ?? '/';
+                        deleteCookie('href');
+                        router.push(redirect);
+                      }
+                    }}
+                  />
+                )}
+              </>
+            );
+          })()}
+          {responseMessage !== '' && <p>{responseMessage}</p>}
         </>
       )}
       <div className='pb-4' />
-      {data?.user?.id && <InvitationsTable userId={data.user.id} />}
+      {data?.user?.id !== undefined && <InvitationsTable userId={data.user.id} />}
     </div>
   );
 };

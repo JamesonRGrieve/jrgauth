@@ -2,6 +2,7 @@
 
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -11,6 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@jgrieve/dynamic-form/components/ui/select';
+import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
+import axios from 'axios';
+import { getCookie, setCookie } from 'cookies-next';
+import { useParams, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { LuPencil, LuPlus } from 'react-icons/lu';
+import useSWR from 'swr';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import {
   SidebarContent,
@@ -20,117 +28,115 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '../components/ui/sidebar';
-import axios from 'axios';
-import { getCookie, setCookie } from 'cookies-next';
-import { useCallback, useEffect, useState } from 'react';
-import { LuPencil, LuPlus } from 'react-icons/lu';
-import { SYSTEM_TEAM_ID, useTeam } from '../hooks/useTeam';
-import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
-import { useParams, useRouter } from 'next/navigation';
-import useSWR from 'swr';
-import type { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
-import { InviteDialog } from './Invite';
 import { useInvitations } from '../hooks/useInvitation';
-import type { Team } from '../hooks/z';
-import { Label } from '@jgrieve/dynamic-form/components/ui/label';
+import { SYSTEM_TEAM_ID, useTeam } from '../hooks/useTeam';
+import type { Team as TeamRecord } from '../hooks/z';
+import { InviteDialog } from './Invite';
 
-type User = {
-  missing_requirements?: {
-    [key: string]: {
-      type: 'number' | 'boolean' | 'text' | 'password';
-      value: DynamicFormFieldValueTypes;
-      validation?: (value: DynamicFormFieldValueTypes) => boolean;
-    };
-  };
+type TeamWithExtras = TeamRecord & {
+  agents?: Array<{ id: string; name: string }>;
 };
+
+type ApiError = { response?: { data?: { detail?: string } } };
 
 export const Team = () => {
   const [newName, setNewName] = useState('');
-  const [userTeams, setUserTeams] = useState([]);
-  const [selectedTeam, setSelected] = useState<any | null>(null);
+  const [userTeams, setUserTeams] = useState<TeamWithExtras[]>([]);
+  const [selectedTeam, setSelected] = useState<TeamWithExtras | null>(null);
   const router = useRouter();
   const params = useParams();
   const { id } = params;
-  const authTeam = id ? id : getCookie('auth-team');
+  const authTeam = id !== undefined ? id : getCookie('auth-team');
 
-  const { data: activeTeam, mutate } = useTeam();
+  const { data: activeTeam, mutate: _mutate } = useTeam();
   const { mutate: inviteMutate } = useInvitations(String(authTeam));
   const userDataEndpoint = '/v1/user';
   const userDataSWRKey = '/user';
 
-  const { data, error, isLoading } = useSWR<User, any, string>(userDataSWRKey, async () => {
-    return (
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URI}${userDataEndpoint}`, {
+  type UserDataResponse = { user?: { id?: string } } & Record<string, unknown>;
+  const { data, error: _error, isLoading: _isLoading } = useSWR<UserDataResponse, Error, string>(
+    userDataSWRKey,
+    async () => {
+      const response = await axios.get<UserDataResponse>(
+        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}${userDataEndpoint}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+          },
+          validateStatus: (status) => [200, 403].includes(status),
+        },
+      );
+      return response.data;
+    },
+  );
+
+  const getUserTeams = useCallback(async (): Promise<{ teams: TeamWithExtras[] } & Record<string, unknown>> => {
+    const response = await axios.get<{ teams?: TeamWithExtras[] } & Record<string, unknown>>(
+      `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/team`,
+      {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${getCookie('jwt')}`,
+          Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
         },
         validateStatus: (status) => [200, 403].includes(status),
-      })
-    ).data;
-  });
-
-  const getUserTeams = useCallback(async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/team`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getCookie('jwt')}`,
       },
-      validateStatus: (status) => [200, 403].includes(status),
-    });
-    const filteredTeams = response.data?.teams ? response.data.teams.filter((team: Team) => team.id !== SYSTEM_TEAM_ID) : [];
+    );
+    const filteredTeams = response.data.teams
+      ? response.data.teams.filter((team) => team.id !== SYSTEM_TEAM_ID)
+      : [];
     return { ...response.data, teams: filteredTeams };
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getUserTeams();
-      if (data?.teams?.length) {
-        setUserTeams(data.teams);
-        const selecetdTeam = data.teams.find((c: { id: string }) => c.id === authTeam);
-        setSelected(selecetdTeam);
+    const fetchData = async (): Promise<void> => {
+      const userTeamData = await getUserTeams();
+      if (userTeamData.teams.length > 0) {
+        setUserTeams(userTeamData.teams);
+        const selectedTeamMatch = userTeamData.teams.find((c) => c.id === authTeam);
+        setSelected(selectedTeamMatch ?? null);
       }
     };
 
-    if (data?.user?.id) {
-      fetchData();
+    if (data?.user?.id !== undefined) {
+      void fetchData();
     }
   }, [data, getUserTeams, authTeam]);
 
-  const selectNewTeam = (teamObj: { id: string }) => {
-    if (teamObj?.id) {
+  const selectNewTeam = (teamObj: TeamWithExtras): void => {
+    if (teamObj.id !== '') {
       setCookie('auth-team', teamObj.id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       setSelected(teamObj);
       router.push(`/team/${teamObj.id}`);
-      inviteMutate();
+      void inviteMutate();
     }
   };
 
-  const checkTeamNameExists = (name: string) => {
-    return userTeams.some((team: any) => team.name.toLowerCase() === name.toLowerCase());
+  const checkTeamNameExists = (name: string): boolean => {
+    return userTeams.some((team) => team.name.toLowerCase() === name.toLowerCase());
   };
 
   return (
     <SidebarContent title='Team Management'>
-      {selectedTeam && (
+      {selectedTeam !== null && (
         <SidebarGroup>
-          <SidebarGroupLabel>{selectedTeam?.name}</SidebarGroupLabel>
+          <SidebarGroupLabel>{selectedTeam.name}</SidebarGroupLabel>
           <div className='space-y-2 px-2'>
-            {selectedTeam?.description && (
+            {selectedTeam.description !== null && selectedTeam.description !== undefined && (
               <div className='text-sm text-muted-foreground'>
                 <span className='font-medium'>Description:</span> {selectedTeam.description}
               </div>
             )}
-            {activeTeam?.parentId && (
+            {activeTeam?.parentId !== null && activeTeam?.parentId !== undefined && (
               <div className='text-sm text-muted-foreground'>
                 <span className='font-medium'>Parent Team ID:</span> {selectedTeam.parentId}
               </div>
             )}
-            {selectedTeam?.agents && selectedTeam.agents.length > 0 && (
+            {selectedTeam.agents !== undefined && selectedTeam.agents.length > 0 && (
               <div className='text-sm text-muted-foreground'>
                 <span className='font-medium'>Agents:</span>
                 <ul className='list-disc list-inside mt-1'>
-                  {selectedTeam.agents.map((agent) => (
+                  {selectedTeam.agents.map((agent: { id: string; name: string }) => (
                     <li key={agent.id}>{agent.name}</li>
                   ))}
                 </ul>
@@ -150,17 +156,18 @@ export const Team = () => {
             setNewName={setNewName}
             checkTeamNameExists={checkTeamNameExists}
             onTeamRenamed={async (_newTeamName: string) => {
-              const data = await getUserTeams();
-              if (data?.teams?.length) {
-                setUserTeams(data.teams);
-                // Find the renamed team and set as selected
-                if (selectedTeam?.id) {
-                  const renamedTeam = data.teams.find((t: any) => t.id === selectedTeam.id);
-                  if (renamedTeam) {setSelected(renamedTeam);}
+              const teamData = await getUserTeams();
+              if (teamData.teams.length > 0) {
+                setUserTeams(teamData.teams);
+                if (selectedTeam?.id !== undefined) {
+                  const renamedTeam = teamData.teams.find((t) => t.id === selectedTeam.id);
+                  if (renamedTeam !== undefined) {
+                    setSelected(renamedTeam);
+                  }
                 }
               }
             }}
-            disabled={!selectedTeam}
+            disabled={selectedTeam === null}
           />
 
           <CreateDialog
@@ -169,13 +176,14 @@ export const Team = () => {
             teamData={userTeams}
             checkTeamNameExists={checkTeamNameExists}
             onTeamCreated={async (newTeamId?: string) => {
-              const data = await getUserTeams();
-              if (data?.teams?.length) {
-                setUserTeams(data.teams);
-                // Set the newly created team as selected
-                if (newTeamId) {
-                  const createdTeam = data.teams.find((t: any) => t.id === newTeamId);
-                  if (createdTeam) {selectNewTeam(createdTeam);}
+              const teamData = await getUserTeams();
+              if (teamData.teams.length > 0) {
+                setUserTeams(teamData.teams);
+                if (newTeamId !== undefined && newTeamId !== '') {
+                  const createdTeam = teamData.teams.find((t) => t.id === newTeamId);
+                  if (createdTeam !== undefined) {
+                    selectNewTeam(createdTeam);
+                  }
                 }
               }
             }}
@@ -193,27 +201,32 @@ const SelectTeam = ({
   userTeams,
   selectNewTeam,
 }: {
-  selectedTeam: any;
-  userTeams: any;
-  selectNewTeam: (team: any) => void;
+  selectedTeam: TeamWithExtras | null;
+  userTeams: TeamWithExtras[];
+  selectNewTeam: (team: TeamWithExtras) => void;
 }) => {
-  const hasTeams = userTeams && userTeams.length > 0;
+  const hasTeams = userTeams.length > 0;
   return (
     <>
       <SidebarGroupLabel>Select Team</SidebarGroupLabel>
-      {/* <SidebarMenuButton className='group-data-[state=expanded]:hidden'>
-        <ArrowBigLeft />
-      </SidebarMenuButton> */}
       <div className='w-full group-data-[collapsible=icon]:hidden'>
-        <Select value={selectedTeam === null ? '' : selectedTeam} onValueChange={(value) => selectNewTeam(value)}>
+        <Select
+          value={selectedTeam === null ? '' : selectedTeam.id}
+          onValueChange={(value: string) => {
+            const team = userTeams.find((t) => t.id === value);
+            if (team !== undefined) {
+              selectNewTeam(team);
+            }
+          }}
+        >
           <SelectTrigger>
             <SelectValue placeholder={hasTeams ? 'Select a Team' : 'None - Create a team'} />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               {hasTeams ? (
-                userTeams.map((child: any) => (
-                  <SelectItem key={child.id} value={child}>
+                userTeams.map((child) => (
+                  <SelectItem key={child.id} value={child.id}>
                     {child.name}
                   </SelectItem>
                 ))
@@ -259,7 +272,7 @@ export const RenameDialog = ({
     try {
       const jwt = getCookie('jwt') as string;
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URI}/v1/team/${activeTeam?.id}`,
+        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/team/${String(activeTeam?.id ?? '')}`,
         { team: { name: newName } },
         {
           headers: {
@@ -269,16 +282,19 @@ export const RenameDialog = ({
         },
       );
       setIsRenameDialogOpen(false);
-      mutate();
+      void mutate();
       toast({
         title: 'Success',
         description: 'Team name updated successfully!',
       });
-      if (onTeamRenamed) {onTeamRenamed(newName);}
+      if (onTeamRenamed !== undefined) {
+        onTeamRenamed(newName);
+      }
     } catch (error) {
+      const err = error as ApiError;
       toast({
         title: 'Error',
-        description: error.response?.data?.detail || 'Failed to update team name',
+        description: err.response?.data?.detail ?? 'Failed to update team name',
         variant: 'destructive',
       });
     }
@@ -289,7 +305,7 @@ export const RenameDialog = ({
       <SidebarMenuItem>
         <SidebarMenuButton
           onClick={() => {
-            setNewName(activeTeam?.name || '');
+            setNewName(activeTeam?.name ?? '');
             setIsRenameDialogOpen(true);
           }}
           tooltip='Rename Team'
@@ -305,7 +321,11 @@ export const RenameDialog = ({
             <DialogTitle>Rename Team</DialogTitle>
           </DialogHeader>
           <div className='grid gap-4 py-4'>
-            <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder='Enter new name' />
+            <Input
+              value={newName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)}
+              placeholder='Enter new name'
+            />
           </div>
           <DialogFooter>
             <Button variant='outline' onClick={() => setIsRenameDialogOpen(false)}>
@@ -328,7 +348,7 @@ export const CreateDialog = ({
 }: {
   newName: string;
   setNewName: (name: string) => void;
-  teamData: any[];
+  teamData: TeamWithExtras[];
   checkTeamNameExists: (name: string) => boolean;
   onTeamCreated: (newTeamId?: string) => void;
 }) => {
@@ -338,9 +358,11 @@ export const CreateDialog = ({
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
 
-  const handleConfirmCreate = async (e?: React.FormEvent) => {
-    if (e) {e.preventDefault();}
-    if (!newName.trim()) {
+  const handleConfirmCreate = async (e?: React.FormEvent): Promise<void> => {
+    if (e !== undefined) {
+      e.preventDefault();
+    }
+    if (newName.trim() === '') {
       toast({
         title: 'Error',
         description: 'Team name is required.',
@@ -350,21 +372,16 @@ export const CreateDialog = ({
     }
     if (checkTeamNameExists(newName) && !isDuplicate) {
       setIsDuplicate(true);
-      // toast({
-      //   title: 'Error',
-      //   description: 'Team name already exists. Please choose a different name.',
-      //   variant: 'destructive',
-      // });
       return;
     }
     try {
       const jwt = getCookie('jwt') as string;
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URI}/v1/team`,
+      const response = await axios.post<{ team?: { id?: string } }>(
+        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/team`,
         {
           name: newName,
           agent_name: `${newName} Agent`,
-          ...(newParent ? { parent_company_id: newParent } : {}),
+          ...(newParent !== '' ? { parent_company_id: newParent } : {}),
         },
         {
           headers: {
@@ -373,18 +390,19 @@ export const CreateDialog = ({
           },
         },
       );
-      mutate();
+      void mutate();
       setIsCreateDialogOpen(false);
       setIsDuplicate(false);
       toast({
         title: 'Success',
         description: 'Team created successfully!',
       });
-      if (onTeamCreated) {onTeamCreated(response.data?.team?.id);}
+      onTeamCreated(response.data.team?.id);
     } catch (error) {
+      const err = error as ApiError;
       toast({
         title: 'Error',
-        description: error.response?.data?.detail || 'Failed to create team',
+        description: err.response?.data?.detail ?? 'Failed to create team',
         variant: 'destructive',
       });
     }
@@ -418,11 +436,11 @@ export const CreateDialog = ({
           <DialogHeader>
             <DialogTitle>Create New Team</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleConfirmCreate}>
+          <form onSubmit={(e: React.FormEvent) => void handleConfirmCreate(e)}>
             <div className='grid gap-4 py-4'>
               <Input
                 value={newName}
-                onChange={(e) => handleTeamName(e)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTeamName(e)}
                 required
                 placeholder='Enter team name (max 20 chars)'
                 maxLength={20}
@@ -437,7 +455,7 @@ export const CreateDialog = ({
                   <SelectGroup>
                     <SelectLabel>Parent Team</SelectLabel>
                     <SelectItem value='-'>[NONE]</SelectItem>
-                    {teamData?.map((child: any) => (
+                    {teamData.map((child) => (
                       <SelectItem key={child.id} value={child.id}>
                         {child.name}
                       </SelectItem>
