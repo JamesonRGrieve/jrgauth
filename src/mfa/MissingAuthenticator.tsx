@@ -11,9 +11,9 @@ export const AuthenticatorHelp = () => {
     sms: false,
   });
 
-  const handleEmailSend = async () => {
+  const handleEmailSend = async (): Promise<void> => {
     setLoading((prev) => ({ ...prev, email: true }));
-    axios.post(
+    await axios.post(
       `${process.env.NEXT_PUBLIC_API_URI}/v1/user/mfa/email`,
       {
         email: getCookie('email'),
@@ -27,10 +27,12 @@ export const AuthenticatorHelp = () => {
     setLoading((prev) => ({ ...prev, email: false }));
   };
 
-  const _handleSMSSend = async () => {
+  const _handleSMSSend = async (): Promise<void> => {
     setLoading((prev) => ({ ...prev, sms: true }));
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
     setLoading((prev) => ({ ...prev, sms: false }));
   };
 
@@ -44,7 +46,9 @@ export const AuthenticatorHelp = () => {
       <DisclosureContent>
         <div className='p-2 space-y-2'>
           <Button
-            onClick={handleEmailSend}
+            onClick={() => {
+              void handleEmailSend();
+            }}
             disabled={loading.email}
             variant='outline'
             type='button'

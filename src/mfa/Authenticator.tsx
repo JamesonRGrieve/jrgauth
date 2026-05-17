@@ -5,12 +5,16 @@ import Field from '@jgrieve/dynamic-form/Field';
 import log from '../lib/log';
 import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 import { LuCheckCircle, LuKey } from 'react-icons/lu';
 import QRCode from 'react-qr-code';
 
 export type RegisterFormProps = object;
-export default function VerifyAuthenticator({ verifiedCallback }: { verifiedCallback: any }): JSX.Element {
+export default function VerifyAuthenticator({
+  verifiedCallback,
+}: {
+  verifiedCallback: (verified: boolean) => void;
+}): JSX.Element {
   const [fields, setFields] = useState({
     token: '',
   });
@@ -31,7 +35,7 @@ export default function VerifyAuthenticator({ verifiedCallback }: { verifiedCall
   }, []);
   async function attemptTotp(): Promise<void> {
     try {
-      const response = await axios.post(`/api/mfa`, {
+      const response = await axios.post<{ detail: string }>(`/api/mfa`, {
         email: getCookie('email'),
         mfa_token: fields.token,
       });
@@ -41,9 +45,9 @@ export default function VerifyAuthenticator({ verifiedCallback }: { verifiedCall
       if (totpResponse.toLowerCase() === 'true') {
         verifiedCallback(true);
         setTotpVerified(true);
-        deleteCookie('totpUri');
+        void deleteCookie('totpUri');
       } else {
-        log(`TOTP verification of ${getCookie('email')} failed.`, process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT, 2);
+        log(`TOTP verification of ${getCookie('email') ?? ''} failed.`, process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT, 2);
         setErrors({
           ...errors,
           token: 'TOTP verification failed.',
@@ -90,7 +94,7 @@ export default function VerifyAuthenticator({ verifiedCallback }: { verifiedCall
               label='MFA Code'
               //autoComplete='one-time-code'
               value={fields.token}
-              onChange={(e: any) => setFields({ ...fields, token: e.target.value })}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setFields({ ...fields, token: e.target.value })}
               //submit={null}
               //error={errors.token}
             />

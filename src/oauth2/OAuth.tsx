@@ -8,15 +8,18 @@ import { type ReactNode, useCallback, useMemo } from 'react';
 import OAuth2Login from 'react-simple-oauth2-login';
 import providers from './OAuthProviders';
 
+type ProviderConfig = (typeof providers)[keyof typeof providers];
+type OAuthProvidersOverride = Partial<Record<string, Partial<ProviderConfig>>>;
+
 export type OAuthProps = {
-  overrides?: any;
+  overrides?: OAuthProvidersOverride;
 };
 export default function OAuth({ overrides }: OAuthProps): ReactNode {
   const _router = useRouter();
   const oAuthProviders = useMemo(() => deepMerge(providers, overrides) as typeof providers, [overrides]);
   log(['OAuth Providers: ', oAuthProviders], { client: 3 });
   const onOAuth2 = useCallback(
-    (_response: any) => {
+    (_response: unknown) => {
       document.location.href = `${process.env.NEXT_PUBLIC_APP_URI}/chat`; // This should be fixed properly just low priority.
 
       // const redirect = getCookie('href') ?? '/';

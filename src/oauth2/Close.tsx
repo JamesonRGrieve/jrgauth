@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useAuthentication } from '../useAuthentication';
 
-export type CloseProps = {};
+export type CloseProps = Record<string, never>;
 
-export default function Close() {
+export default function Close(): ReactNode {
   const authConfig = useAuthentication();
 
   useEffect(() => {

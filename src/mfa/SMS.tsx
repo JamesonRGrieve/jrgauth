@@ -6,7 +6,11 @@ import { getCookie } from 'cookies-next';
 import { useState } from 'react';
 
 export type RegisterFormProps = object;
-export default function VerifySMS({ verifiedCallback }: { verifiedCallback: any }): JSX.Element {
+export default function VerifySMS({
+  verifiedCallback,
+}: {
+  verifiedCallback: (verified: boolean) => void;
+}): JSX.Element {
   const [fields, _setFields] = useState({
     smsCode: '',
   });
@@ -16,7 +20,7 @@ export default function VerifySMS({ verifiedCallback }: { verifiedCallback: any 
   const [smsVerified, setSMSVerified] = useState(false);
   async function _attemptSMS(): Promise<void> {
     const smsResponse = (
-      await axios.post(
+      await axios.post<{ detail: string }>(
         `/api/email`,
         {
           email: getCookie('email'),
@@ -30,7 +34,7 @@ export default function VerifySMS({ verifiedCallback }: { verifiedCallback: any 
       verifiedCallback(true);
       setSMSVerified(true);
     } else {
-      log(`Email verification of ${getCookie('email')} failed.`, process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT, 2);
+      log(`Email verification of ${getCookie('email') ?? ''} failed.`, process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT, 2);
       setErrors({
         ...errors,
         smsCode: 'SMS verification failed.',

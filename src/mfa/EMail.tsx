@@ -7,12 +7,16 @@ import log from '../lib/log';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { CheckCircle } from 'lucide-react';
-import { useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 import { LuKey } from 'react-icons/lu';
 
 export type RegisterFormProps = object;
 
-export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: any }): JSX.Element {
+export default function VerifyEmail({
+  verifiedCallback,
+}: {
+  verifiedCallback: (verified: boolean) => void;
+}): JSX.Element {
   const { toast } = useToast();
   const [fields, setFields] = useState({
     emailCode: '',
@@ -22,9 +26,9 @@ export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: an
   });
   const [emailVerified, setEmailVerified] = useState(false);
 
-  async function attemptEmail() {
+  async function attemptEmail(): Promise<void> {
     const emailResponse = (
-      await axios.post(
+      await axios.post<{ detail: string }>(
         `/api/email`,
         {
           email: getCookie('email'),
@@ -76,7 +80,7 @@ export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: an
               label='EMail Code'
               //autoComplete='email-code'
               value={fields.emailCode}
-              onChange={(e: any) => setFields({ ...fields, emailCode: e.target.value })}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setFields({ ...fields, emailCode: e.target.value })}
               //submit={null}
               //error={errors.emailCode}
             />
