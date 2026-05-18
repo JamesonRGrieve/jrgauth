@@ -9,6 +9,10 @@ import { LuCheckCircle, LuKey } from 'react-icons/lu';
 import QRCode from 'react-qr-code';
 import log from '../lib/log';
 
+function cookieString(value: ReturnType<typeof getCookie>): string {
+  return typeof value === 'string' ? value : '';
+}
+
 export type RegisterFormProps = object;
 export default function VerifyAuthenticator({
   verifiedCallback,
@@ -23,13 +27,14 @@ export default function VerifyAuthenticator({
     token: '',
   });
   const [totpVerified, setTotpVerified] = useState(false);
-  const totpUri = getCookie('totpUri');
+  const totpUri = cookieString(getCookie('totpUri'));
 
   useEffect(() => {
-    if (navigator.userAgent.match(/iphone/i) || navigator.userAgent.match(/ipod/i)) {
+    const ua = navigator.userAgent;
+    if (/iphone/i.test(ua) || /ipod/i.test(ua)) {
       setPlatformLink('https://apps.apple.com/us/app/google-authenticator/id388497605');
     }
-    if (navigator.userAgent.match(/android/i)) {
+    if (/android/i.test(ua)) {
       setPlatformLink('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2');
     }
   }, []);
@@ -47,7 +52,7 @@ export default function VerifyAuthenticator({
         setTotpVerified(true);
         void deleteCookie('totpUri');
       } else {
-        log(`TOTP verification of ${getCookie('email') ?? ''} failed.`, process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT, 2);
+        log([`TOTP verification of ${cookieString(getCookie('email'))} failed.`], { client: 2 });
         setErrors({
           ...errors,
           token: 'TOTP verification failed.',
@@ -77,7 +82,7 @@ export default function VerifyAuthenticator({
               <QRCode
                 size={256}
                 style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-                value={totpUri ?? ''}
+                value={totpUri}
                 viewBox={`0 0 256 256`}
               />
             </div>

@@ -13,7 +13,7 @@ describe('VerifySMS (surface)', () => {
   });
 
   it('requires a verifiedCallback that accepts a boolean', () => {
-    expectTypeOf(VerifySMS).parameter(0).toMatchTypeOf<{ verifiedCallback: (verified: boolean) => void }>();
+    expectTypeOf(VerifySMS).parameter(0).toExtend<{ verifiedCallback: (verified: boolean) => void }>();
   });
 
   it('exports a RegisterFormProps placeholder type (currently `object`)', () => {

@@ -5,6 +5,10 @@ import { getCookie } from 'cookies-next';
 import { useState } from 'react';
 import log from '../lib/log';
 
+function cookieString(value: ReturnType<typeof getCookie>): string {
+  return typeof value === 'string' ? value : '';
+}
+
 export type RegisterFormProps = object;
 export default function VerifySMS({
   verifiedCallback,
@@ -34,7 +38,7 @@ export default function VerifySMS({
       verifiedCallback(true);
       setSMSVerified(true);
     } else {
-      log(`Email verification of ${getCookie('email') ?? ''} failed.`, process.env.NEXT_PUBLIC_LOG_VERBOSITY_CLIENT, 2);
+      log([`Email verification of ${cookieString(getCookie('email'))} failed.`], { client: 2 });
       setErrors({
         ...errors,
         smsCode: 'SMS verification failed.',

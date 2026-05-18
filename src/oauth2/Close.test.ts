@@ -17,7 +17,7 @@ describe('Close (surface)', () => {
 
   it('returns a ReactNode', () => {
     type R = ReturnType<typeof Close>;
-    expectTypeOf<R>().toMatchTypeOf<ReactNode>();
+    expectTypeOf<R>().toExtend<ReactNode>();
   });
 
   it('CloseProps is an empty Record type (component takes no public props)', () => {
