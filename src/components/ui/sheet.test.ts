@@ -43,11 +43,11 @@ describe('Sheet exports', () => {
 
   it('SheetContent accepts a side variant of top | right | bottom | left | null | undefined', () => {
     type ContentProps = React.ComponentPropsWithoutRef<typeof SheetContent>;
-    expectTypeOf<ContentProps['side']>().toMatchTypeOf<'top' | 'right' | 'bottom' | 'left' | null | undefined>();
+    expectTypeOf<ContentProps['side']>().toExtend<'top' | 'right' | 'bottom' | 'left' | null | undefined>();
   });
 
   it('SheetHeader merges base layout utilities with caller className', () => {
-    const el = SheetHeader({ className: 'gap-8' });
+    const el: React.ReactElement<{ className?: string }> = SheetHeader({ className: 'gap-8' });
     const cls = String(el.props.className);
     expect(el.type).toBe('div');
     expect(cls).toContain('flex');

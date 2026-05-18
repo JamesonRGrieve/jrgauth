@@ -83,12 +83,12 @@ describe('DropdownMenuShortcut', () => {
   it('is a span-rendering helper with a fixed displayName', () => {
     expectTypeOf(DropdownMenuShortcut).toBeFunction();
     expect(DropdownMenuShortcut.displayName).toBe('DropdownMenuShortcut');
-    const el = DropdownMenuShortcut({});
+    const el: React.ReactElement = DropdownMenuShortcut({});
     expect(el.type).toBe('span');
   });
 
   it('merges base utilities with caller className', () => {
-    const el = DropdownMenuShortcut({ className: 'opacity-50' });
+    const el: React.ReactElement<{ className?: string }> = DropdownMenuShortcut({ className: 'opacity-50' });
     const cls = String(el.props.className);
     expect(cls).toContain('ml-auto');
     expect(cls).toContain('opacity-50');

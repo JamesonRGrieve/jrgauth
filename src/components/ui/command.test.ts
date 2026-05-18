@@ -34,14 +34,14 @@ describe('CommandShortcut', () => {
   it('renders a span with default utility classes', () => {
     expectTypeOf(CommandShortcut).toBeFunction();
     expect(CommandShortcut.displayName).toBe('CommandShortcut');
-    const el = CommandShortcut({});
+    const el: React.ReactElement<{ className?: string }> = CommandShortcut({});
     expect(el.type).toBe('span');
     expect(String(el.props.className)).toContain('ml-auto');
     expect(String(el.props.className)).toContain('text-muted-foreground');
   });
 
   it('merges base utilities with caller-provided className', () => {
-    const el = CommandShortcut({ className: 'text-red-500' });
+    const el: React.ReactElement<{ className?: string }> = CommandShortcut({ className: 'text-red-500' });
     const cls = String(el.props.className);
     expect(cls).toContain('text-red-500');
     expect(cls).toContain('ml-auto');

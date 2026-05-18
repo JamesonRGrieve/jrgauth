@@ -37,17 +37,17 @@ describe('Tooltip surface', () => {
   });
 
   it('Tooltip applies a 600ms default delayDuration when none is provided', () => {
-    const el = Tooltip({});
+    const el: React.ReactElement<{ delayDuration?: number }> = Tooltip({});
     expect(el.props.delayDuration).toBe(600);
   });
 
   it('Tooltip honours an explicit delayDuration override', () => {
-    const el = Tooltip({ delayDuration: 100 });
+    const el: React.ReactElement<{ delayDuration?: number }> = Tooltip({ delayDuration: 100 });
     expect(el.props.delayDuration).toBe(100);
   });
 
   it('TooltipProvider wraps its children in Radix Provider', () => {
-    const el = TooltipProvider({ children: 'hi' });
+    const el: React.ReactElement<{ children?: React.ReactNode }> = TooltipProvider({ children: 'hi' });
     expect(el.props.children).toBe('hi');
   });
 });

@@ -56,17 +56,17 @@ describe('Dialog exports', () => {
   });
 
   it('DialogHeader renders a div element', () => {
-    const el = DialogHeader({});
+    const el: React.ReactElement = DialogHeader({});
     expect(el.type).toBe('div');
   });
 
   it('DialogFooter renders a div element', () => {
-    const el = DialogFooter({});
+    const el: React.ReactElement = DialogFooter({});
     expect(el.type).toBe('div');
   });
 
   it('DialogHeader merges base layout utilities with caller className', () => {
-    const el = DialogHeader({ className: 'mt-4' });
+    const el: React.ReactElement<{ className?: string }> = DialogHeader({ className: 'mt-4' });
     const cls = String(el.props.className);
     expect(cls).toContain('flex');
     expect(cls).toContain('mt-4');

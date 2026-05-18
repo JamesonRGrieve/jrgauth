@@ -17,17 +17,17 @@ describe('Skeleton', () => {
   });
 
   it('renders a div as the root element', () => {
-    const el = Skeleton({});
+    const el: React.ReactElement = Skeleton({});
     expect(el.type).toBe('div');
   });
 
   it('produces the base class when no className is passed', () => {
-    const el = Skeleton({});
+    const el: React.ReactElement<{ className?: string }> = Skeleton({});
     expect(el.props.className).toBe('animate-pulse rounded-md bg-muted');
   });
 
   it('merges the base utilities with a caller-provided className', () => {
-    const el = Skeleton({ className: 'h-4 w-32' });
+    const el: React.ReactElement<{ className?: string }> = Skeleton({ className: 'h-4 w-32' });
     const cls = el.props.className;
     expect(cls).toContain('animate-pulse');
     expect(cls).toContain('rounded-md');
@@ -36,13 +36,16 @@ describe('Skeleton', () => {
   });
 
   it('forwards arbitrary HTML props to the div', () => {
-    const el = Skeleton({ id: 'avatar-skeleton', 'aria-busy': true });
+    const el: React.ReactElement<{ id?: string; 'aria-busy'?: boolean }> = Skeleton({
+      id: 'avatar-skeleton',
+      'aria-busy': true,
+    });
     expect(el.props.id).toBe('avatar-skeleton');
     expect(el.props['aria-busy']).toBe(true);
   });
 
   it('lets caller utilities win for conflicting Tailwind keys via twMerge', () => {
-    const el = Skeleton({ className: 'bg-red-500' });
+    const el: React.ReactElement<{ className?: string }> = Skeleton({ className: 'bg-red-500' });
     const cls = el.props.className;
     expect(cls).not.toMatch(/\bbg-muted\b/);
     expect(cls).toContain('bg-red-500');
