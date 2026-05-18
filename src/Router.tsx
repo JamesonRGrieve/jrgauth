@@ -129,12 +129,12 @@ export default function AuthRouter({
   // Convert searchParams to a regular object
   const searchParamsObject: Record<string, string> = {};
 
-  if (searchParams instanceof URLSearchParams || routeSearchParams) {
+  if (searchParams instanceof URLSearchParams || routeSearchParams !== null) {
     const paramsToUse = searchParams instanceof URLSearchParams ? searchParams : routeSearchParams;
     paramsToUse?.forEach((value, key) => {
       searchParamsObject[key] = value;
     });
-  } else if (searchParams && typeof searchParams === 'object') {
+  } else if (searchParams !== undefined && typeof searchParams === 'object') {
     Object.assign(searchParamsObject, searchParams);
   }
 
@@ -142,7 +142,7 @@ export default function AuthRouter({
   console.warn('AuthRouter params:', params);
 
   // Merge configs - ensure deep merge works with partial config
-  const mergedConfig = deepMerge(pageConfigDefaults, corePagesConfig || {}) as AuthenticationConfig;
+  const mergedConfig = deepMerge(pageConfigDefaults, corePagesConfig ?? {}) as AuthenticationConfig;
 
   // Define pages with components
   const pages = {
@@ -165,8 +165,8 @@ export default function AuthRouter({
 
   // Safely handle slug arrays, ensuring we don't directly access properties
   // that might be undefined or pending promises
-  if (params && 'slug' in params) {
-    const slug = params.slug;
+  if ('slug' in params) {
+    const slug: string | string[] | undefined = params.slug;
     if (Array.isArray(slug) && slug.length > 0) {
       path = `/${slug.join('/')}`;
     } else if (typeof slug === 'string') {

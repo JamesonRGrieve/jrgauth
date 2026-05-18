@@ -43,7 +43,7 @@ export const getRequestedURI = (req: NextRequest): string => {
   const url = new URL(req.url);
 
   // Match the protocol, domain, and optional port
-  const processedUrl = url.origin.replace(/https?:\/\/([a-zA-Z\d.-]+)(?::\d+)?/, (match, domain) => {
+  const processedUrl = url.origin.replace(/https?:\/\/([a-zA-Z\d.-]+)(?::\d+)?/, (match: string, domain: string) => {
     // If the domain is a single word (like localhost or 0f86ff25b193), replace it with APP_URI
     if (singleWordDomainRegex.test(domain)) {
       // Remove trailing slash from appUri if it exists
@@ -70,8 +70,8 @@ export const getRequestedURI = (req: NextRequest): string => {
 export const getJWT = (req: NextRequest): string => {
   const rawJWT = req.cookies.get('jwt')?.value;
   // Strip any and all 'Bearer 's off of JWT.
-  const parts = rawJWT ? rawJWT.split(' ') : [];
-  const jwt = parts.length > 0 ? (parts[parts.length - 1] ?? rawJWT ?? '') : (rawJWT ?? '');
+  const parts = rawJWT !== undefined && rawJWT !== '' ? rawJWT.split(' ') : [];
+  const jwt = parts.length > 0 ? (parts[parts.length - 1] ?? '') : (rawJWT ?? '');
   console.warn('JWT:', jwt);
   return jwt;
 };

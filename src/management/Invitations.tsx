@@ -11,12 +11,18 @@ import log from '../lib/log';
 
 export function InvitationsTable({ userId }: { userId?: string }) {
   const { data: invitations, mutate } = useInvitationsByUserId(userId);
-  const { toast } = useToast();
+  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
 
-  const handleAccept = async (orgObj: Invitation) => {
+  const readJwt = (): string => {
+    const c = getCookie('jwt');
+    return typeof c === 'string' ? c : '';
+  };
+  const apiBase = (): string => process.env.NEXT_PUBLIC_API_URI ?? '';
+
+  const handleAccept = async (orgObj: Invitation): Promise<void> => {
     try {
       await axios.patch(
-        `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/invitation/${orgObj.id}`,
+        `${apiBase()}/v1/invitation/${orgObj.id}`,
         {
           invitation: {
             invitation_code: orgObj.code,
@@ -25,7 +31,7 @@ export function InvitationsTable({ userId }: { userId?: string }) {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${String(getCookie('jwt') ?? '')}`,
+            Authorization: `Bearer ${readJwt()}`,
           },
         },
       );
@@ -34,7 +40,7 @@ export function InvitationsTable({ userId }: { userId?: string }) {
         title: 'Invitation accepted',
         description: 'You have successfully accepted the invitation.',
       });
-    } catch (_e) {
+    } catch {
       toast({
         title: 'Error accepting invitation',
         description: 'There was an error accepting the invitation. Please try again.',
@@ -43,12 +49,13 @@ export function InvitationsTable({ userId }: { userId?: string }) {
     }
   };
 
+  // eslint-disable-next-line react/no-unstable-nested-components -- columns must be defined inline to close over handleAccept; refactor would require lifting handler + invitation context out.
   const columns: ColumnDef<Invitation>[] = [
     {
       accessorKey: 'team.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title='Team' />,
       cell: ({ row }) => {
-        const team = (row.original as unknown as { team?: { name?: string } }).team;
+        const team = (row.original as { team?: { name?: string } | null }).team;
         return <span>{team?.name ?? '-'}</span>;
       },
     },
@@ -61,8 +68,8 @@ export function InvitationsTable({ userId }: { userId?: string }) {
       accessorKey: 'createdAt',
       header: ({ column }) => <DataTableColumnHeader column={column} title='Created At' />,
       cell: ({ row }) => {
-        const createdAt = (row.original as unknown as { created_at?: string }).created_at ?? row.original.createdAt;
-        return <span>{new Date(createdAt).toLocaleString()}</span>;
+        const createdAt = (row.original as { created_at?: string; createdAt?: string }).created_at ?? row.original.createdAt;
+        return <span>{createdAt !== undefined ? new Date(createdAt).toLocaleString() : '-'}</span>;
       },
     },
     {
@@ -96,11 +103,13 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[
         log(['REST useInvitationsByUserId() Fetching', { userId }], {
           client: 1,
         });
+        const jwtString = typeof jwt === 'string' ? jwt : '';
+        const apiBase = process.env.NEXT_PUBLIC_API_URI ?? '';
         const response = await axios.get<{ invitations?: RawInvitationGroup[] }>(
-          `${String(process.env.NEXT_PUBLIC_API_URI ?? '')}/v1/user/invitation`,
+          `${apiBase}/v1/user/invitation`,
           {
             headers: {
-              Authorization: `Bearer ${String(jwt)}`,
+              Authorization: `Bearer ${jwtString}`,
             },
             params: { userId },
           },
@@ -149,7 +158,7 @@ function convertInvitationsData(invitationsData: RawInvitationGroup[], userId: s
           created_at: data.created_at,
           code: data.code,
           ...data.invitees[i],
-        } as unknown as Invitation;
+        } as Invitation;
         list.push(inviteeWithTeam);
       }
     }

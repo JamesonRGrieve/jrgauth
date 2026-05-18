@@ -30,10 +30,13 @@ import {
 } from '../components/ui/sidebar';
 import { useInvitations } from '../hooks/useInvitation';
 import { SYSTEM_TEAM_ID, useTeam } from '../hooks/useTeam';
-import type { Team as TeamRecord } from '../hooks/z';
 import { InviteDialog } from './Invite';
 
-type TeamWithExtras = TeamRecord & {
+type TeamWithExtras = {
+  id: string;
+  name: string;
+  description?: string | null;
+  parentId?: string | null;
   agents?: Array<{ id: string; name: string }>;
 };
 
@@ -57,8 +60,8 @@ export const Team = () => {
   const authTeam =
     typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
 
-  const { data: activeTeam, mutate: _mutate } = useTeam();
-  const { mutate: inviteMutate } = useInvitations(authTeam);
+  const { data: activeTeam, mutate: _mutate } = useTeam() as { data?: { parentId?: string | null }; mutate: () => void };
+  const { mutate: inviteMutate } = useInvitations(authTeam) as { mutate: () => Promise<unknown> };
   const userDataEndpoint = '/v1/user';
   const userDataSWRKey = '/user';
 
@@ -114,7 +117,7 @@ export const Team = () => {
 
   const selectNewTeam = (teamObj: TeamWithExtras): void => {
     if (teamObj.id !== '') {
-      setCookie('auth-team', teamObj.id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+      void setCookie('auth-team', teamObj.id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       setSelected(teamObj);
       router.push(`/team/${teamObj.id}`);
       void inviteMutate();
@@ -164,17 +167,19 @@ export const Team = () => {
             newName={newName}
             setNewName={setNewName}
             checkTeamNameExists={checkTeamNameExists}
-            onTeamRenamed={async (_newTeamName: string) => {
-              const teamData = await getUserTeams();
-              if (teamData.teams.length > 0) {
-                setUserTeams(teamData.teams);
-                if (selectedTeam?.id !== undefined) {
-                  const renamedTeam = teamData.teams.find((t) => t.id === selectedTeam.id);
-                  if (renamedTeam !== undefined) {
-                    setSelected(renamedTeam);
+            onTeamRenamed={(_newTeamName: string) => {
+              void (async (): Promise<void> => {
+                const teamData = await getUserTeams();
+                if (teamData.teams.length > 0) {
+                  setUserTeams(teamData.teams);
+                  if (selectedTeam?.id !== undefined) {
+                    const renamedTeam = teamData.teams.find((t) => t.id === selectedTeam.id);
+                    if (renamedTeam !== undefined) {
+                      setSelected(renamedTeam);
+                    }
                   }
                 }
-              }
+              })();
             }}
             disabled={selectedTeam === null}
           />
@@ -184,17 +189,19 @@ export const Team = () => {
             setNewName={setNewName}
             teamData={userTeams}
             checkTeamNameExists={checkTeamNameExists}
-            onTeamCreated={async (newTeamId?: string) => {
-              const teamData = await getUserTeams();
-              if (teamData.teams.length > 0) {
-                setUserTeams(teamData.teams);
-                if (newTeamId !== undefined && newTeamId !== '') {
-                  const createdTeam = teamData.teams.find((t) => t.id === newTeamId);
-                  if (createdTeam !== undefined) {
-                    selectNewTeam(createdTeam);
+            onTeamCreated={(newTeamId?: string) => {
+              void (async (): Promise<void> => {
+                const teamData = await getUserTeams();
+                if (teamData.teams.length > 0) {
+                  setUserTeams(teamData.teams);
+                  if (newTeamId !== undefined && newTeamId !== '') {
+                    const createdTeam = teamData.teams.find((t) => t.id === newTeamId);
+                    if (createdTeam !== undefined) {
+                      selectNewTeam(createdTeam);
+                    }
                   }
                 }
-              }
+              })();
             }}
           />
 
@@ -265,11 +272,11 @@ export const RenameDialog = ({
   onTeamRenamed?: (newTeamName: string) => void;
   disabled?: boolean;
 }) => {
-  const { toast } = useToast();
-  const { data: activeTeam, mutate } = useTeam();
+  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
+  const { data: activeTeam, mutate } = useTeam() as { data?: { id?: string; name?: string }; mutate: () => Promise<unknown> };
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
 
-  const handleConfirmRename = async () => {
+  const handleConfirmRename = async (): Promise<void> => {
     if (checkTeamNameExists(newName)) {
       toast({
         title: 'Error',
@@ -339,7 +346,7 @@ export const RenameDialog = ({
             <Button variant='outline' onClick={() => setIsRenameDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleConfirmRename}>Rename</Button>
+            <Button onClick={() => { void handleConfirmRename(); }}>Rename</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -360,8 +367,8 @@ export const CreateDialog = ({
   checkTeamNameExists: (name: string) => boolean;
   onTeamCreated: (newTeamId?: string) => void;
 }) => {
-  const { toast } = useToast();
-  const { mutate } = useTeam();
+  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
+  const { mutate } = useTeam() as { mutate: () => Promise<unknown> };
   const [newParent, setNewParent] = useState('');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);

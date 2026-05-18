@@ -1,9 +1,13 @@
 'use client';
+/* eslint-disable react/no-unstable-nested-components -- column cell renderers close over component state; canonical tanstack pattern. */
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
-import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
+import { useToast as useToastUntyped } from '@jgrieve/dynamic-form/hooks/useToast';
+
+type ToastFn = (args: { title: string; description: string; variant?: string }) => void;
+const useToast = useToastUntyped as () => { toast: ToastFn };
 import type { ColumnDef } from '@tanstack/react-table';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -109,26 +113,26 @@ export const Team = () => {
   const authTeam =
     typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
   const teamIdString = typeof id === 'string' ? id : Array.isArray(id) ? (id[0] ?? '') : '';
-  const { data: user } = useUser();
-  const { data: activeTeam, mutate: _mutate } = useTeam(teamIdString);
-  const { data: userData } = useUser();
-  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(authTeam);
-  const invitationsData = (invitationsList as Invitation[] | undefined)?.filter(
+  const { data: user } = useUser() as { data?: { id?: string } };
+  const { data: activeTeam, mutate: _mutate } = useTeam(teamIdString) as { data?: { id?: string; name?: string }; mutate: () => void };
+  const { data: userData } = useUser() as { data?: { id?: string } };
+  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(authTeam) as { data?: Invitation[]; mutate: () => Promise<unknown> };
+  const invitationsData = invitationsList?.filter(
     (invitation) => invitation.created_by_user_id === userData?.id,
   ) ?? [];
   const [_responseMessage, _setResponseMessage] = useState('');
-  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam);
+  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam) as { data?: User[]; mutate: () => Promise<unknown> };
   const { toast } = useToast();
   const router = useRouter();
 
   const inviteesArray = convertInvitationsData(invitationsData);
 
-  function convertInvitationsData(invitationsList: Invitation[]): Invitee[] {
-    if (invitationsList.length === 0) {
+  function convertInvitationsData(rows: Invitation[]): Invitee[] {
+    if (rows.length === 0) {
       return [];
     }
     const list: Invitee[] = [];
-    for (const data of invitationsList) {
+    for (const data of rows) {
       if (!Array.isArray(data.invitees)) {
         continue;
       }
@@ -192,8 +196,8 @@ export const Team = () => {
           </div>
         );
       },
-      filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id));
+      filterFn: (row, columnId, value: string[]) => {
+        return value.includes(row.getValue(columnId));
       },
       meta: {
         headerName: 'Last Name',
@@ -277,7 +281,7 @@ export const Team = () => {
                         description: 'The user has been removed from the team.',
                       });
                       void teamUsersMutate();
-                    } catch (_error) {
+                    } catch {
                       toast({
                         title: 'Error deleting user',
                         description: 'Failed to remove the user from the team.',
@@ -355,8 +359,8 @@ export const Team = () => {
           </div>
         );
       },
-      filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id));
+      filterFn: (row, columnId, value: string[]) => {
+        return value.includes(row.getValue(columnId));
       },
       meta: {
         headerName: 'Role',
@@ -483,7 +487,7 @@ export const Team = () => {
 
   return (
     <div className='space-y-10'>
-      <DataTable data={(users as User[] | undefined) ?? []} columns={users_columns} meta={{ title: 'Current Users' }} />
+      <DataTable data={users ?? []} columns={users_columns} meta={{ title: 'Current Users' }} />
       {invitationsData.length === 0 ? (
         <div>
           <h4 className='text-2xl font-bold mr-auto mb-4'>Pending Invitations</h4>
@@ -504,11 +508,11 @@ export function InviteUsers() {
   const [email, setEmail] = useState('');
   const [roleId, setRoleId] = useState('3');
   const [_responseMessage, setResponseMessage] = useState('');
-  const { data: activeTeam } = useTeam();
-  const { mutate: mutateInvitations } = useInvitations(activeTeam?.id);
+  const { data: activeTeam } = useTeam() as { data?: { id?: string; name?: string } };
+  const { mutate: mutateInvitations } = useInvitations(activeTeam?.id) as { mutate: () => Promise<unknown> };
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (email === '') {
       setResponseMessage('Please enter an email to invite.');

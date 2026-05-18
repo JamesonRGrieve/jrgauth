@@ -79,7 +79,7 @@ export const useAuth: MiddlewareHook = async (req) => {
           });
         } catch (exception) {
           const axiosError = exception as AxiosError;
-          if (axiosError.response?.status === 409) {
+          if (axiosError.response !== undefined && axiosError.response.status === 409) {
             // User exists
             toReturn.response = NextResponse.redirect(`${process.env.AUTH_URI}/login`, {
               headers: {
@@ -107,10 +107,10 @@ export const useAuth: MiddlewareHook = async (req) => {
       }
 
       if (
-        !process.env.PRIVATE_ROUTES?.split(',').some((path) => req.nextUrl.pathname.startsWith(path)) &&
+        !process.env.PRIVATE_ROUTES.split(',').some((path) => req.nextUrl.pathname.startsWith(path)) &&
         !req.nextUrl.pathname.startsWith('/user')
       ) {
-        console.warn('Private routes: ', process.env.PRIVATE_ROUTES?.split(','));
+        console.warn('Private routes: ', process.env.PRIVATE_ROUTES.split(','));
         console.warn('Public route: ', req.nextUrl.pathname);
         const token = getJWT(req);
         if (req.nextUrl.pathname.startsWith('/accept-invitation') && token.length > 0) {
@@ -142,7 +142,8 @@ export const useAuth: MiddlewareHook = async (req) => {
             // Body = that is the session ID for the user to get a new subscription.
             if (!requestedURI.startsWith(`${process.env.AUTH_URI}/subscribe`)) {
               const clientSecret = responseJSON.detail?.customer_session?.client_secret;
-              const sessionSuffix = clientSecret ? `?customer_session=${clientSecret}` : '';
+              const sessionSuffix =
+                clientSecret !== undefined && clientSecret !== '' ? `?customer_session=${clientSecret}` : '';
               console.warn(`Payment required. Redirecting to: ${process.env.AUTH_URI}/subscribe${sessionSuffix}`);
 
               toReturn.response = NextResponse.redirect(
@@ -189,7 +190,7 @@ export const useAuth: MiddlewareHook = async (req) => {
             );
           } else if (
             authMode === AuthMode.MagicalAuth &&
-            requestedURI.startsWith(process.env.AUTH_URI ?? '') &&
+            requestedURI.startsWith(process.env.AUTH_URI) &&
             jwt.length > 0 &&
             !['/user/manage'].includes(req.nextUrl.pathname)
           ) {
@@ -203,7 +204,7 @@ export const useAuth: MiddlewareHook = async (req) => {
             console.warn('JWT is valid and no guard clauses tripped.');
           }
           console.warn('JWT is valid (or server was unable to verify it).');
-          if (queryParams.code && queryParams.email) {
+          if (queryParams.code !== undefined && queryParams.email !== undefined) {
             const redirect = new URL(`${process.env.APP_URI}/invite/${queryParams.code}`);
             const teamParam = (queryParams.team ?? '').replaceAll('+', ' ');
             toReturn.response = NextResponse.redirect(redirect, {
@@ -217,19 +218,19 @@ export const useAuth: MiddlewareHook = async (req) => {
             console.error(
               `Invalid token. Failed with TypeError>AggregateError. Logging out and redirecting to authentication at ${process.env.AUTH_URI}. ${exception.message} Exceptions to follow.`,
             );
-            for (const anError of exception.cause.errors) {
+            for (const anError of exception.cause.errors as Error[]) {
               console.error(anError.message);
             }
           } else if (exception instanceof AggregateError) {
             console.error(
               `Invalid token. Failed with AggregateError. Logging out and redirecting to authentication at ${process.env.AUTH_URI}. ${exception.message} Exceptions to follow.`,
             );
-            for (const anError of exception.errors) {
+            for (const anError of exception.errors as Error[]) {
               console.error(anError.message);
             }
           } else if (exception instanceof TypeError) {
             console.error(
-              `Invalid token. Failed with TypeError. Logging out and redirecting to authentication at ${process.env.AUTH_URI}. ${exception.message} Cause: ${exception.cause}.`,
+              `Invalid token. Failed with TypeError. Logging out and redirecting to authentication at ${process.env.AUTH_URI}. ${exception.message} Cause: ${String(exception.cause)}.`,
             );
           } else {
             console.error(
@@ -246,7 +247,7 @@ export const useAuth: MiddlewareHook = async (req) => {
 
         if (
           authMode === AuthMode.MagicalAuth &&
-          requestedURI.startsWith(process.env.AUTH_URI ?? '') &&
+          requestedURI.startsWith(process.env.AUTH_URI) &&
           req.nextUrl.pathname !== '/user/manage'
         ) {
           console.warn(`Pathname: ${req.nextUrl.pathname}`);
@@ -280,7 +281,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
   };
   const queryParams = getQueryParams(req);
   if (queryParams.code) {
-    const oAuthEndpoint = `${process.env.API_URI ?? ''.replace('localhost', (process.env.SERVERSIDE_API_URI ?? '').split(',')[0])}/v1/oauth2/${provider}`;
+    const oAuthEndpoint = `${process.env.API_URI.replace('localhost', process.env.SERVERSIDE_API_URI.split(',')[0])}/v1/oauth2/${provider}`;
 
     // Use the state parameter as the JWT if present
     const jwt = queryParams.state ?? getJWT(req);
@@ -297,7 +298,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
         }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: jwt ?? '',
+          Authorization: jwt,
         },
       });
 
@@ -311,7 +312,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
 
       // Forward the original JWT in the response if present
       const headers = new Headers();
-      if (jwt) {
+      if (jwt !== '') {
         headers.set('Authorization', jwt);
       }
 
@@ -331,7 +332,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
 export const useJWTQueryParam: MiddlewareHook = async (req) => {
   const queryParams = getQueryParams(req);
   const _requestedURI = getRequestedURI(req);
-  const jwtValue = queryParams.token ?? queryParams.jwt ?? '';
+  const jwtValue = queryParams.token ?? queryParams.jwt;
   const toReturn = {
     activated: false,
     // This should set the cookie and then re-run the middleware (without query params).
@@ -342,7 +343,7 @@ export const useJWTQueryParam: MiddlewareHook = async (req) => {
             'Set-Cookie': [generateCookieString('jwt', jwtValue, (86400 * 7).toString())],
           },
         })
-      : NextResponse.redirect(req.cookies.get('href')?.value ?? process.env.APP_URI ?? '', {
+      : NextResponse.redirect(req.cookies.get('href')?.value ?? process.env.APP_URI, {
           // @ts-expect-error NextJS' types are wrong.
           headers: {
             'Set-Cookie': [

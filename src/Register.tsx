@@ -6,7 +6,7 @@ import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import { type CookieValueTypes, deleteCookie, getCookie, } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import { type ReactNode, type SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { type ChangeEvent, type ReactNode, type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { ReCAPTCHA } from 'react-google-recaptcha';
 import AuthCard from './AuthCard';
 import { useAssertion } from './lib/assert';
@@ -58,7 +58,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
           console.error(exception);
           return exception.response;
         });
-      if (registerResponse && (registerResponse.status === 200 || registerResponse.status === 201)) {
+      if (registerResponse !== null && registerResponse !== undefined && (registerResponse.status === 200 || registerResponse.status === 201)) {
         void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
         void deleteCookie('team', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       }
@@ -69,18 +69,18 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     }
 
     // TODO Check for status 418 which is app disabled by admin.
-    setResponseMessage(registerResponseData?.detail ?? '');
+    setResponseMessage(registerResponseData.detail ?? '');
     const loginParams: string[] = [];
-    if (registerResponseData?.otp_uri) {
+    if (registerResponseData.otp_uri) {
       loginParams.push(`otp_uri=${registerResponseData.otp_uri}`);
     }
-    if (registerResponseData?.verify_email) {
+    if (registerResponseData.verify_email) {
       loginParams.push(`verify_email=true`);
     }
-    if (registerResponseData?.verify_sms) {
+    if (registerResponseData.verify_sms) {
       loginParams.push(`verify_sms=true`);
     }
-    if ([200, 201].includes(registerResponse?.status ?? 500)) {
+    if (registerResponse !== null && registerResponse !== undefined && [200, 201].includes(registerResponse.status)) {
       router.push(loginParams.length > 0 ? `/user/login?${loginParams.join('&')}` : '/user/login');
     }
   };
@@ -88,7 +88,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     // To-Do Assert that there are no dupes or empty strings in additionalFields (after trimming and lowercasing)
   }, []);
   useEffect(() => {
-    if (!submitted && formRef.current && authConfig.authModes.magical && additionalFields.length === 0) {
+    if (!submitted && formRef.current !== null && authConfig.authModes.magical && additionalFields.length === 0) {
       setSubmitted(true);
       formRef.current.requestSubmit();
     }
@@ -120,16 +120,18 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
 
   const inviteHeader = {
     title: 'Accept Invitation',
-    description: invite
-      ? `You've been invited to join ${teamName}. Please complete your registration to join the team.`
-      : `You've been invited to join a team. Please complete your registration to join the team.`,
+    description:
+      typeof invite === 'string' && invite !== ''
+        ? `You've been invited to join ${teamName}. Please complete your registration to join the team.`
+        : `You've been invited to join a team. Please complete your registration to join the team.`,
   };
+  const hasInvite = typeof invite === 'string' && invite !== '';
 
   return (
     <div className={additionalFields.length === 0 && authConfig.authModes.magical ? ' invisible' : ''}>
       <AuthCard
-        title={invite  ? inviteHeader.title : registerHeader.title}
-        description={invite ? inviteHeader.description : registerHeader.description}
+        title={hasInvite ? inviteHeader.title : registerHeader.title}
+        description={hasInvite ? inviteHeader.description : registerHeader.description}
         showBackButton
       >
         <form
@@ -143,7 +145,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
             type='hidden'
             id='email'
             name='email'
-            value={String(getCookie('email') ?? '').toLowerCase().trim()}
+            value={((getCookie('email') as string | undefined) ?? '').toLowerCase().trim()}
           />
           {authConfig.authModes.basic && (
             <>
@@ -155,7 +157,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
                 type='password'
                 autoFocus={authConfig.authModes.basic}
                 required
-                onChange={(e) => {
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setPasswords((prev) => ({ ...prev, password: e.target.value }));
                   setPasswordsMatch(e.target.value === passwords.passwordAgain);
                 }}
@@ -167,7 +169,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
                 name='password-again'
                 type='password'
                 required
-                onChange={(e) => {
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setPasswords((prev) => ({ ...prev, passwordAgain: e.target.value }));
                   setPasswordsMatch(e.target.value === passwords.password);
                 }}
@@ -204,9 +206,9 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
             </div>
           )}
           <Button type='submit' disabled={authConfig.authModes.basic && !passwordsMatch}>
-            {invite ? 'Accept Invitation' : 'Register'}
+            {hasInvite ? 'Accept Invitation' : 'Register'}
           </Button>
-          {responseMessage && <AuthCard.ResponseMessage>{responseMessage}</AuthCard.ResponseMessage>}
+          {responseMessage !== '' && <AuthCard.ResponseMessage>{responseMessage}</AuthCard.ResponseMessage>}
         </form>
         {/* {invite && <OAuth />} */}
       </AuthCard>

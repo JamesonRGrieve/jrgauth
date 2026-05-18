@@ -84,7 +84,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: { id: string; nam
   const [email, setEmail] = useState('');
   const [roleId, setRoleId] = useState(ROLES[1].id);
   const [roles, setRoles] = useState(ROLES);
-  const { toast } = useToast();
+  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
 
   const params = useParams();
   const { id } = params;

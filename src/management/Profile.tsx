@@ -3,7 +3,9 @@
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
-import { toast } from '@jgrieve/dynamic-form/hooks/useToast';
+import { toast as toastUntyped } from '@jgrieve/dynamic-form/hooks/useToast';
+
+const toast = toastUntyped as (args: { title: string; description: string; variant?: string }) => void;
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import type { CellContext, Column, ColumnDef } from '@tanstack/react-table';
@@ -130,7 +132,7 @@ export const Profile = ({
             return userProfile[key];
           }
         }
-      } catch (_e) {
+      } catch {
         // ignore
       }
       return undefined;
@@ -152,7 +154,7 @@ export const Profile = ({
         return;
       }
       const existingTZ = readUserField('timezone');
-      if (existingTZ !== undefined && existingTZ !== null && String(existingTZ).length > 0) {
+      if (typeof existingTZ === 'string' && existingTZ.length > 0) {
         return;
       }
 
@@ -175,16 +177,17 @@ export const Profile = ({
           );
           await mutate(userDataSWRKey);
           await mutate('/user');
-        } catch (_err) {
+        } catch {
           // failed to persist timezone; swallow silently
         }
       })();
-    } catch (_err) {
+    } catch {
       // swallow errors
     }
   }, [data, authConfig, userUpdateEndpoint, userDataSWRKey, readUserField]);
 
   const user_teams_columns: ColumnDef<Team>[] = useMemo(() => {
+    // eslint-disable-next-line react/no-unstable-nested-components -- closes over router; memoized via useMemo
     const TeamActionCell = ({ row }: CellContext<Team, unknown>): ReactElement => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -234,8 +237,7 @@ export const Profile = ({
         <p>Loading Current Data...</p>
       ) : error !== undefined ? (
         <p>{error.message}</p>
-      ) : data === undefined ||
-        data.missing_requirements === undefined ||
+      ) : data?.missing_requirements === undefined ||
         Object.keys(data.missing_requirements).length === 0 ? (
         <DynamicForm
           fields={{
@@ -263,8 +265,10 @@ export const Profile = ({
                 }
                 const first = readUserField('first_name');
                 const last = readUserField('last_name');
-                if ((first !== undefined && first !== null) || (last !== undefined && last !== null)) {
-                  return `${String(first ?? '')} ${String(last ?? '')}`.trim();
+                const firstStr = typeof first === 'string' ? first : '';
+                const lastStr = typeof last === 'string' ? last : '';
+                if (firstStr !== '' || lastStr !== '') {
+                  return `${firstStr} ${lastStr}`.trim();
                 }
                 return '';
               })(),
@@ -276,8 +280,8 @@ export const Profile = ({
               // Use server value if present; otherwise fall back to browser timezone or UTC.
               value: (() => {
                 const tz = readUserField('timezone');
-                if (tz !== undefined && tz !== null && String(tz).length > 0) {
-                  return String(tz);
+                if (typeof tz === 'string' && tz.length > 0) {
+                  return tz;
                 }
                 return typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function'
                   ? Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -363,7 +367,7 @@ export const Profile = ({
                   <p className='text-xl'>Please check your email and verify it using the link provided.</p>
                 )}
                 {verifySms !== undefined && verifySms !== null && verifySms !== false && (
-                  <VerifySMS verifiedCallback={async () => mutate(userDataSWRKey)} />
+                  <VerifySMS verifiedCallback={() => { void mutate(userDataSWRKey); }} />
                 )}
                 {hasOther && (
                   <DynamicForm
@@ -401,7 +405,7 @@ export const Profile = ({
                         .missing_requirements;
                       if (newReqs !== undefined && Object.keys(newReqs).length === 0) {
                         const redirect = (getCookie('href') as string | undefined) ?? '/';
-                        deleteCookie('href');
+                        void deleteCookie('href');
                         router.push(redirect);
                       }
                     }}

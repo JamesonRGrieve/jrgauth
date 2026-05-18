@@ -55,12 +55,13 @@ export default function Login({
         })
         .catch((exception: AxiosError) => exception.response);
 
-      if (response) {
+      if (response !== undefined) {
+        const responseData = response.data as { detail?: string; token?: string };
         if (response.status !== 200) {
-          setResponseMessage(response.data.detail);
+          setResponseMessage(responseData.detail ?? '');
         } else {
-          const token = response.data.token;
-          if (token) {
+          const token = responseData.token;
+          if (token !== undefined && token !== '') {
             // Store the token and redirect
             // biome-ignore lint/suspicious/noDocumentCookie: CookieStore API not widely available; document.cookie is required for legacy compatibility
             document.cookie = `jwt=${token}; path=/`;
@@ -77,9 +78,11 @@ export default function Login({
               return;
             }
             const hrefCookie = await getCookie('href');
-            const href2 = process.env.NEXT_PUBLIC_APP_URI
-              ? `${process.env.NEXT_PUBLIC_APP_URI}/user`
-              : `${window.location.protocol}//${window.location.hostname}/user`;
+            const appUri = process.env.NEXT_PUBLIC_APP_URI;
+            const href2 =
+              appUri !== undefined && appUri !== ''
+                ? `${appUri}/user`
+                : `${window.location.protocol}//${window.location.hostname}/user`;
             window.location.href = typeof hrefCookie === 'string' && hrefCookie !== '' ? hrefCookie : href2;
           } else {
             setResponseMessage('Login failed: No token received');
@@ -99,7 +102,7 @@ export default function Login({
         }}
         className='flex flex-col gap-4'
       >
-        {otp_uri && (
+        {typeof otp_uri === 'string' && otp_uri !== '' && (
           <div className='flex flex-col max-w-xs gap-2 mx-auto text-center'>
             <div
               style={{
@@ -110,7 +113,7 @@ export default function Login({
               <QRCode
                 size={256}
                 style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-                value={otp_uri ?? ''}
+                value={otp_uri}
                 viewBox={`0 0 256 256`}
               />
             </div>
@@ -121,7 +124,7 @@ export default function Login({
             <CopyButton content={otp_uri} label={'Copy Link'} />
           </div>
         )}
-        <input type='hidden' id='email' name='email' value={String(getCookie('email') ?? '')} />
+        <input type='hidden' id='email' name='email' value={(getCookie('email') as string | undefined) ?? ''} />
         {authConfig.authModes.basic && (
           <>
             <Label htmlFor='password'>Password</Label>
@@ -135,20 +138,20 @@ export default function Login({
             />
           </>
         )}
-        {otp_uri && (
+        {typeof otp_uri === 'string' && otp_uri !== '' && (
           <>
             <Label htmlFor='token'>Multi-Factor Code</Label>
             <Input
               id='token'
               placeholder='Enter your 6 digit code'
-              autoFocus={otp_uri}
+              autoFocus={Boolean(otp_uri)}
               name='token'
               autoComplete='one-time-code'
             />
             <MissingAuthenticator />
           </>
         )}
-        {authConfig.recaptchaSiteKey && (
+        {typeof authConfig.recaptchaSiteKey === 'string' && authConfig.recaptchaSiteKey !== '' && (
           <div className='my-3'>
             <ReCAPTCHA
               sitekey={authConfig.recaptchaSiteKey}
@@ -159,8 +162,8 @@ export default function Login({
           </div>
         )}
 
-        <Button type='submit'>{responseMessage ? 'Continue' : 'Login'}</Button>
-        {responseMessage && <AuthCard.ResponseMessage>{responseMessage}</AuthCard.ResponseMessage>}
+        <Button type='submit'>{responseMessage !== '' ? 'Continue' : 'Login'}</Button>
+        {responseMessage !== '' && <AuthCard.ResponseMessage>{responseMessage}</AuthCard.ResponseMessage>}
       </form>
     </AuthCard>
   );

@@ -26,18 +26,24 @@ export interface Quotas {
   };
 }
 
-export default function OrganizationalUnit({
+function OrganizationalUnitPage({
   searchParams,
   organizationalUnitEndpoint = '/ou',
 }: { searchParams: Record<string, string | string[] | undefined> } & OrganizationalUnitProps): ReactNode {
   const authConfig = useAuthentication();
-  useSWR<OrganizationalUnit[]>(`/ou/${searchParams.ou}`, async () => {
-    const response = await axios.get(`${authConfig.authServer}${organizationalUnitEndpoint}`, {
+  const ouParam = searchParams.ou;
+  const ouKey = Array.isArray(ouParam) ? ouParam.join(',') : (ouParam ?? '');
+  useSWR<OrganizationalUnit[]>(`/ou/${ouKey}`, async () => {
+    const jwtCookie = getCookie('jwt');
+    const jwt = typeof jwtCookie === 'string' ? jwtCookie : '';
+    const response = await axios.get<OrganizationalUnit[]>(`${authConfig.authServer}${organizationalUnitEndpoint}`, {
       headers: {
-        Authorization: `Bearer ${getCookie('jwt')}`,
+        Authorization: `Bearer ${jwt}`,
       },
     });
-    return response.data.sort((a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name));
+    return response.data.sort((a, b) => a.name.localeCompare(b.name));
   });
   return null;
 }
+
+export default OrganizationalUnitPage;
