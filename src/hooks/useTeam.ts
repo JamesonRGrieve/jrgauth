@@ -1,6 +1,6 @@
 import log from '../lib/log';
 import 'zod2gql';
-import { getCookie, setCookie } from 'cookies-next';
+import { getCookie, setCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
 import z, { GQLType } from 'zod2gql';
 import { chainMutations, createGraphQLClient } from './lib';
@@ -24,11 +24,11 @@ export function useTeams(): SWRResponse<Team[]> {
         const data= response.teams.filter((team)=>team.id !== SYSTEM_TEAM_ID);
         if (response.teams) {
           if (!getCookie('auth-team') || !data.some((team: Team) => team.id === getCookie('auth-team'))) {
-            setCookie('auth-team', data[0].id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+            void setCookie('auth-team', data[0].id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
           }
         }
         return data || [];
-      } catch (error) {
+      } catch (error: unknown) {
         log(['GQL useTeams() Error', error], {
           client: 1,
         });
@@ -52,7 +52,7 @@ export function useTeam(id?: string): SWRResponse<Team | null> {
   }
   const swrHook = useSWR<Team | null>(
     [`/team?id=${id}`, teams, getCookie('jwt')],
-    async (): Promise<Team | null> => {
+    (): Team | null => {
       if (!getCookie('jwt')) {
         return null;
       }
@@ -61,12 +61,13 @@ export function useTeam(id?: string): SWRResponse<Team | null> {
         if (id) {
           return teams?.find((team) => team.id === id) || null;
         }
-      } catch (error) {
+      } catch (error: unknown) {
         log(['GQL useTeam() Error', error], {
           client: 3,
         });
         return null;
       }
+      return null;
     },
     { fallbackData: null },
   );

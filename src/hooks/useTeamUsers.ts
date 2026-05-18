@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
 
 /**

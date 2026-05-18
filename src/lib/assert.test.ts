@@ -8,10 +8,10 @@ describe('assert', () => {
   });
 
   it('throws an Error when the predicate is false', () => {
-    expect(() => assert(false, 'boom')).toThrowError(/Assertion Failure: boom/);
+    expect(() => assert(false, 'boom')).toThrow(/Assertion Failure: boom/);
   });
 
   it('uses the default message when none provided', () => {
-    expect(() => assert(false)).toThrowError(/Assertion Failure: No message provided\./);
+    expect(() => assert(false)).toThrow(/Assertion Failure: No message provided\./);
   });
 });

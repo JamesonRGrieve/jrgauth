@@ -6,7 +6,7 @@ import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
 import type { Table } from '@tanstack/react-table';
 import { Filter } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 interface FilterState {
@@ -59,7 +59,7 @@ export function DataTableFilter<TData>({ table }: { table: Table<TData> }) {
             <Label htmlFor='column' className='text-right'>
               Column
             </Label>
-            <Select onValueChange={(value) => updateFilter('column', value)} value={filter.column}>
+            <Select onValueChange={(value: string) => updateFilter('column', value)} value={filter.column}>
               <SelectTrigger className='col-span-3'>
                 <SelectValue placeholder='Select Column' />
               </SelectTrigger>
@@ -80,7 +80,7 @@ export function DataTableFilter<TData>({ table }: { table: Table<TData> }) {
             <Input
               type='text'
               value={filter.value}
-              onChange={(e) => updateFilter('value', e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => updateFilter('value', e.target.value)}
               placeholder='Enter filter value'
               className='col-span-3'
             />

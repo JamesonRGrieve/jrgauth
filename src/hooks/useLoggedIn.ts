@@ -1,6 +1,6 @@
 'use client';
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -21,13 +21,13 @@ export default function useLoggedIn() {
         } else {
           setIsLoggedIn(false);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error checking authentication:', error);
         setIsLoggedIn(false);
       }
     };
 
-    checkAuth();
+    void checkAuth();
   }, []);
 
   return { isLoggedIn };

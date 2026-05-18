@@ -1,6 +1,6 @@
 import log from '../lib/log';
 import 'zod2gql';
-import { getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
 import { createGraphQLClient } from './lib';
 import { type User, UserSchema } from './z';
@@ -27,7 +27,7 @@ export function useUser(): SWRResponse<User | null> {
           client: 3,
         });
         return UserSchema.parse(response.user);
-      } catch (error) {
+      } catch (error: unknown) {
         log(['GQL useUser() Error', error], {
           client: 1,
         });

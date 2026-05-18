@@ -18,6 +18,6 @@ describe('useTeamUsers (surface)', () => {
 
   it('returns an SWRResponse over an array shape', () => {
     type R = ReturnType<typeof useTeamUsers>;
-    expectTypeOf<R>().toMatchTypeOf<SWRResponse<unknown[]>>();
+    expectTypeOf<R>().toExtend<SWRResponse<unknown[]>>();
   });
 });

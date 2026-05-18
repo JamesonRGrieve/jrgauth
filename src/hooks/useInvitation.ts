@@ -1,7 +1,7 @@
 import log from '../lib/log';
 import 'zod2gql';
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
 import type { Invitation, } from './z';
 /**
@@ -16,7 +16,7 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
     async (): Promise<Invitation[]> => {
       if (!teamId) {return [];}
       try {
-        const response = await axios.get(
+        const response = await axios.get<{ invitations?: Invitation[] }>(
           `${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/invitation`,
           {
             headers: {
@@ -27,7 +27,7 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
         );
         // Adjust this if your API response structure is different
         return response.data?.invitations || [];
-      } catch (error) {
+      } catch (error: unknown) {
         log(['REST useInvitationsByUserId() Error', error], { client: 1 });
         return [];
       }
