@@ -87,7 +87,7 @@ export const ConnectedServices = () => {
 
       setConnectedServices(allServices);
       setError(null);
-    } catch (err) {
+    } catch (err: unknown) {
       const e = err as OAuthErrorLike;
       if (e.response?.status === 404) {
         setError(null);
@@ -113,7 +113,7 @@ export const ConnectedServices = () => {
       });
       await fetchConnections();
       setDisconnectDialog({ isOpen: false, provider: null });
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error disconnecting service:', err);
       setError('Failed to disconnect service');
     }
@@ -141,7 +141,7 @@ export const ConnectedServices = () => {
         },
       );
       await fetchConnections();
-    } catch (err) {
+    } catch (err: unknown) {
       await fetchConnections();
       console.error('OAuth error:', err);
     }

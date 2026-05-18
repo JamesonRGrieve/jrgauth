@@ -77,7 +77,7 @@ export const useAuth: MiddlewareHook = async (req) => {
               email: decodeURIComponent(queryParams.email),
             },
           });
-        } catch (exception) {
+        } catch (exception: unknown) {
           const axiosError = exception as AxiosError;
           if (axiosError.response !== undefined && axiosError.response.status === 409) {
             // User exists
@@ -213,7 +213,7 @@ export const useAuth: MiddlewareHook = async (req) => {
               },
             });
           }
-        } catch (exception) {
+        } catch (exception: unknown) {
           if (exception instanceof TypeError && exception.cause instanceof AggregateError) {
             console.error(
               `Invalid token. Failed with TypeError>AggregateError. Logging out and redirecting to authentication at ${process.env.AUTH_URI}. ${exception.message} Exceptions to follow.`,
@@ -322,7 +322,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
           headers: headers,
         }),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Middleware OAuth2 error:', error);
     }
   }

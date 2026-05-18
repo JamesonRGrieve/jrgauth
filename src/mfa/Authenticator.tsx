@@ -58,7 +58,7 @@ export default function VerifyAuthenticator({
           token: 'TOTP verification failed.',
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error verifying TOTP:', error);
       setErrors({
         ...errors,

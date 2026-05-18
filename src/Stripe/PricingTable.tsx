@@ -5,7 +5,7 @@ import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { LuCheck as CheckIcon, LuMinus as MinusIcon } from 'react-icons/lu';
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
@@ -163,14 +163,14 @@ export function PricingCard({
         {getCookie('jwt') ? (
           <>
             <Label htmlFor='quantity'>Initial Users</Label>
-            <Input id='quantity' type='number' value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} />
+            <Input id='quantity' type='number' value={quantity} onChange={(e: ChangeEvent<HTMLInputElement>) => setQuantity(Number(e.target.value))} />
 
             <Button
               className='w-full text-foreground'
               variant={'outline'}
               onClick={async () => {
-                const checkout_uri = (
-                  await axios.post(
+                const checkout_uri: string = (
+                  await axios.post<{ detail: string }>(
                     `${process.env.NEXT_PUBLIC_API_URI}/v1/checkout`,
                     {
                       cart: [

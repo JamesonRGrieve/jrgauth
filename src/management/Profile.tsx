@@ -340,7 +340,7 @@ export const Profile = ({
                 title: 'Profile updated',
                 description: 'Your profile was updated successfully.',
               });
-            } catch (err) {
+            } catch (err: unknown) {
               const message = err instanceof Error ? err.message : 'There was an error updating your profile.';
               toast({
                 title: 'Profile update failed',

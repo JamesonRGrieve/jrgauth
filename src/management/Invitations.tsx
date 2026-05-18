@@ -121,7 +121,7 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[
         const data = convertInvitationsData(response.data.invitations ?? [], userId);
 
         return data;
-      } catch (error) {
+      } catch (error: unknown) {
         log(['REST useInvitationsByUserId() Error', error], {
           client: 3,
         });

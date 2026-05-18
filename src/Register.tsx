@@ -43,18 +43,20 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     if (typeof invitationCookie === 'string' && invitationCookie !== '') {
       formData['invitation_code'] = invitationCookie;
     }
-    let registerResponse: AxiosResponse | null | undefined;
-    let registerResponseData:
-      | { detail?: string; otp_uri?: string; verify_email?: boolean; verify_sms?: boolean }
-      | undefined;
+    type RegisterPayload = { detail?: string; otp_uri?: string; verify_email?: boolean; verify_sms?: boolean };
+    let registerResponse: AxiosResponse<RegisterPayload> | null | undefined;
+    let registerResponseData: RegisterPayload | undefined;
     try {
       registerResponse = await axios
-        .post(`${authConfig.authServer}${userRegisterEndpoint}`, {
-          user: {
-            ...formData,
+        .post<RegisterPayload>(
+          `${authConfig.authServer}${userRegisterEndpoint}`,
+          {
+            user: {
+              ...formData,
+            },
           },
-        })
-        .catch((exception: AxiosError) => {
+        )
+        .catch((exception: AxiosError<RegisterPayload>) => {
           console.error(exception);
           return exception.response;
         });
@@ -62,8 +64,8 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
         void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
         void deleteCookie('team', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       }
-      registerResponseData = registerResponse?.data as typeof registerResponseData;
-    } catch (exception) {
+      registerResponseData = registerResponse?.data;
+    } catch (exception: unknown) {
       console.error(exception);
       registerResponse = null;
     }

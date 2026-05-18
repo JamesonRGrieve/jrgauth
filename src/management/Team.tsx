@@ -305,7 +305,7 @@ export const RenameDialog = ({
       if (onTeamRenamed !== undefined) {
         onTeamRenamed(newName);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       const err = error as ApiError;
       toast({
         title: 'Error',
@@ -412,7 +412,7 @@ export const CreateDialog = ({
         description: 'Team created successfully!',
       });
       onTeamCreated(response.data.team?.id);
-    } catch (error) {
+    } catch (error: unknown) {
       const err = error as ApiError;
       toast({
         title: 'Error',
@@ -461,7 +461,7 @@ export const CreateDialog = ({
                 name='teamName'
                 autoFocus
               />
-              <Select value={newParent} onValueChange={(value) => setNewParent(value)}>
+              <Select value={newParent} onValueChange={(value: string) => setNewParent(value)}>
                 <SelectTrigger>
                   <SelectValue placeholder='(Optional) Select a Parent Team' />
                 </SelectTrigger>

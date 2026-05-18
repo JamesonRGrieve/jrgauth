@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 import log from './log';
 
 describe('log', () => {
-  let spy: ReturnType<typeof vi.spyOn>;
+  let spy: MockInstance<(...args: unknown[]) => void>;
 
   beforeEach(() => {
     spy = vi.spyOn(console, 'log').mockImplementation(() => {

@@ -48,7 +48,7 @@ export default function Login({
       const encodedAuth = `Basic ${Buffer.from(authString, 'utf-8').toString('base64')}`;
 
       const response = await axios
-        .post(`${authConfig.authServer}${userLoginEndpoint}`, null, {
+        .post<{ detail?: string; token?: string }>(`${authConfig.authServer}${userLoginEndpoint}`, null, {
           headers: {
             Authorization: encodedAuth,
           },
@@ -89,7 +89,7 @@ export default function Login({
           }
         }
       }
-    } catch (exception) {
+    } catch (exception: unknown) {
       console.error(exception);
     }
   };

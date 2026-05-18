@@ -194,7 +194,7 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: { id: string; nam
         setIsInviteDialogOpen(false);
         void inviteMutate();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       const err = error as ApiError;
       const detail = err.response?.data?.detail;
       toast({

@@ -66,7 +66,7 @@ export default function Identify({
       });
       void setCookie('email', formData.email, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       router.push(`${pathname}${redirectToOnNotExists}`);
-    } catch (exception) {
+    } catch (exception: unknown) {
       const axiosError = exception as AxiosError;
       if (axiosError.response?.status === 409) {
         // User exists

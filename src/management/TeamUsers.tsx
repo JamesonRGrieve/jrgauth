@@ -13,7 +13,7 @@ import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { Mail, MoreHorizontal } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { DataTable } from '../components/data/data-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { Badge } from '../components/ui/badge';
@@ -458,7 +458,7 @@ export const Team = () => {
                         description: 'The invitation has been cancelled.',
                       });
                       void mutateInvitations();
-                    } catch (error) {
+                    } catch (error: unknown) {
                       const err = error as ApiError;
                       toast({
                         title: 'Error Cancelling Invitation',
@@ -553,7 +553,7 @@ export function InviteUsers() {
         }
         setEmail('');
       }
-    } catch (error) {
+    } catch (error: unknown) {
       const err = error as ApiError;
       const message = err.response?.data?.detail ?? 'Failed to send invitation';
       toast({
@@ -575,7 +575,7 @@ export function InviteUsers() {
           type='email'
           placeholder='user@example.com'
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           className='w-full'
         />
       </div>
