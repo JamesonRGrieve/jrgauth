@@ -1,34 +1,13 @@
 {
   "componentsTotal": 53,
   "sourcesTotal": 72,
-  "componentsMissingStoriesCount": 12,
-  "sourcesMissingTestsCount": 31,
-  "componentsMissingStories": [
-    "src/Login.tsx",
-    "src/Register.tsx",
-    "src/Router.tsx",
-    "src/components/data/data-table-filter.tsx",
-    "src/management/Account.tsx",
-    "src/management/ConnectedServices.tsx",
-    "src/management/Invitations.tsx",
-    "src/management/Invite.tsx",
-    "src/management/Profile.tsx",
-    "src/management/Team.tsx",
-    "src/management/TeamUsers.tsx",
-    "src/management/index.tsx"
-  ],
+  "componentsMissingStoriesCount": 0,
+  "sourcesMissingTestsCount": 21,
+  "componentsMissingStories": [],
   "sourcesMissingTests": [
-    "src/Identify.tsx",
-    "src/Login.tsx",
-    "src/Register.tsx",
-    "src/Router.tsx",
-    "src/Stripe/PricingTable.tsx",
-    "src/Subscribe.tsx",
     "src/auth.middleware.ts",
-    "src/components/data/data-table-column-header.tsx",
     "src/components/data/data-table-faceted-filter.tsx",
     "src/components/data/data-table-filter.tsx",
-    "src/components/data/data-table-pagination.tsx",
     "src/components/data/data-table-toolbar.tsx",
     "src/components/data/data-table-view-options.tsx",
     "src/components/data/data-table.tsx",
@@ -44,10 +23,8 @@
     "src/management/Profile.tsx",
     "src/management/Team.tsx",
     "src/management/TeamUsers.tsx",
-    "src/management/index.tsx",
     "src/mfa/Authenticator.tsx",
     "src/mfa/EMail.tsx",
-    "src/mfa/MissingAuthenticator.tsx",
-    "src/oauth2/OAuth.tsx"
+    "src/mfa/MissingAuthenticator.tsx"
   ]
 }
