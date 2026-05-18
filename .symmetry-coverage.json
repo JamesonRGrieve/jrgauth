@@ -1,22 +1,13 @@
 {
   "componentsTotal": 53,
   "sourcesTotal": 72,
-  "componentsMissingStoriesCount": 22,
-  "sourcesMissingTestsCount": 41,
+  "componentsMissingStoriesCount": 12,
+  "sourcesMissingTestsCount": 31,
   "componentsMissingStories": [
-    "src/AuthenticationContext.tsx",
     "src/Login.tsx",
-    "src/NavMenu.tsx",
-    "src/OU.tsx",
     "src/Register.tsx",
     "src/Router.tsx",
-    "src/components/data/data-table-column-header.tsx",
-    "src/components/data/data-table-faceted-filter.tsx",
     "src/components/data/data-table-filter.tsx",
-    "src/components/data/data-table-pagination.tsx",
-    "src/components/data/data-table-toolbar.tsx",
-    "src/components/data/data-table-view-options.tsx",
-    "src/components/data/data-table.tsx",
     "src/management/Account.tsx",
     "src/management/ConnectedServices.tsx",
     "src/management/Invitations.tsx",
@@ -24,18 +15,11 @@
     "src/management/Profile.tsx",
     "src/management/Team.tsx",
     "src/management/TeamUsers.tsx",
-    "src/management/index.tsx",
-    "src/oauth2/OAuth.tsx"
+    "src/management/index.tsx"
   ],
   "sourcesMissingTests": [
-    "src/AuthCard.tsx",
-    "src/AuthenticationContext.tsx",
-    "src/ErrorPage.tsx",
     "src/Identify.tsx",
     "src/Login.tsx",
-    "src/Logout.tsx",
-    "src/NavMenu.tsx",
-    "src/OU.tsx",
     "src/Register.tsx",
     "src/Router.tsx",
     "src/Stripe/PricingTable.tsx",
@@ -55,10 +39,8 @@
     "src/hooks/z.ts",
     "src/management/Account.tsx",
     "src/management/ConnectedServices.tsx",
-    "src/management/Gravatar.tsx",
     "src/management/Invitations.tsx",
     "src/management/Invite.tsx",
-    "src/management/Notifications.tsx",
     "src/management/Profile.tsx",
     "src/management/Team.tsx",
     "src/management/TeamUsers.tsx",
@@ -66,8 +48,6 @@
     "src/mfa/Authenticator.tsx",
     "src/mfa/EMail.tsx",
     "src/mfa/MissingAuthenticator.tsx",
-    "src/mfa/SMS.tsx",
-    "src/oauth2/OAuth.tsx",
-    "src/oauth2/OAuthProviders.tsx"
+    "src/oauth2/OAuth.tsx"
   ]
 }
