@@ -18,7 +18,7 @@ interface OAuth2Provider {
   icon: ReactNode;
 }
 
-const oAuth2Providers = oAuth2ProvidersRaw as unknown as Record<string, OAuth2Provider>;
+const oAuth2Providers = oAuth2ProvidersRaw as Record<string, OAuth2Provider>;
 
 interface ConnectedService {
   provider: string;
