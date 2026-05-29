@@ -19,14 +19,19 @@ type DisclosureProviderProps = {
   variants?: { expanded: Variant; collapsed: Variant };
 };
 
-function DisclosureProvider({ children, open: openProp, onOpenChange, variants }: DisclosureProviderProps) {
+function DisclosureProvider({
+  children,
+  open: openProp,
+  onOpenChange,
+  variants,
+}: DisclosureProviderProps): React.JSX.Element {
   const [internalOpenValue, setInternalOpenValue] = useState<boolean>(openProp);
 
   useEffect(() => {
     setInternalOpenValue(openProp);
   }, [openProp]);
 
-  const toggle = () => {
+  const toggle = (): void => {
     const newOpen = !internalOpenValue;
     setInternalOpenValue(newOpen);
     if (onOpenChange) {
@@ -47,7 +52,7 @@ function DisclosureProvider({ children, open: openProp, onOpenChange, variants }
   );
 }
 
-function useDisclosure() {
+function useDisclosure(): DisclosureContextType {
   const context = useContext(DisclosureContext);
   if (!context) {
     throw new Error('useDisclosure must be used within a DisclosureProvider');
@@ -71,7 +76,7 @@ export function Disclosure({
   className,
   transition,
   variants,
-}: DisclosureProps) {
+}: DisclosureProps): React.JSX.Element {
   return (
     <MotionConfig transition={transition}>
       <div className={className}>
@@ -84,7 +89,13 @@ export function Disclosure({
   );
 }
 
-export function DisclosureTrigger({ children, className }: { children: React.ReactNode; className?: string }) {
+export function DisclosureTrigger({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}): React.JSX.Element {
   const { toggle, open } = useDisclosure();
 
   return (
@@ -111,7 +122,13 @@ export function DisclosureTrigger({ children, className }: { children: React.Rea
   );
 }
 
-export function DisclosureContent({ children, className }: { children: React.ReactNode; className?: string }) {
+export function DisclosureContent({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}): React.JSX.Element {
   const { open, variants } = useDisclosure();
   const uniqueId = useId();
 

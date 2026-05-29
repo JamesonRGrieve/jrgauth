@@ -4,11 +4,11 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
 
-const TooltipProvider = ({ children }: { children: React.ReactNode }) => {
+const TooltipProvider = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
   return <TooltipPrimitive.Provider>{children}</TooltipPrimitive.Provider>;
 };
 
-const Tooltip = ({ delayDuration = 600, ...props }: TooltipPrimitive.TooltipProps) => (
+const Tooltip = ({ delayDuration = 600, ...props }: TooltipPrimitive.TooltipProps): React.JSX.Element => (
   <TooltipPrimitive.Root delayDuration={delayDuration} {...props} />
 );
 
@@ -40,7 +40,7 @@ type TooltipBasicProps = React.PropsWithChildren & {
   side?: 'top' | 'right' | 'bottom' | 'left';
 };
 
-const TooltipBasic = ({ title, side, children }: TooltipBasicProps) => (
+const TooltipBasic = ({ title, side, children }: TooltipBasicProps): React.JSX.Element => (
   <Tooltip delayDuration={600}>
     <TooltipTrigger asChild>{children}</TooltipTrigger>
     <TooltipContent side={side}>{title}</TooltipContent>

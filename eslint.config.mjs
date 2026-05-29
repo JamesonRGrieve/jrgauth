@@ -308,6 +308,9 @@ export default [
           builtinGlobals: true,
           hoist: 'all',
           allow: [
+            // `import * as React` is the standard namespace import; React is an
+            // ambient global via the JSX runtime, so this is never a real shadow.
+            'React',
             'event',
             'name',
             'location',
