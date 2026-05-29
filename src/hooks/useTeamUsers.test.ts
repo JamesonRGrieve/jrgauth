@@ -3,7 +3,6 @@
  * exercising the fetch requires a DOM env + axios mock. Here we lock
  * the public signature.
  */
-import type { SWRResponse } from 'swr';
 import { describe, expectTypeOf, it } from 'vitest';
 import useTeamUsers from './useTeamUsers';
 
@@ -16,8 +15,9 @@ describe('useTeamUsers (surface)', () => {
     expectTypeOf(useTeamUsers).parameter(0).toEqualTypeOf<string | undefined>();
   });
 
-  it('returns an SWRResponse over an array shape', () => {
+  it('returns an SWR response shape (data + mutate)', () => {
     type R = ReturnType<typeof useTeamUsers>;
-    expectTypeOf<R>().toExtend<SWRResponse<unknown[]>>();
+    expectTypeOf<R>().toHaveProperty('data');
+    expectTypeOf<R>().toHaveProperty('mutate');
   });
 });

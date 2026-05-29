@@ -80,7 +80,7 @@ type PricingCardProps = Product & {
 };
 export default function PricingTable() {
   // const [isAnnual, setIsAnnual] = useState(false);
-  const { data: pricingData } = useProducts();
+  const { data: pricingData = [] } = useProducts();
   return (
     <>
       {/* <div className='flex items-center justify-center'>

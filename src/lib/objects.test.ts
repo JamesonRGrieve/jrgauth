@@ -28,8 +28,11 @@ describe('deepMergeJSON', () => {
   it('deep-copies input so callers cannot mutate originals through the result', () => {
     const src = { nested: { value: 1 } };
     const merged = deepMergeJSON(src);
-    merged.nested.value = 999;
-    expect(src.nested.value).toBe(1);
+    // A deep copy clones nested objects, so the nested references must differ
+    // (mutating through `merged` therefore cannot reach `src`).
+    expect(merged).not.toBe(src);
+    expect(merged.nested).not.toBe(src.nested);
+    expect(merged).toEqual(src);
   });
 
   it('returns an empty object when called with no arguments', () => {

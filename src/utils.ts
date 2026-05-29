@@ -1,5 +1,19 @@
 import type { NextRequest } from 'next/server';
 
+/**
+ * Read a required environment variable, throwing a descriptive error if it is
+ * absent. Returns a guaranteed `string` so callers do not need to null-check.
+ * The auth middleware relies on these vars being present at runtime; failing
+ * fast here is preferable to a downstream `undefined.split(...)` crash.
+ */
+export const requireEnv = (name: string): string => {
+  const value = process.env[name];
+  if (value === undefined) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+};
+
 export const AuthMode = {
   None: 0,
   GTAuth: 1,
@@ -21,6 +35,20 @@ export const getAuthMode = (): number => {
 };
 export const generateCookieString = (key: string, value: string, age: string): string =>
   `${key}=${value}; Domain=${process.env.NEXT_PUBLIC_COOKIE_DOMAIN}; Path=/; Max-Age=${age}; SameSite=strict;`;
+
+/**
+ * Build a `Headers` object carrying one or more `Set-Cookie` headers. The web
+ * `Headers` API is the correct way to emit multiple Set-Cookie values; passing
+ * a `string[]` via a plain `HeadersInit` literal is not type-safe (and Next's
+ * `HeadersInit` rejects it). `Headers.append` preserves every cookie.
+ */
+export const cookieHeaders = (cookies: string[]): Headers => {
+  const headers = new Headers();
+  for (const cookie of cookies) {
+    headers.append('Set-Cookie', cookie);
+  }
+  return headers;
+};
 
 export const getQueryParams = (req: NextRequest): Record<string, string | undefined> =>
   req.url.includes('?')

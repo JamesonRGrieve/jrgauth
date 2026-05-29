@@ -16,7 +16,7 @@
     "skipLibCheck": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "strictNullChecks": false, // TODO ratchet to zero and re-enable strict
+    "strictNullChecks": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,

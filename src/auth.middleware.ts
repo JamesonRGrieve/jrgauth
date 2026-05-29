@@ -1,6 +1,16 @@
 import axios, { type AxiosError } from 'axios';
 import { type NextRequest, NextResponse } from 'next/server';
-import { AuthMode, generateCookieString, getAuthMode, getJWT, getQueryParams, getRequestedURI, verifyJWT } from './utils';
+import {
+  AuthMode,
+  generateCookieString,
+  getAuthMode,
+  getJWT,
+  getQueryParams,
+  getRequestedURI,
+  cookieHeaders,
+  requireEnv,
+  verifyJWT,
+} from './utils';
 
 export type MiddlewareHook = (req: NextRequest) => Promise<{
   activated: boolean;
@@ -10,7 +20,7 @@ export type MiddlewareHook = (req: NextRequest) => Promise<{
 export const useAuth: MiddlewareHook = async (req) => {
   const toReturn = {
     activated: false,
-    response: NextResponse.redirect(new URL(process.env.AUTH_URI), { headers: {} }),
+    response: NextResponse.redirect(new URL(requireEnv('AUTH_URI')), { headers: {} }),
   };
   const requestedURI = getRequestedURI(req);
   const authMode = getAuthMode();
@@ -26,6 +36,7 @@ export const useAuth: MiddlewareHook = async (req) => {
     }
   } else if (authMode) {
     const queryParams = getQueryParams(req);
+    const authUri = requireEnv('AUTH_URI');
     if (requestedURI.endsWith('/user/logout')) {
       const response = NextResponse.redirect(new URL('/', req.url));
 
@@ -65,10 +76,10 @@ export const useAuth: MiddlewareHook = async (req) => {
       const cookieArray = [
         generateCookieString('email', queryParams.email, (86400).toString().toLowerCase()),
         generateCookieString('invitation', queryParams.code, (86400).toString()),
-        generateCookieString('team', queryParams.team.replaceAll('+', ' '), (86400).toString()),
+        generateCookieString('team', (queryParams.team ?? '').replaceAll('+', ' '), (86400).toString()),
       ];
       if (queryParams.company) {
-        cookieArray.push(generateCookieString('team_id', queryParams.team_id, (86400).toString()));
+        cookieArray.push(generateCookieString('team_id', queryParams.team_id ?? '', (86400).toString()));
       }
 
       try {
@@ -82,16 +93,12 @@ export const useAuth: MiddlewareHook = async (req) => {
         if (axiosError.response !== undefined && axiosError.response.status === 409) {
           // User exists
           toReturn.response = NextResponse.redirect(`${process.env.AUTH_URI}/login`, {
-            headers: {
-              'Set-Cookie': cookieArray,
-            },
+            headers: cookieHeaders(cookieArray),
           });
         } else {
           // User doesn't exist
           toReturn.response = NextResponse.redirect(`${process.env.AUTH_URI}/register`, {
-            headers: {
-              'Set-Cookie': cookieArray,
-            },
+            headers: cookieHeaders(cookieArray),
           });
         }
       }
@@ -105,11 +112,9 @@ export const useAuth: MiddlewareHook = async (req) => {
       // });
     }
 
-    if (
-      !process.env.PRIVATE_ROUTES.split(',').some((path) => req.nextUrl.pathname.startsWith(path)) &&
-      !req.nextUrl.pathname.startsWith('/user')
-    ) {
-      console.warn('Private routes: ', process.env.PRIVATE_ROUTES.split(','));
+    const privateRoutes = requireEnv('PRIVATE_ROUTES').split(',');
+    if (!privateRoutes.some((path) => req.nextUrl.pathname.startsWith(path)) && !req.nextUrl.pathname.startsWith('/user')) {
+      console.warn('Private routes: ', privateRoutes);
       console.warn('Public route: ', req.nextUrl.pathname);
       const token = getJWT(req);
       if (req.nextUrl.pathname.startsWith('/accept-invitation') && token.length > 0) {
@@ -187,7 +192,7 @@ export const useAuth: MiddlewareHook = async (req) => {
           );
         } else if (
           authMode === AuthMode.MagicalAuth &&
-          requestedURI.startsWith(process.env.AUTH_URI) &&
+          requestedURI.startsWith(authUri) &&
           jwt.length > 0 &&
           !['/user/manage'].includes(req.nextUrl.pathname)
         ) {
@@ -238,15 +243,9 @@ export const useAuth: MiddlewareHook = async (req) => {
         toReturn.activated = true;
       }
     } else {
-      console.warn(
-        `${requestedURI} does ${requestedURI.startsWith(process.env.AUTH_URI) ? '' : 'not '}start with ${process.env.AUTH_URI}.`,
-      );
+      console.warn(`${requestedURI} does ${requestedURI.startsWith(authUri) ? '' : 'not '}start with ${authUri}.`);
 
-      if (
-        authMode === AuthMode.MagicalAuth &&
-        requestedURI.startsWith(process.env.AUTH_URI) &&
-        req.nextUrl.pathname !== '/user/manage'
-      ) {
+      if (authMode === AuthMode.MagicalAuth && requestedURI.startsWith(authUri) && req.nextUrl.pathname !== '/user/manage') {
         console.warn(`Pathname: ${req.nextUrl.pathname}`);
       } else {
         console.warn(
@@ -278,7 +277,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
   };
   const queryParams = getQueryParams(req);
   if (queryParams.code) {
-    const oAuthEndpoint = `${process.env.API_URI.replace('localhost', process.env.SERVERSIDE_API_URI.split(',')[0])}/v1/oauth2/${provider}`;
+    const oAuthEndpoint = `${(process.env.API_URI ?? '').replace('localhost', (process.env.SERVERSIDE_API_URI ?? '').split(',')[0])}/v1/oauth2/${provider}`;
 
     // Use the state parameter as the JWT if present
     const jwt = queryParams.state ?? getJWT(req);

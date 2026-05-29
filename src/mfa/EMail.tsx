@@ -6,13 +6,13 @@ import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { CheckCircle } from 'lucide-react';
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, type ReactElement, useState } from 'react';
 import { LuKey } from 'react-icons/lu';
 import log from '../lib/log';
 
 export type RegisterFormProps = object;
 
-export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: (verified: boolean) => void }): JSX.Element {
+export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: (verified: boolean) => void }): ReactElement {
   const { toast } = useToast();
   const [fields, setFields] = useState({
     emailCode: '',

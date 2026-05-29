@@ -30,7 +30,7 @@ export type AuthenticationConfig = {
   register: RouterPageProps & { props?: RegisterProps };
   close: RouterPageProps & { props?: CloseProps };
   subscribe: RouterPageProps & { props?: SubscribeProps };
-  logout: RouterPageProps & { props: LogoutProps };
+  logout: RouterPageProps & { props?: LogoutProps };
   ou: RouterPageProps & { props?: OrganizationalUnitProps };
   error: RouterPageProps & { props?: ErrorPageProps };
   authModes: {
@@ -83,9 +83,9 @@ const pageConfigDefaults: AuthenticationConfig = {
     path: '/error',
     heading: 'Error',
   },
-  appName: process.env.NEXT_PUBLIC_APP_NAME,
-  authBaseURI: process.env.NEXT_PUBLIC_AUTH_URI,
-  authServer: process.env.NEXT_PUBLIC_API_URI,
+  appName: process.env.NEXT_PUBLIC_APP_NAME ?? '',
+  authBaseURI: process.env.NEXT_PUBLIC_AUTH_URI ?? '',
+  authServer: process.env.NEXT_PUBLIC_API_URI ?? '',
   authModes: {
     basic: true,
     oauth2: Object.values(oAuth2Providers).some((provider) => !!provider.client_id),

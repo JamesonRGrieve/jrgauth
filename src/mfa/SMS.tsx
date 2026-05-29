@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import { useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import log from '../lib/log';
 
 function cookieString(value: ReturnType<typeof getCookie>): string {
@@ -10,7 +10,7 @@ function cookieString(value: ReturnType<typeof getCookie>): string {
 }
 
 export type RegisterFormProps = object;
-export default function VerifySMS({ verifiedCallback }: { verifiedCallback: (verified: boolean) => void }): JSX.Element {
+export default function VerifySMS({ verifiedCallback }: { verifiedCallback: (verified: boolean) => void }): ReactElement {
   const [fields, _setFields] = useState({
     smsCode: '',
   });

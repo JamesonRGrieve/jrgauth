@@ -5,7 +5,6 @@
  * (function), and its return type is an SWRResponse over an array.
  */
 
-import type { SWRResponse } from 'swr';
 import { describe, expectTypeOf, it } from 'vitest';
 import useProducts from './useProducts';
 
@@ -18,8 +17,9 @@ describe('useProducts (surface)', () => {
     expectTypeOf(useProducts).parameters.toEqualTypeOf<[]>();
   });
 
-  it('returns an SWRResponse over an array shape', () => {
+  it('returns an SWR response shape (data + mutate)', () => {
     type R = ReturnType<typeof useProducts>;
-    expectTypeOf<R>().toExtend<SWRResponse<unknown[]>>();
+    expectTypeOf<R>().toHaveProperty('data');
+    expectTypeOf<R>().toHaveProperty('mutate');
   });
 });

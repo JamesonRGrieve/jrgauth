@@ -20,7 +20,7 @@ export default function Subscribe({
   searchParams,
 }: {
   searchParams: Record<string, string | string[] | undefined>;
-}): JSX.Element {
+}): React.JSX.Element {
   const authConfig = useAuthentication();
 
   return (
