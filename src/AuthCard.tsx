@@ -3,7 +3,7 @@ import { LuArrowLeft as ArrowLeft } from 'react-icons/lu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { cn } from './lib/utils';
 
-interface AuthCardProps extends React.PropsWithChildren {
+export interface AuthCardProps extends React.PropsWithChildren {
   showBackButton?: boolean;
   title: string;
   description: string;

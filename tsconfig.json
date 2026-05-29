@@ -6,17 +6,17 @@
     "rootDir": "./src",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "declaration": false,
-    "declarationMap": false,
+    "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
     "noImplicitAny": true,
     "noEmitOnError": false,
     "jsx": "react-jsx",
-    "strict": false, // TODO Make this work.
+    "strict": false, // TODO ratchet to zero and re-enable strict
     "skipLibCheck": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "strictNullChecks": false, // TODO Make this work.
+    "strictNullChecks": false, // TODO ratchet to zero and re-enable strict
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
