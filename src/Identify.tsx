@@ -16,7 +16,7 @@ import AuthCard from './AuthCard';
 import { Alert } from './components/ui/alert';
 import { useAssertion } from './lib/assert';
 import { validateURI } from './lib/validation';
-import OAuth from './oauth2/OAuth';
+import OAuth, { type OAuthProps } from './oauth2/OAuth';
 import { useAuthentication } from './useAuthentication';
 
 const schema = z.object({
@@ -30,7 +30,7 @@ export type IdentifyProps = {
   identifyEndpoint?: string;
   redirectToOnExists?: string;
   redirectToOnNotExists?: string;
-  oAuthOverrides?: Record<string, unknown>;
+  oAuthOverrides?: OAuthProps['overrides'];
 };
 
 export default function Identify({
@@ -38,7 +38,7 @@ export default function Identify({
   redirectToOnExists = '/login',
   redirectToOnNotExists = '/register', // TODO Default this to /register if in basic mode, and /login in magical mode
   oAuthOverrides = {},
-}): ReactNode {
+}: IdentifyProps): ReactNode {
   const router = useRouter();
   const authConfig = useAuthentication();
   const pathname = usePathname();
@@ -99,8 +99,10 @@ export default function Identify({
         {showEmail && (
           <>
             <Label htmlFor='E-Mail Address'>E-Mail Address</Label>
-            <Input id='email' autoComplete='username' placeholder='your@example.com' autoFocus {...register('email')} />
-            {errors.email?.message && <Alert variant='destructive'>{errors.email?.message}</Alert>}
+            <Input id='email' autoComplete='username' placeholder='your@example.com' {...register('email')} />
+            {errors.email?.message !== undefined && errors.email.message !== '' && (
+              <Alert variant='destructive'>{errors.email.message}</Alert>
+            )}
 
             <Button variant='default' disabled={isSubmitting} className='w-full space-x-1'>
               <LuUser className='w-5 h-5' />

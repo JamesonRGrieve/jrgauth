@@ -3,7 +3,7 @@ import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next/client';
 import Link from 'next/link';
 import { useState, type ChangeEvent } from 'react';
 import { LuCheck as CheckIcon, LuMinus as MinusIcon } from 'react-icons/lu';
@@ -69,6 +69,8 @@ type Product = {
 };
 type PricingCardProps = Product & {
   isAnnual?: boolean;
+  flatRate?: boolean;
+  id?: string;
   price: {
     id: string;
     amount: number;
@@ -78,7 +80,7 @@ type PricingCardProps = Product & {
     usage_type: string;
   };
 };
-export default function PricingTable() {
+export default function PricingTable(): React.JSX.Element {
   // const [isAnnual, setIsAnnual] = useState(false);
   const { data: pricingData = [] } = useProducts();
   return (
@@ -115,13 +117,14 @@ export function PricingCard({
   name,
   description,
   price,
-  marketing_features,
+  marketing_features: marketingFeatures,
   priceAnnual,
   isMostPopular,
   flatRate = false,
   isAnnual = false,
-}: PricingCardProps) {
+}: PricingCardProps): React.JSX.Element {
   const [quantity, setQuantity] = useState(1);
+  const jwt = getCookie('jwt');
   return (
     <Card
       className={cn(
@@ -138,7 +141,7 @@ export function PricingCard({
           <span className='text-5xl font-bold'>
             {isAnnual
               ? priceAnnual
-              : `$${price.unit_amount / 100}${price.currency.toLocaleUpperCase()} / ${price.recurring.interval_count} ${price.recurring.interval}`}
+              : `$${price.amount / 100}${price.currency.toLocaleUpperCase()} / ${price.interval_count} ${price.interval}`}
           </span>
         )}
       </CardHeader>
@@ -147,7 +150,7 @@ export function PricingCard({
       </CardDescription>
       <CardContent>
         <ul className='mt-7 space-y-2.5 text-sm'>
-          {marketing_features?.map((feature) => (
+          {marketingFeatures.map((feature) => (
             <li className='flex space-x-2' key={feature.name}>
               {feature.name.startsWith('-') ? (
                 <MinusIcon className='shrink-0 mt-0.5 h-4 w-4' />
@@ -160,7 +163,7 @@ export function PricingCard({
         </ul>
       </CardContent>
       <CardFooter className='flex flex-col gap-4'>
-        {getCookie('jwt') ? (
+        {jwt !== undefined && jwt !== '' ? (
           <>
             <Label htmlFor='quantity'>Initial Users</Label>
             <Input
@@ -173,26 +176,28 @@ export function PricingCard({
             <Button
               className='w-full text-foreground'
               variant={'outline'}
-              onClick={async () => {
-                const checkout_uri: string = (
-                  await axios.post<{ detail: string }>(
-                    `${process.env.NEXT_PUBLIC_API_URI}/v1/checkout`,
-                    {
-                      cart: [
-                        {
-                          price: price.id,
-                          quantity: quantity,
-                        },
-                      ],
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${getCookie('jwt')}`,
+              onClick={() => {
+                void (async (): Promise<void> => {
+                  const checkoutUri: string = (
+                    await axios.post<{ detail: string }>(
+                      `${process.env.NEXT_PUBLIC_API_URI}/v1/checkout`,
+                      {
+                        cart: [
+                          {
+                            price: price.id,
+                            quantity: quantity,
+                          },
+                        ],
                       },
-                    },
-                  )
-                ).data.detail;
-                window.location.href = checkout_uri;
+                      {
+                        headers: {
+                          Authorization: `Bearer ${jwt}`,
+                        },
+                      },
+                    )
+                  ).data.detail;
+                  window.location.href = checkoutUri;
+                })();
               }}
             >
               Sign up
