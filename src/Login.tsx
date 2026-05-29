@@ -19,6 +19,33 @@ import { useAuthentication } from './useAuthentication';
 export type LoginProps = {
   userLoginEndpoint?: string;
 };
+export const CopyButton = ({
+  content,
+  label = 'Copy',
+}: {
+  content: string;
+  label?: string;
+}): React.JSX.Element => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  return (
+    <Button
+      variant='outline'
+      size='sm'
+      type='button'
+      className='flex items-center gap-2 mx-auto'
+      onClick={() => {
+        setIsCopied(true);
+        void navigator.clipboard.writeText(content);
+        setTimeout(() => setIsCopied(false), 2000);
+      }}
+    >
+      {isCopied ? <Check className='w-4 h-4' /> : <Copy className='w-4 h-4' />}
+      {isCopied ? 'Copied!' : label}
+    </Button>
+  );
+};
+
 export default function Login({
   searchParams,
   userLoginEndpoint = '/v1/user/authorize',
@@ -34,7 +61,11 @@ export default function Login({
   ]);
   const submitForm = async (event: SyntheticEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    if (authConfig.recaptchaSiteKey && !captcha) {
+    if (
+      authConfig.recaptchaSiteKey !== undefined &&
+      authConfig.recaptchaSiteKey !== '' &&
+      (captcha === null || captcha === '')
+    ) {
       setResponseMessage('Please complete the reCAPTCHA.');
       return;
     }
@@ -93,7 +124,7 @@ export default function Login({
       console.error(exception);
     }
   };
-  const otp_uri = searchParams.otp_uri;
+  const otpUri = searchParams.otp_uri;
   return (
     <AuthCard title='Login' description='Please login to your account.' showBackButton>
       <form
@@ -102,7 +133,7 @@ export default function Login({
         }}
         className='flex flex-col gap-4'
       >
-        {typeof otp_uri === 'string' && otp_uri !== '' && (
+        {typeof otpUri === 'string' && otpUri !== '' && (
           <div className='flex flex-col max-w-xs gap-2 mx-auto text-center'>
             <div
               style={{
@@ -113,7 +144,7 @@ export default function Login({
               <QRCode
                 size={256}
                 style={{ height: 'auto', maxWidth: '100%', width: '100%' }}
-                value={otp_uri}
+                value={otpUri}
                 viewBox={`0 0 256 256`}
               />
             </div>
@@ -121,7 +152,7 @@ export default function Login({
               Scan the above QR code with Microsoft Authenticator, Google Authenticator or equivalent (or click the copy
               button if you are using your Authenticator device).
             </p>
-            <CopyButton content={otp_uri} label={'Copy Link'} />
+            <CopyButton content={otpUri} label={'Copy Link'} />
           </div>
         )}
         <input type='hidden' id='email' name='email' value={(getCookie('email') as string | undefined) ?? ''} />
@@ -134,17 +165,15 @@ export default function Login({
               name='password'
               type='password'
               autoComplete='password'
-              autoFocus={authConfig.authModes.basic}
             />
           </>
         )}
-        {typeof otp_uri === 'string' && otp_uri !== '' && (
+        {typeof otpUri === 'string' && otpUri !== '' && (
           <>
             <Label htmlFor='token'>Multi-Factor Code</Label>
             <Input
               id='token'
               placeholder='Enter your 6 digit code'
-              autoFocus={Boolean(otp_uri)}
               name='token'
               autoComplete='one-time-code'
             />
@@ -168,24 +197,3 @@ export default function Login({
     </AuthCard>
   );
 }
-
-export const CopyButton = ({ content, label = 'Copy' }: { content: string; label?: string }) => {
-  const [isCopied, setIsCopied] = useState(false);
-
-  return (
-    <Button
-      variant='outline'
-      size='sm'
-      type='button'
-      className='flex items-center gap-2 mx-auto'
-      onClick={() => {
-        setIsCopied(true);
-        void navigator.clipboard.writeText(content);
-        setTimeout(() => setIsCopied(false), 2000);
-      }}
-    >
-      {isCopied ? <Check className='w-4 h-4' /> : <Copy className='w-4 h-4' />}
-      {isCopied ? 'Copied!' : label}
-    </Button>
-  );
-};
