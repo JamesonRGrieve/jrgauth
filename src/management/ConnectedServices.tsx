@@ -2,8 +2,7 @@
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
-import type { ReactNode } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { LuPlus as Plus, LuUnlink as Unlink } from 'react-icons/lu';
 import OAuth2Login from 'react-simple-oauth2-login';
 import { Alert, AlertDescription } from '../components/ui/alert';
@@ -46,12 +45,12 @@ const providerDescriptions: Record<string, string> = {
 
 type OAuthErrorLike = {
   response?: { status?: number };
-  config?: { url?: string; method?: string; headers?: unknown; data?: unknown };
+  config?: { url?: string; method?: string; headers?: Record<string, unknown>; data?: Record<string, unknown> };
 };
 
 type OAuthSuccessResponse = { code?: string };
 
-export const ConnectedServices = () => {
+export const ConnectedServices = (): ReactNode => {
   const [connectedServices, setConnectedServices] = useState<ConnectedService[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [_loading, setLoading] = useState(true);

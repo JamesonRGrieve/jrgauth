@@ -1,7 +1,7 @@
-import log from '../lib/log';
 import 'zod2gql';
 import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
+import log from '../lib/log';
 import { createGraphQLClient } from './lib';
 import { type User, UserSchema } from './z';
 /**
@@ -14,7 +14,8 @@ export function useUser(): SWRResponse<User | null> {
   return useSWR<User | null>(
     ['/user', getCookie('jwt')],
     async (): Promise<User | null> => {
-      if (!getCookie('jwt')) {
+      const jwt = getCookie('jwt');
+      if (jwt === undefined || jwt === '') {
         return null;
       }
       try {

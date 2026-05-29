@@ -103,7 +103,7 @@ export default function VerifyAuthenticator({
               //submit={null}
               //error={errors.token}
             />
-            <Button variant='outline' className='space-x-1 bg-transparent' onClick={attemptTotp}>
+            <Button variant='outline' className='space-x-1 bg-transparent' onClick={() => void attemptTotp()}>
               <LuKey className='w-5 h-5' />
               <span>Verify MFA</span>
             </Button>

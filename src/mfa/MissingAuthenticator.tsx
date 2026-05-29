@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { LuLoader as Loader2, LuMail as Mail } from 'react-icons/lu';
 import { Disclosure, DisclosureContent, DisclosureTrigger } from '../components/ui/disclosure';
 
-export const AuthenticatorHelp = () => {
+export const AuthenticatorHelp = (): React.JSX.Element => {
   const [loading, setLoading] = useState({
     email: false,
     sms: false,

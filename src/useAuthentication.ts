@@ -1,10 +1,10 @@
 'use client';
 
-import { useContext } from 'react';
+import { type ContextType, useContext } from 'react';
 import { AuthenticationContext } from './AuthenticationContext';
 import assert from './lib/assert';
 
-export const useAuthentication = () => {
+export const useAuthentication = (): NonNullable<ContextType<typeof AuthenticationContext>> => {
   const context = useContext(AuthenticationContext);
   if (context === undefined) {
     throw new Error('useAuthentication must be used within an AuthenticationProvider');

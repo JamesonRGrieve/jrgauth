@@ -18,7 +18,7 @@ export default function OAuth({ overrides }: OAuthProps): ReactNode {
   const _router = useRouter();
   const oAuthProviders = useMemo(() => deepMerge(providers, overrides) as typeof providers, [overrides]);
   log(['OAuth Providers: ', oAuthProviders], { client: 3 });
-  const onOAuth2 = useCallback((_response: unknown) => {
+  const onOAuth2 = useCallback(() => {
     document.location.href = `${process.env.NEXT_PUBLIC_APP_URI}/chat`; // This should be fixed properly just low priority.
 
     // const redirect = getCookie('href') ?? '/';
@@ -35,11 +35,12 @@ export default function OAuth({ overrides }: OAuthProps): ReactNode {
   */
   return (
     <>
-      {Object.values(oAuthProviders).some((provider) => provider.client_id) &&
+      {Object.values(oAuthProviders).some((provider) => provider.client_id !== undefined && provider.client_id !== '') &&
         process.env.NEXT_PUBLIC_ALLOW_EMAIL_SIGN_IN === 'true' && <hr />}
       {Object.entries(oAuthProviders).map(([key, provider]) => {
         return (
-          provider.client_id && (
+          provider.client_id !== undefined &&
+          provider.client_id !== '' && (
             <OAuth2Login
               key={key}
               authorizationUrl={provider.uri}

@@ -7,13 +7,13 @@ import useSWR, { type SWRResponse } from 'swr';
  * @param teamId - The ID of the team
  * @returns SWR response containing the users of the team
  */
-type TeamUser = { [key: string]: unknown };
+type TeamUser = Record<string, unknown>;
 
 export default function useTeamUsers(teamId: string | undefined): SWRResponse<TeamUser[]> {
   return useSWR<TeamUser[]>(
-    teamId ? [`/v1/team/${teamId}/user`, teamId] : null,
+    teamId !== undefined && teamId !== '' ? [`/v1/team/${teamId}/user`, teamId] : null,
     async () => {
-      if (!teamId) {
+      if (teamId === undefined || teamId === '') {
         return [];
       }
       const response = await axios.get<{ user_teams: TeamUser[] }>(

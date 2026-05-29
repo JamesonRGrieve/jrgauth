@@ -79,7 +79,11 @@ function sortRolesByPermission(roles: Role[]): Role[] {
   return sortedRoles.map(({ children: _children, depth: _depth, ...role }) => role);
 }
 
-export const InviteDialog = ({ selectedTeam }: { selectedTeam: { id: string; name?: string } | null }) => {
+export const InviteDialog = ({
+  selectedTeam,
+}: {
+  selectedTeam: { id: string; name?: string } | null;
+}): React.JSX.Element => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [roleId, setRoleId] = useState(ROLES[1].id);
@@ -108,12 +112,15 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: { id: string; nam
 
   useEffect(() => {
     if (selectedTeam !== null) {
-      fetchRoles()
-        .then((data) => {
+      void (async (): Promise<void> => {
+        try {
+          const data = await fetchRoles();
           const sortedRoles = sortRolesByPermission(data.roles);
           setRoles([...ROLES, ...sortedRoles.map((r) => ({ id: String(r.id), name: r.name }))]);
-        })
-        .catch(() => setRoles(ROLES));
+        } catch {
+          setRoles(ROLES);
+        }
+      })();
     }
   }, [selectedTeam, fetchRoles]);
 

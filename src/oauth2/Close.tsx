@@ -12,5 +12,7 @@ export default function Close(): ReactNode {
     window.close();
   }, []);
 
-  return authConfig.close.heading ? <h2 className='text-3xl'>{authConfig.close.heading}</h2> : null;
+  return authConfig.close.heading !== undefined && authConfig.close.heading !== '' ? (
+    <h2 className='text-3xl'>{authConfig.close.heading}</h2>
+  ) : null;
 }

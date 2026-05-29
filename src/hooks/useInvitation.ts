@@ -1,8 +1,8 @@
-import log from '../lib/log';
 import 'zod2gql';
 import axios from 'axios';
 import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
+import log from '../lib/log';
 import type { Invitation } from './z';
 /**
  * Hook to fetch and manage invitations
@@ -12,9 +12,9 @@ import type { Invitation } from './z';
 
 export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
   return useSWR<Invitation[]>(
-    teamId ? [`/v1/team/${teamId}/invitation`, teamId] : null,
+    teamId !== undefined && teamId !== '' ? [`/v1/team/${teamId}/invitation`, teamId] : null,
     async (): Promise<Invitation[]> => {
-      if (!teamId) {
+      if (teamId === undefined || teamId === '') {
         return [];
       }
       try {
@@ -28,7 +28,7 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
           },
         );
         // Adjust this if your API response structure is different
-        return response.data?.invitations || [];
+        return response.data.invitations ?? [];
       } catch (error: unknown) {
         log(['REST useInvitationsByUserId() Error', error], { client: 1 });
         return [];

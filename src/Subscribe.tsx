@@ -1,8 +1,7 @@
 'use client';
 
 import { getCookie } from 'cookies-next';
-import type React from 'react';
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import PricingTable from './Stripe/PricingTable';
 import { useAuthentication } from './useAuthentication';
 
@@ -25,8 +24,11 @@ export default function Subscribe({
 
   return (
     <>
-      {authConfig.subscribe.heading && <h2 className='text-3xl'>{authConfig.subscribe.heading}</h2>}
-      {process.env.NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID ? (
+      {authConfig.subscribe.heading !== undefined && authConfig.subscribe.heading !== '' && (
+        <h2 className='text-3xl'>{authConfig.subscribe.heading}</h2>
+      )}
+      {process.env.NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID !== undefined &&
+      process.env.NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID !== '' ? (
         <Suspense fallback={<p>Loading pricing...</p>}>
           <h1>Subscribe</h1>
           <div id='stripe-box'>

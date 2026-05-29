@@ -16,10 +16,10 @@ export default function deepMerge(obj1: PlainObject, obj2: PlainObject): PlainOb
     const next = obj2[key];
     const prev = obj1[key];
     if (
-      next &&
+      next !== null &&
       typeof next === 'object' &&
       !Array.isArray(next) &&
-      prev &&
+      prev !== null &&
       typeof prev === 'object' &&
       !Array.isArray(prev)
     ) {
