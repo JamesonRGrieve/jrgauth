@@ -41,7 +41,7 @@ type SidebarContextValue = {
 
 const SidebarContext = React.createContext<SidebarContextMap>({});
 
-function useSidebar(side: SidebarSide = 'left') {
+function useSidebar(side: SidebarSide = 'left'): SidebarContextValue {
   const context = React.useContext(SidebarContext);
   const sidebarContext = context[side];
 
@@ -351,7 +351,7 @@ const SidebarRail = React.forwardRef<
       startXRef.current = e.pageX;
       startWidthRef.current = state === 'expanded' ? width : lastWidthRef.current;
 
-      const handleInitialMouseUp = (upEvent: MouseEvent) => {
+      const handleInitialMouseUp = (upEvent: MouseEvent): void => {
         if (Math.abs(upEvent.pageX - startXRef.current) < 5) {
           if (state === 'expanded') {
             lastWidthRef.current = width;
@@ -362,7 +362,7 @@ const SidebarRail = React.forwardRef<
         document.removeEventListener('mousemove', handleInitialMouseMove);
       };
 
-      const handleInitialMouseMove = (moveEvent: MouseEvent) => {
+      const handleInitialMouseMove = (moveEvent: MouseEvent): void => {
         if (Math.abs(moveEvent.pageX - startXRef.current) > 5) {
           setIsResizing(true);
           document.body.style.userSelect = 'none';

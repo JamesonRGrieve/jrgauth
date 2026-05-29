@@ -21,7 +21,7 @@ Command.displayName = CommandPrimitive.displayName;
 
 type CommandDialogProps = DialogProps;
 
-const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
+const CommandDialog = ({ children, ...props }: CommandDialogProps): React.JSX.Element => {
   return (
     <Dialog {...props}>
       <DialogContent className='p-0 overflow-hidden shadow-lg'>
@@ -108,7 +108,7 @@ const CommandItem = React.forwardRef<
 
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
-const CommandShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
+const CommandShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>): React.JSX.Element => {
   return <span className={cn('ml-auto text-xs tracking-widest text-muted-foreground', className)} {...props} />;
 };
 CommandShortcut.displayName = 'CommandShortcut';
