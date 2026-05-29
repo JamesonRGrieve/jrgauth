@@ -98,7 +98,7 @@ export interface Invitation {
   invitees: Invitee[];
 }
 
-export const Team = () => {
+export const Team = (): React.JSX.Element => {
   const [_email, _setEmail] = useState('');
   const [_roleId, _setRoleId] = useState('3');
   const [_renaming, _setRenaming] = useState(false);
@@ -156,13 +156,13 @@ export const Team = () => {
     return list;
   }
 
-  const users_columns: ColumnDef<User>[] = [
+  const usersColumns: ColumnDef<User>[] = [
     {
       id: 'select',
       header: ({ table }) => (
         <Checkbox
           checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(value !== false)}
           aria-label='Select all'
           className='translate-y-[2px]'
         />
@@ -170,7 +170,7 @@ export const Team = () => {
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => row.toggleSelected(value !== false)}
           aria-label='Select row'
           className='translate-y-[2px]'
         />
@@ -310,13 +310,13 @@ export const Team = () => {
       },
     },
   ];
-  const invitations_columns: ColumnDef<Invitee>[] = [
+  const invitationsColumns: ColumnDef<Invitee>[] = [
     {
       id: 'select',
       header: ({ table }) => (
         <Checkbox
           checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(value !== false)}
           aria-label='Select all'
           className='translate-y-[2px]'
         />
@@ -324,7 +324,7 @@ export const Team = () => {
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => row.toggleSelected(value !== false)}
           aria-label='Select row'
           className='translate-y-[2px]'
         />
@@ -373,10 +373,10 @@ export const Team = () => {
       accessorKey: 'status',
       header: ({ column }) => <DataTableColumnHeader column={column} title='Status' />,
       cell: ({ row }) => {
-        const status = row.original?.status;
+        const status = row.original.status;
         return (
           <div className='flex w-[100px] items-center'>
-            <Badge variant={status ? 'default' : 'secondary'}>
+            <Badge variant={status === 'accepted' ? 'default' : 'secondary'}>
               {/* {status ? <Check className='w-3 h-3 mr-1' /> : <X className='w-3 h-3 mr-1' />} */}
               {String(status)}
             </Badge>
@@ -487,7 +487,7 @@ export const Team = () => {
 
   return (
     <div className='space-y-10'>
-      <DataTable data={users ?? []} columns={users_columns} meta={{ title: 'Current Users' }} />
+      <DataTable data={users ?? []} columns={usersColumns} meta={{ title: 'Current Users' }} />
       {invitationsData.length === 0 ? (
         <div>
           <h4 className='text-2xl font-bold mr-auto mb-4'>Pending Invitations</h4>
@@ -497,14 +497,14 @@ export const Team = () => {
         </div>
       ) : (
         invitationsData.length > 0 && (
-          <DataTable data={inviteesArray} columns={invitations_columns} meta={{ title: 'Pending Invitations' }} />
+          <DataTable data={inviteesArray} columns={invitationsColumns} meta={{ title: 'Pending Invitations' }} />
         )
       )}
     </div>
   );
 };
 
-export function InviteUsers() {
+export function InviteUsers(): React.JSX.Element {
   const [email, setEmail] = useState('');
   const [roleId, setRoleId] = useState('3');
   const [_responseMessage, setResponseMessage] = useState('');
@@ -602,3 +602,4 @@ export function InviteUsers() {
     </form>
   );
 }
+/* eslint-enable react/no-unstable-nested-components */

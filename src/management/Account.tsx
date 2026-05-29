@@ -37,7 +37,7 @@ export const Account = ({
             event.preventDefault();
             const form = event.currentTarget;
             void (async (): Promise<void> => {
-              const formData = Object.fromEntries(new FormData(form));
+              const formData: Record<string, FormDataEntryValue | undefined> = Object.fromEntries(new FormData(form));
 
               if (formData['password'] === undefined || formData['password'] === '') {
                 setResponseMessage('Please enter a password.');
