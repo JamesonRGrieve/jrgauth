@@ -351,7 +351,7 @@ const SidebarRail = React.forwardRef<
       startXRef.current = e.pageX;
       startWidthRef.current = state === 'expanded' ? width : lastWidthRef.current;
 
-      const handleInitialMouseUp = (upEvent: MouseEvent): void => {
+      function handleInitialMouseUp(upEvent: MouseEvent): void {
         if (Math.abs(upEvent.pageX - startXRef.current) < 5) {
           if (state === 'expanded') {
             lastWidthRef.current = width;
@@ -360,9 +360,9 @@ const SidebarRail = React.forwardRef<
         }
         document.removeEventListener('mouseup', handleInitialMouseUp);
         document.removeEventListener('mousemove', handleInitialMouseMove);
-      };
+      }
 
-      const handleInitialMouseMove = (moveEvent: MouseEvent): void => {
+      function handleInitialMouseMove(moveEvent: MouseEvent): void {
         if (Math.abs(moveEvent.pageX - startXRef.current) > 5) {
           setIsResizing(true);
           document.body.style.userSelect = 'none';
@@ -371,7 +371,7 @@ const SidebarRail = React.forwardRef<
           document.removeEventListener('mousemove', handleInitialMouseMove);
           document.removeEventListener('mouseup', handleInitialMouseUp);
         }
-      };
+      }
 
       document.addEventListener('mouseup', handleInitialMouseUp);
       document.addEventListener('mousemove', handleInitialMouseMove);
@@ -609,7 +609,7 @@ const SidebarMenuButton = React.forwardRef<
       />
     );
 
-    if (tooltip === undefined || tooltip === null) {
+    if (tooltip === undefined) {
       return button;
     }
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
 
-type Product = { last_name?: string; [key: string]: unknown };
+type Product = { last_name?: string } & Record<string, unknown>;
 
 // Create a custom SWR hook for a specific endpoint
 export default function useProducts(): SWRResponse<Product[]> {

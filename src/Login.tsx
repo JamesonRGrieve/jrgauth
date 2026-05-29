@@ -19,13 +19,7 @@ import { useAuthentication } from './useAuthentication';
 export type LoginProps = {
   userLoginEndpoint?: string;
 };
-export const CopyButton = ({
-  content,
-  label = 'Copy',
-}: {
-  content: string;
-  label?: string;
-}): React.JSX.Element => {
+export const CopyButton = ({ content, label = 'Copy' }: { content: string; label?: string }): React.JSX.Element => {
   const [isCopied, setIsCopied] = useState(false);
 
   return (
@@ -159,24 +153,13 @@ export default function Login({
         {authConfig.authModes.basic && (
           <>
             <Label htmlFor='password'>Password</Label>
-            <Input
-              id='password'
-              placeholder='Password'
-              name='password'
-              type='password'
-              autoComplete='password'
-            />
+            <Input id='password' placeholder='Password' name='password' type='password' autoComplete='password' />
           </>
         )}
         {typeof otpUri === 'string' && otpUri !== '' && (
           <>
             <Label htmlFor='token'>Multi-Factor Code</Label>
-            <Input
-              id='token'
-              placeholder='Enter your 6 digit code'
-              name='token'
-              autoComplete='one-time-code'
-            />
+            <Input id='token' placeholder='Enter your 6 digit code' name='token' autoComplete='one-time-code' />
             <MissingAuthenticator />
           </>
         )}

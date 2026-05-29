@@ -44,7 +44,7 @@ describe('getAuthMode', () => {
     process.env.NEXT_PUBLIC_AUTH_URI = 'https://app.example.com/login';
     process.env.NEXT_PUBLIC_API_URI = 'https://api.example.com';
     process.env.APP_URI = 'https://app.example.com';
-    expect(() => getAuthMode()).toThrowError(/Invalid AUTH_URI/);
+    expect(() => getAuthMode()).toThrow(/Invalid AUTH_URI/);
   });
 });
 

@@ -21,10 +21,13 @@ export const AuthMode = {
 };
 export const getAuthMode = (): number => {
   let authMode = AuthMode.None;
-  if (process.env.NEXT_PUBLIC_AUTH_URI && process.env.NEXT_PUBLIC_API_URI) {
-    if (process.env.APP_URI && process.env.NEXT_PUBLIC_AUTH_URI.startsWith(process.env.APP_URI)) {
+  const authUri = process.env.NEXT_PUBLIC_AUTH_URI;
+  const apiUri = process.env.NEXT_PUBLIC_API_URI;
+  const appUri = process.env.APP_URI;
+  if (authUri !== undefined && authUri !== '' && apiUri !== undefined && apiUri !== '') {
+    if (appUri !== undefined && appUri !== '' && authUri.startsWith(appUri)) {
       authMode = AuthMode.MagicalAuth;
-      if (!process.env.NEXT_PUBLIC_AUTH_URI.endsWith('/user')) {
+      if (!authUri.endsWith('/user')) {
         throw new Error('Invalid AUTH_URI. For Magical Auth implementations, AUTH_URI must point to APP_URI/user.');
       }
     } else {

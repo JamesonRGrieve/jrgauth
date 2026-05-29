@@ -8,22 +8,30 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import { AuthenticationContext } from './AuthenticationContext';
 import type { AuthenticationConfig } from './Router';
 
+// React context objects carry internal fields ($$typeof, _currentValue) that
+// are not part of the public `Context<T>` type surface. We describe them with a
+// runtime-internal interface that also includes the public members, so the
+// assertion overlaps structurally and needs no `as unknown` escape hatch.
+interface ReactContextInternals extends Context<AuthenticationConfig | undefined> {
+  $$typeof: symbol;
+  _currentValue: AuthenticationConfig | undefined;
+}
+const internals: ReactContextInternals = AuthenticationContext as ReactContextInternals;
+
 describe('AuthenticationContext', () => {
   it('is a React Context object', () => {
     expect(AuthenticationContext).toBeDefined();
     expect(AuthenticationContext).toHaveProperty('Provider');
     expect(AuthenticationContext).toHaveProperty('Consumer');
     // React 18+ contexts also expose $$typeof.
-    expect((AuthenticationContext as unknown as { $$typeof: symbol }).$$typeof).toBeTypeOf('symbol');
+    expect(internals.$$typeof).toBeTypeOf('symbol');
   });
 
   it('defaults to `undefined` so consumers without a Provider can detect the missing context', () => {
-    // The 4th positional field on a React context object is the default value;
-    // however it is not part of the public type — read it via the Consumer.
-    // The contract the rest of this repo depends on is that
-    // `useContext(AuthenticationContext)` returns `undefined` when un-provided,
-    // which mirrors the default exactly.
-    const consumerDefault = (AuthenticationContext as unknown as { _currentValue: unknown })._currentValue;
+    // The default value lives on `_currentValue`; the contract the rest of this
+    // repo depends on is that `useContext(AuthenticationContext)` returns
+    // `undefined` when un-provided, which mirrors the default exactly.
+    const consumerDefault = internals._currentValue;
     expect(consumerDefault).toBeUndefined();
   });
 

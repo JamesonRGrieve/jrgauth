@@ -80,7 +80,7 @@ export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: (v
               //submit={null}
               //error={errors.emailCode}
             />
-            <Button variant='outline' className='space-x-1 bg-transparent' onClick={attemptEmail}>
+            <Button variant='outline' className='space-x-1 bg-transparent' onClick={() => void attemptEmail()}>
               <LuKey className='w-5 h-5' />
               <span>Verify Email</span>
             </Button>

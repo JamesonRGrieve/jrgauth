@@ -6,8 +6,7 @@
  */
 import type { ReactNode } from 'react';
 import { describe, expectTypeOf, it } from 'vitest';
-import Close from './Close';
-import type { CloseProps } from './Close';
+import Close, { type CloseProps } from './Close';
 
 describe('Close (surface)', () => {
   it('default export is a parameterless React component', () => {

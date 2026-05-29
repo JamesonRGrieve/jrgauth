@@ -26,9 +26,9 @@ const ToolbarHarness = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    meta: title ? { title } : undefined,
+    meta: title !== undefined && title !== '' ? { title } : undefined,
     initialState: preFilter ? { columnFilters: [{ id: preFilter.columnId, value: preFilter.value }] } : undefined,
-  }) as unknown as Parameters<typeof DataTableToolbar<Row>>[0]['table'];
+  });
   return (
     <div style={{ padding: 16 }}>
       <DataTableToolbar table={table} />

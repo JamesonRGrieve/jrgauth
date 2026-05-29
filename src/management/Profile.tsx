@@ -26,6 +26,12 @@ const readJwtString = (): string => {
   return typeof jwt === 'string' ? jwt : '';
 };
 
+type DynamicFormFieldType = 'text' | 'number' | 'password' | 'boolean';
+const FIELD_TYPES: readonly DynamicFormFieldType[] = ['text', 'number', 'password', 'boolean'];
+const isFieldType = (raw: string): raw is DynamicFormFieldType => (FIELD_TYPES as readonly string[]).includes(raw);
+/** Narrow an untyped server-provided field type to the DynamicForm field union, defaulting to `text`. */
+const toFieldType = (raw: string): DynamicFormFieldType => (isFieldType(raw) ? raw : 'text');
+
 type Team = {
   image_url: string | null;
   name: string;
@@ -91,12 +97,12 @@ export const Profile = ({
   responseMessage: string;
   userUpdateEndpoint: string;
   setResponseMessage: (message: string) => void;
-}) => {
+}): React.JSX.Element => {
   const { data: userTeams } = useTeams();
   // Use `data` passed from parent Manage component as the authoritative user object.
   // But be resilient to different API shapes. Try several common locations for fields.
   const readUserField = useCallback(
-    (field: string): unknown => {
+    (field: string) => {
       // Try several common keys and shapes to be resilient to API variations.
       const candidates: string[] = [];
       const camel = field.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
@@ -185,7 +191,7 @@ export const Profile = ({
     }
   }, [data, authConfig, userUpdateEndpoint, userDataSWRKey, readUserField]);
 
-  const user_teams_columns: ColumnDef<Team>[] = useMemo(() => {
+  const userTeamsColumns: ColumnDef<Team>[] = useMemo(() => {
     // eslint-disable-next-line react/no-unstable-nested-components -- closes over router; memoized via useMemo
     const TeamActionCell = ({ row }: CellContext<Team, unknown>): ReactElement => (
       <DropdownMenu>
@@ -300,60 +306,62 @@ export const Profile = ({
             <div key='teams-table' className='col-span-4'>
               <DataTable
                 data={(userTeams as Team[] | undefined) ?? []}
-                columns={user_teams_columns}
+                columns={userTeamsColumns}
                 meta={{ title: 'Teams' }}
               />
             </div>,
           ]}
-          onConfirm={async (formData: Record<string, unknown>) => {
-            try {
-              const putResponse = await axios
-                .put<{ detail?: string }>(
-                  `${authConfig.authServer}${userUpdateEndpoint}`,
-                  {
-                    user: {
-                      ...Object.entries(formData).reduce<Record<string, unknown>>((acc, [key, value]) => {
-                        if (value !== undefined && value !== null && value !== '') {
-                          acc[key] = value;
-                        }
-                        return acc;
-                      }, {}),
+          onConfirm={(formData: Record<string, unknown>) => {
+            void (async (): Promise<void> => {
+              try {
+                const putResponse = await axios
+                  .put<{ detail?: string }>(
+                    `${authConfig.authServer}${userUpdateEndpoint}`,
+                    {
+                      user: {
+                        ...Object.entries(formData).reduce<Record<string, unknown>>((acc, [key, value]) => {
+                          if (value !== undefined && value !== null && value !== '') {
+                            acc[key] = value;
+                          }
+                          return acc;
+                        }, {}),
+                      },
                     },
-                  },
-                  {
-                    headers: {
-                      'Content-Type': 'application/json',
-                      Authorization: `Bearer ${readJwtString()}`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${readJwtString()}`,
+                      },
                     },
-                  },
-                )
-                .catch((exception: { response?: { data?: { detail?: string } } }) => ({
-                  data: exception.response?.data ?? {},
-                }));
-              const updateResponse = putResponse.data;
-              log(['Update Response', updateResponse], { client: 2 });
-              setResponseMessage(updateResponse.detail !== undefined ? updateResponse.detail : 'Update successful.');
-              await mutate('/user');
-              toast({
-                title: 'Profile updated',
-                description: 'Your profile was updated successfully.',
-              });
-            } catch (err: unknown) {
-              const message = err instanceof Error ? err.message : 'There was an error updating your profile.';
-              toast({
-                title: 'Profile update failed',
-                description: message,
-                variant: 'destructive',
-              });
-            }
+                  )
+                  .catch((exception: { response?: { data?: { detail?: string } } }) => ({
+                    data: exception.response?.data ?? {},
+                  }));
+                const updateResponse = putResponse.data;
+                log(['Update Response', updateResponse], { client: 2 });
+                setResponseMessage(updateResponse.detail ?? 'Update successful.');
+                await mutate('/user');
+                toast({
+                  title: 'Profile updated',
+                  description: 'Your profile was updated successfully.',
+                });
+              } catch (err: unknown) {
+                const message = err instanceof Error ? err.message : 'There was an error updating your profile.';
+                toast({
+                  title: 'Profile update failed',
+                  description: message,
+                  variant: 'destructive',
+                });
+              }
+            })();
           }}
         />
       ) : (
         <>
           {(() => {
-            const reqs = data?.missing_requirements;
+            const reqs = data.missing_requirements;
             const reqsArray = Array.isArray(reqs) ? reqs : [];
-            const reqsRecord = reqs !== undefined && !Array.isArray(reqs) ? reqs : {};
+            const reqsRecord = Array.isArray(reqs) ? {} : reqs;
             const hasVerifyEmail = reqsArray.some((obj) => Object.keys(obj).some((key) => key === 'verify_email'));
             const verifySms = reqsRecord['verify_sms'];
             const hasOther = reqsArray.some((obj) =>
@@ -372,41 +380,48 @@ export const Profile = ({
                 {hasOther && (
                   <DynamicForm
                     submitButtonText='Submit Missing Information'
-                    fields={Object.entries(reqsRecord).reduce<Record<string, { type: unknown }>>((acc, [_key, value]) => {
-                      const v = value as Record<string, unknown>;
-                      const fieldKey = Object.keys(v)[0];
-                      acc[fieldKey] = { type: Object.values(v)[0] };
-                      return acc;
-                    }, {})}
+                    fields={Object.entries(reqsRecord).reduce<Record<string, { type: DynamicFormFieldType }>>(
+                      (acc, [, value]) => {
+                        const v = value as Record<string, unknown>;
+                        const fieldKey = Object.keys(v)[0];
+                        const rawType = Object.values(v)[0];
+                        acc[fieldKey] = { type: typeof rawType === 'string' ? toFieldType(rawType) : 'text' };
+                        return acc;
+                      },
+                      {},
+                    )}
                     excludeFields={['verify_email', 'verify_sms']}
-                    onConfirm={async (formData: Record<string, unknown>) => {
-                      const putResponse = await axios
-                        .put<{ detail?: string }>(
-                          `${authConfig.authServer}${userUpdateEndpoint}`,
-                          {
-                            ...formData,
-                          },
-                          {
-                            headers: {
-                              'Content-Type': 'application/json',
-                              Authorization: `Bearer ${readJwtString()}`,
+                    onConfirm={(formData: Record<string, unknown>) => {
+                      void (async (): Promise<void> => {
+                        const putResponse = await axios
+                          .put<{ detail?: string }>(
+                            `${authConfig.authServer}${userUpdateEndpoint}`,
+                            {
+                              ...formData,
                             },
-                          },
-                        )
-                        .catch((exception: { response?: { data?: { detail?: string } } }) => ({
-                          data: exception.response?.data ?? {},
-                        }));
-                      const updateResponse = putResponse.data;
-                      if (updateResponse.detail !== undefined) {
-                        setResponseMessage(updateResponse.detail);
-                      }
-                      await mutate(userDataSWRKey);
-                      const newReqs = (formData as { missing_requirements?: Record<string, unknown> }).missing_requirements;
-                      if (newReqs !== undefined && Object.keys(newReqs).length === 0) {
-                        const redirect = (getCookie('href') as string | undefined) ?? '/';
-                        void deleteCookie('href');
-                        router.push(redirect);
-                      }
+                            {
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${readJwtString()}`,
+                              },
+                            },
+                          )
+                          .catch((exception: { response?: { data?: { detail?: string } } }) => ({
+                            data: exception.response?.data ?? {},
+                          }));
+                        const updateResponse = putResponse.data;
+                        if (updateResponse.detail !== undefined) {
+                          setResponseMessage(updateResponse.detail);
+                        }
+                        await mutate(userDataSWRKey);
+                        const newReqs = (formData as { missing_requirements?: Record<string, unknown> })
+                          .missing_requirements;
+                        if (newReqs !== undefined && Object.keys(newReqs).length === 0) {
+                          const redirect = (getCookie('href') as string | undefined) ?? '/';
+                          void deleteCookie('href');
+                          router.push(redirect);
+                        }
+                      })();
                     }}
                   />
                 )}

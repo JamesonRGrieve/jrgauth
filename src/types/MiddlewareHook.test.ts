@@ -14,8 +14,9 @@ describe('MiddlewareHook', () => {
 
     expectTypeOf(stub).toBeFunction();
     expectTypeOf(stub).parameters.toBeObject();
-    expectTypeOf(stub).returns.resolves.toHaveProperty('activated');
-    expectTypeOf(stub).returns.resolves.toHaveProperty('response');
+    type Resolved = Awaited<ReturnType<MiddlewareHook>>;
+    expectTypeOf<Resolved>().toHaveProperty('activated');
+    expectTypeOf<Resolved>().toHaveProperty('response');
   });
 
   it('reports activated as a boolean', async () => {

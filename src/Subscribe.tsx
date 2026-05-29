@@ -1,7 +1,7 @@
 'use client';
 
 import { getCookie } from 'cookies-next';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import PricingTable from './Stripe/PricingTable';
 import { useAuthentication } from './useAuthentication';
 

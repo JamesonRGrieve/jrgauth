@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components -- column cell/header renderers are tanstack render props, not React components. */
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -9,7 +10,7 @@ import { DataTableColumnHeader } from '../components/data/data-table-column-head
 import type { Invitation } from '../hooks/z';
 import log from '../lib/log';
 
-export function InvitationsTable({ userId }: { userId?: string }) {
+export function InvitationsTable({ userId }: { userId?: string }): React.JSX.Element {
   const { data: invitations, mutate } = useInvitationsByUserId(userId);
   const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
 
@@ -19,7 +20,7 @@ export function InvitationsTable({ userId }: { userId?: string }) {
   };
   const apiBase = (): string => process.env.NEXT_PUBLIC_API_URI ?? '';
 
-  const handleAccept = async (orgObj: Invitation): Promise<void> => {
+  const handleAccept = async (orgObj: DisplayInvitation): Promise<void> => {
     try {
       await axios.patch(
         `${apiBase()}/v1/invitation/${orgObj.id}`,
@@ -49,13 +50,12 @@ export function InvitationsTable({ userId }: { userId?: string }) {
     }
   };
 
-   
-  const columns: ColumnDef<Invitation>[] = [
+  const columns: ColumnDef<DisplayInvitation>[] = [
     {
       accessorKey: 'team.name',
       header: ({ column }) => <DataTableColumnHeader column={column} title='Team' />,
       cell: ({ row }) => {
-        const team = (row.original as { team?: { name?: string } | null }).team;
+        const team = row.original.team;
         return <span>{team?.name ?? '-'}</span>;
       },
     },
@@ -68,7 +68,7 @@ export function InvitationsTable({ userId }: { userId?: string }) {
       accessorKey: 'createdAt',
       header: ({ column }) => <DataTableColumnHeader column={column} title='Created At' />,
       cell: ({ row }) => {
-        const createdAt = (row.original as { created_at?: string; createdAt?: string }).created_at ?? row.original.createdAt;
+        const createdAt = row.original.created_at ?? row.original.createdAt;
         return <span>{createdAt !== undefined ? new Date(createdAt).toLocaleString() : '-'}</span>;
       },
     },
@@ -85,13 +85,13 @@ export function InvitationsTable({ userId }: { userId?: string }) {
     },
   ];
 
-  return <DataTable data={invitations} columns={columns} meta={{ title: 'Invitations' }} />;
+  return <DataTable data={invitations ?? []} columns={columns} meta={{ title: 'Invitations' }} />;
 }
 
-export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[]> {
-  return useSWR<Invitation[]>(
+export function useInvitationsByUserId(userId?: string): SWRResponse<DisplayInvitation[]> {
+  return useSWR<DisplayInvitation[]>(
     userId !== undefined && userId !== '' ? [`/user/invitation`, userId] : '/user/invitation',
-    async (): Promise<Invitation[]> => {
+    async (): Promise<DisplayInvitation[]> => {
       const jwt = getCookie('jwt');
       if (jwt === undefined || jwt === '' || userId === undefined || userId === '') {
         return [];
@@ -126,35 +126,51 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[
   );
 }
 
-type RawInvitee = { user_id: string; status: string; [key: string]: unknown };
+/**
+ * The shape that actually flows from the API into the table. The upstream
+ * payload mixes the canonical {@link Invitation} fields (camelCase) with the
+ * raw snake_case fields the renderers read (`team`, `created_at`). Modelling
+ * both keeps the column renderers type-safe without an `as Invitation` cast.
+ */
+type DisplayInvitation = Partial<Invitation> & {
+  team?: { name?: string } | null;
+  role_id?: string | null;
+  role?: string | null;
+  created_at?: string;
+  user_id?: string;
+  status?: string;
+} & Record<string, unknown>;
+
+type RawInvitee = { user_id: string; status: string } & Record<string, unknown>;
 type RawInvitationGroup = {
-  team?: unknown;
-  role_id?: unknown;
-  role?: unknown;
-  created_at?: unknown;
-  code?: unknown;
+  team?: { name?: string } | null;
+  role_id?: string | null;
+  role?: string | null;
+  created_at?: string;
+  code?: string | null;
   invitees: RawInvitee[];
 };
 
-function convertInvitationsData(invitationsData: RawInvitationGroup[], userId: string): Invitation[] {
+function convertInvitationsData(invitationsData: RawInvitationGroup[], userId: string): DisplayInvitation[] {
   if (invitationsData.length === 0) {
     return [];
   }
-  const list: Invitation[] = [];
+  const list: DisplayInvitation[] = [];
   invitationsData.forEach((data) => {
-    for (let i = 0; i < data.invitees.length; i++) {
-      if (data.invitees[i].user_id === userId && data.invitees[i].status === 'pending') {
-        const inviteeWithTeam = {
+    for (const invitee of data.invitees) {
+      if (invitee.user_id === userId && invitee.status === 'pending') {
+        const inviteeWithTeam: DisplayInvitation = {
           team: data.team,
           role_id: data.role_id,
           role: data.role,
           created_at: data.created_at,
           code: data.code,
-          ...data.invitees[i],
-        } as Invitation;
+          ...invitee,
+        };
         list.push(inviteeWithTeam);
       }
     }
   });
   return list;
 }
+/* eslint-enable react/no-unstable-nested-components */

@@ -10,7 +10,7 @@ function PathnameInspector({ label }: { label?: string }) {
     <div className='space-y-1 rounded-md border p-3 text-sm'>
       {label !== undefined && <div className='font-medium'>{label}</div>}
       <div>
-        <span className='text-muted-foreground'>pathname:</span> <code>{pathname ?? '(none)'}</code>
+        <span className='text-muted-foreground'>pathname:</span> <code>{pathname}</code>
       </div>
     </div>
   );

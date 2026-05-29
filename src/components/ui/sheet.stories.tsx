@@ -16,7 +16,7 @@ function StoryShell({ side }: { side: 'top' | 'right' | 'bottom' | 'left' }) {
       <SheetContent side={side}>
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
-          <SheetDescription>Make changes to your profile here. Click save when you're done.</SheetDescription>
+          <SheetDescription>Make changes to your profile here. Click save when you&apos;re done.</SheetDescription>
         </SheetHeader>
         <p className='py-4 text-sm'>Profile form fields would render here.</p>
         <SheetFooter>

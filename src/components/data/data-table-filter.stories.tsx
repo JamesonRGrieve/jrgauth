@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ColumnDef } from '@tanstack/react-table';
-import { getCoreRowModel, getFilteredRowModel, useReactTable } from '@tanstack/react-table';
+import { type ColumnDef, getCoreRowModel, getFilteredRowModel, useReactTable } from '@tanstack/react-table';
 import { DataTableFilter } from './data-table-filter';
 
 interface Row {

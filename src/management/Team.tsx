@@ -49,7 +49,309 @@ const readJwtString = (): string => {
 
 const apiUri = (): string => process.env.NEXT_PUBLIC_API_URI ?? '';
 
-export const Team = () => {
+const SelectTeam = ({
+  selectedTeam,
+  userTeams,
+  selectNewTeam,
+}: {
+  selectedTeam: TeamWithExtras | null;
+  userTeams: TeamWithExtras[];
+  selectNewTeam: (team: TeamWithExtras) => void;
+}): React.JSX.Element => {
+  const hasTeams = userTeams.length > 0;
+  return (
+    <>
+      <SidebarGroupLabel>Select Team</SidebarGroupLabel>
+      <div className='w-full group-data-[collapsible=icon]:hidden'>
+        <Select
+          value={selectedTeam === null ? '' : selectedTeam.id}
+          onValueChange={(value: string) => {
+            const team = userTeams.find((t) => t.id === value);
+            if (team !== undefined) {
+              selectNewTeam(team);
+            }
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={hasTeams ? 'Select a Team' : 'None - Create a team'} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {hasTeams ? (
+                userTeams.map((child) => (
+                  <SelectItem key={child.id} value={child.id}>
+                    {child.name}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value='SYSTEM' disabled>
+                  No teams available
+                </SelectItem>
+              )}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+    </>
+  );
+};
+
+export const RenameDialog = ({
+  newName,
+  setNewName,
+  checkTeamNameExists,
+  onTeamRenamed,
+  disabled,
+}: {
+  newName: string;
+  setNewName: (name: string) => void;
+  checkTeamNameExists: (name: string) => boolean;
+  onTeamRenamed?: (newTeamName: string) => void;
+  disabled?: boolean;
+}): React.JSX.Element => {
+  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
+  const { data: activeTeam, mutate } = useTeam() as {
+    data?: { id?: string; name?: string };
+    mutate: () => Promise<unknown>;
+  };
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+
+  const handleConfirmRename = async (): Promise<void> => {
+    if (checkTeamNameExists(newName)) {
+      toast({
+        title: 'Error',
+        description: 'Team name already exists. Please choose a different name.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    try {
+      await axios.put(
+        `${apiUri()}/v1/team/${activeTeam?.id ?? ''}`,
+        { team: { name: newName } },
+        {
+          headers: {
+            Authorization: `Bearer ${readJwtString()}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      setIsRenameDialogOpen(false);
+      void mutate();
+      toast({
+        title: 'Success',
+        description: 'Team name updated successfully!',
+      });
+      if (onTeamRenamed !== undefined) {
+        onTeamRenamed(newName);
+      }
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      toast({
+        title: 'Error',
+        description: err.response?.data?.detail ?? 'Failed to update team name',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  return (
+    <>
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          onClick={() => {
+            setNewName(activeTeam?.name ?? '');
+            setIsRenameDialogOpen(true);
+          }}
+          tooltip='Rename Team'
+          disabled={disabled}
+        >
+          <LuPencil className='w-4 h-4' />
+          <span>Rename Team</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename Team</DialogTitle>
+          </DialogHeader>
+          <div className='grid gap-4 py-4'>
+            <Input
+              value={newName}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)}
+              placeholder='Enter new name'
+            />
+          </div>
+          <DialogFooter>
+            <Button variant='outline' onClick={() => setIsRenameDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                void handleConfirmRename();
+              }}
+            >
+              Rename
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+export const CreateDialog = ({
+  newName,
+  setNewName,
+  teamData,
+  checkTeamNameExists,
+  onTeamCreated,
+}: {
+  newName: string;
+  setNewName: (name: string) => void;
+  teamData: TeamWithExtras[];
+  checkTeamNameExists: (name: string) => boolean;
+  onTeamCreated: (newTeamId?: string) => void;
+}): React.JSX.Element => {
+  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
+  const { mutate } = useTeam() as { mutate: () => Promise<unknown> };
+  const [newParent, setNewParent] = useState('');
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isDuplicate, setIsDuplicate] = useState(false);
+
+  const handleConfirmCreate = async (e?: React.SyntheticEvent): Promise<void> => {
+    if (e !== undefined) {
+      e.preventDefault();
+    }
+    if (newName.trim() === '') {
+      toast({
+        title: 'Error',
+        description: 'Team name is required.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (checkTeamNameExists(newName) && !isDuplicate) {
+      setIsDuplicate(true);
+      return;
+    }
+    try {
+      const response = await axios.post<{ team?: { id?: string } }>(
+        `${apiUri()}/v1/team`,
+        {
+          name: newName,
+          agent_name: `${newName} Agent`,
+          ...(newParent !== '' ? { parent_company_id: newParent } : {}),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${readJwtString()}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      void mutate();
+      setIsCreateDialogOpen(false);
+      setIsDuplicate(false);
+      toast({
+        title: 'Success',
+        description: 'Team created successfully!',
+      });
+      onTeamCreated(response.data.team?.id);
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      toast({
+        title: 'Error',
+        description: err.response?.data?.detail ?? 'Failed to create team',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleTeamName = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setNewName(e.target.value.slice(0, 20));
+    if (isDuplicate) {
+      setIsDuplicate(false);
+    }
+  };
+
+  return (
+    <>
+      <SidebarMenuItem>
+        <SidebarMenuButton
+          onClick={() => {
+            setNewName('');
+            setNewParent('');
+            setIsDuplicate(false);
+            setIsCreateDialogOpen(true);
+          }}
+          tooltip='Create Team'
+        >
+          <LuPlus className='w-4 h-4' />
+          <span>Create Team</span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Team</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={(e: React.SyntheticEvent) => void handleConfirmCreate(e)}>
+            <div className='grid gap-4 py-4'>
+              <Input
+                value={newName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTeamName(e)}
+                required
+                placeholder='Enter team name (max 20 chars)'
+                maxLength={20}
+                name='teamName'
+              />
+              <Select value={newParent} onValueChange={(value: string) => setNewParent(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder='(Optional) Select a Parent Team' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Parent Team</SelectLabel>
+                    <SelectItem value='-'>[NONE]</SelectItem>
+                    {teamData.map((child) => (
+                      <SelectItem key={child.id} value={child.id}>
+                        {child.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            {isDuplicate && (
+              <div className='text-xs text-yellow-700 bg-yellow-100 rounded px-2 py-2 mb-2'>
+                <Label>
+                  You are already a member of a team with this name, creating another may cause confusion, are you sure you
+                  want to continue?
+                </Label>
+              </div>
+            )}
+            <DialogFooter>
+              <Button
+                variant='outline'
+                type='button'
+                onClick={() => {
+                  setIsCreateDialogOpen(false);
+                  setIsDuplicate(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type='submit'>Create</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+export const Team = (): React.JSX.Element => {
   const [newName, setNewName] = useState('');
   const [userTeams, setUserTeams] = useState<TeamWithExtras[]>([]);
   const [selectedTeam, setSelected] = useState<TeamWithExtras | null>(null);
@@ -201,308 +503,5 @@ export const Team = () => {
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
-  );
-};
-
-const SelectTeam = ({
-  selectedTeam,
-  userTeams,
-  selectNewTeam,
-}: {
-  selectedTeam: TeamWithExtras | null;
-  userTeams: TeamWithExtras[];
-  selectNewTeam: (team: TeamWithExtras) => void;
-}) => {
-  const hasTeams = userTeams.length > 0;
-  return (
-    <>
-      <SidebarGroupLabel>Select Team</SidebarGroupLabel>
-      <div className='w-full group-data-[collapsible=icon]:hidden'>
-        <Select
-          value={selectedTeam === null ? '' : selectedTeam.id}
-          onValueChange={(value: string) => {
-            const team = userTeams.find((t) => t.id === value);
-            if (team !== undefined) {
-              selectNewTeam(team);
-            }
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={hasTeams ? 'Select a Team' : 'None - Create a team'} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {hasTeams ? (
-                userTeams.map((child) => (
-                  <SelectItem key={child.id} value={child.id}>
-                    {child.name}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value='SYSTEM' disabled>
-                  No teams available
-                </SelectItem>
-              )}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-    </>
-  );
-};
-
-export const RenameDialog = ({
-  newName,
-  setNewName,
-  checkTeamNameExists,
-  onTeamRenamed,
-  disabled,
-}: {
-  newName: string;
-  setNewName: (name: string) => void;
-  checkTeamNameExists: (name: string) => boolean;
-  onTeamRenamed?: (newTeamName: string) => void;
-  disabled?: boolean;
-}) => {
-  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
-  const { data: activeTeam, mutate } = useTeam() as {
-    data?: { id?: string; name?: string };
-    mutate: () => Promise<unknown>;
-  };
-  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-
-  const handleConfirmRename = async (): Promise<void> => {
-    if (checkTeamNameExists(newName)) {
-      toast({
-        title: 'Error',
-        description: 'Team name already exists. Please choose a different name.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    try {
-      await axios.put(
-        `${apiUri()}/v1/team/${activeTeam?.id ?? ''}`,
-        { team: { name: newName } },
-        {
-          headers: {
-            Authorization: `Bearer ${readJwtString()}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      setIsRenameDialogOpen(false);
-      void mutate();
-      toast({
-        title: 'Success',
-        description: 'Team name updated successfully!',
-      });
-      if (onTeamRenamed !== undefined) {
-        onTeamRenamed(newName);
-      }
-    } catch (error: unknown) {
-      const err = error as ApiError;
-      toast({
-        title: 'Error',
-        description: err.response?.data?.detail ?? 'Failed to update team name',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  return (
-    <>
-      <SidebarMenuItem>
-        <SidebarMenuButton
-          onClick={() => {
-            setNewName(activeTeam?.name ?? '');
-            setIsRenameDialogOpen(true);
-          }}
-          tooltip='Rename Team'
-          disabled={disabled}
-        >
-          <LuPencil className='w-4 h-4' />
-          <span>Rename Team</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Rename Team</DialogTitle>
-          </DialogHeader>
-          <div className='grid gap-4 py-4'>
-            <Input
-              value={newName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)}
-              placeholder='Enter new name'
-            />
-          </div>
-          <DialogFooter>
-            <Button variant='outline' onClick={() => setIsRenameDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                void handleConfirmRename();
-              }}
-            >
-              Rename
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
-};
-
-export const CreateDialog = ({
-  newName,
-  setNewName,
-  teamData,
-  checkTeamNameExists,
-  onTeamCreated,
-}: {
-  newName: string;
-  setNewName: (name: string) => void;
-  teamData: TeamWithExtras[];
-  checkTeamNameExists: (name: string) => boolean;
-  onTeamCreated: (newTeamId?: string) => void;
-}) => {
-  const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
-  const { mutate } = useTeam() as { mutate: () => Promise<unknown> };
-  const [newParent, setNewParent] = useState('');
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isDuplicate, setIsDuplicate] = useState(false);
-
-  const handleConfirmCreate = async (e?: React.SyntheticEvent): Promise<void> => {
-    if (e !== undefined) {
-      e.preventDefault();
-    }
-    if (newName.trim() === '') {
-      toast({
-        title: 'Error',
-        description: 'Team name is required.',
-        variant: 'destructive',
-      });
-      return;
-    }
-    if (checkTeamNameExists(newName) && !isDuplicate) {
-      setIsDuplicate(true);
-      return;
-    }
-    try {
-      const response = await axios.post<{ team?: { id?: string } }>(
-        `${apiUri()}/v1/team`,
-        {
-          name: newName,
-          agent_name: `${newName} Agent`,
-          ...(newParent !== '' ? { parent_company_id: newParent } : {}),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${readJwtString()}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      void mutate();
-      setIsCreateDialogOpen(false);
-      setIsDuplicate(false);
-      toast({
-        title: 'Success',
-        description: 'Team created successfully!',
-      });
-      onTeamCreated(response.data.team?.id);
-    } catch (error: unknown) {
-      const err = error as ApiError;
-      toast({
-        title: 'Error',
-        description: err.response?.data?.detail ?? 'Failed to create team',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleTeamName = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setNewName(e.target.value.slice(0, 20));
-    if (isDuplicate) {
-      setIsDuplicate(false);
-    }
-  };
-
-  return (
-    <>
-      <SidebarMenuItem>
-        <SidebarMenuButton
-          onClick={() => {
-            setNewName('');
-            setNewParent('');
-            setIsDuplicate(false);
-            setIsCreateDialogOpen(true);
-          }}
-          tooltip='Create Team'
-        >
-          <LuPlus className='w-4 h-4' />
-          <span>Create Team</span>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Team</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={(e: React.SyntheticEvent) => void handleConfirmCreate(e)}>
-            <div className='grid gap-4 py-4'>
-              <Input
-                value={newName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleTeamName(e)}
-                required
-                placeholder='Enter team name (max 20 chars)'
-                maxLength={20}
-                name='teamName'
-                autoFocus
-              />
-              <Select value={newParent} onValueChange={(value: string) => setNewParent(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder='(Optional) Select a Parent Team' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Parent Team</SelectLabel>
-                    <SelectItem value='-'>[NONE]</SelectItem>
-                    {teamData.map((child) => (
-                      <SelectItem key={child.id} value={child.id}>
-                        {child.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            {isDuplicate && (
-              <div className='text-xs text-yellow-700 bg-yellow-100 rounded px-2 py-2 mb-2'>
-                <Label>
-                  You are already a member of a team with this name, creating another may cause confusion, are you sure you
-                  want to continue?
-                </Label>
-              </div>
-            )}
-            <DialogFooter>
-              <Button
-                variant='outline'
-                type='button'
-                onClick={() => {
-                  setIsCreateDialogOpen(false);
-                  setIsDuplicate(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button type='submit'>Create</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
   );
 };
