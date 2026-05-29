@@ -382,7 +382,9 @@ export default [
           message: 'Avoid `as any`. Fix the type at its source.',
         },
         {
-          selector: 'TSTypeAnnotation > TSUnknownKeyword',
+          // Catch-clause variables are genuinely exempt (the bare selector was
+          // flagging `catch (e: unknown)`, which is the correct, encouraged form).
+          selector: 'TSTypeAnnotation > TSUnknownKeyword:not(CatchClause TSUnknownKeyword)',
           message:
             '`unknown` outside `catch` is a smell. Validate at the boundary entry (Zod / type guard) and propagate the narrow type. Catch-clause variables are exempt.',
         },
