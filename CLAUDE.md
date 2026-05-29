@@ -10,7 +10,10 @@ Package manager: **pnpm**. Toolchain: TypeScript + Storybook + ESLint + Prettier
 
 This repo is **not yet at workspace-grade**. Tracked debt:
 
-- `tsconfig.json` has `"strict": false` and `"strictNullChecks": false` flagged with `// TODO Make this work.` These are not acceptable end states. Convert to a tsc-error ratchet (`.tsc-error-baseline`) and ratchet down to zero, then flip strict on.
+- The flat `eslint.config.mjs` now wires the workspace §7.5 plugins: `import`, `jsx-a11y`, `eslint-comments`, `promise` (in the `**/*.{ts,tsx}` block, with their recommended rulesets + the §7.5 import/order/cycle/naming rules), plus dedicated override blocks for `vitest` (test files) and `storybook` (stories — both re-enabled in lint; previously ignored). After `pnpm install`, the ESLint warning baseline must be re-seeded with `pnpm lint:ratchet:update` (commit the baseline file in the same commit per workspace §7.3).
+- A `tsconfig.strict.json` (extends `tsconfig.json`, enables `noImplicitOverride` / `noFallthroughCasesInSwitch` / `noImplicitReturns` / `noUncheckedIndexedAccess` / `noPropertyAccessFromIndexSignature` / `exactOptionalPropertyTypes`) was added to back the strict-mode ratchet. After install, seed it via `pnpm strict:ratchet:update`.
+- `biome.json` gained `style.useFilenamingConvention` (kebab/camel/Pascal allowed for the React component files). After install, re-seed with `pnpm biome:ratchet:update`. All three baseline files (`pnpm lint:ratchet:update`, `pnpm strict:ratchet:update`, `pnpm biome:ratchet:update`) are committed in the same commit as the config change (workspace §7.3).
+- `tsconfig.json` has `"strict": false` and `"strictNullChecks": false` flagged with `// TODO ratchet to zero and re-enable strict`. These are not acceptable end states. Convert to a tsc-error ratchet (`.tsc-error-baseline`) and ratchet down to zero, then flip strict on.
 - `target: "es5"` is stale; bump to `ESNext` once strict mode lands and the build pipeline tolerates it.
 - No ratchet scripts present. Adopt the canonical `dynamic-form/scripts/` runners (`lint-ratchet.mjs`, `typecheck-ratchet.mjs`, `coverage-symmetry.mjs`, `symmetry-ratchet.mjs`) and seed baselines from the current state.
 - No `vitest.config.ts` or `tests/` directory yet. Add Vitest + happy-dom and start covering the auth flow primitives.

@@ -17,6 +17,25 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import unusedImports from 'eslint-plugin-unused-imports';
+import importPlugin from 'eslint-plugin-import';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import eslintComments from 'eslint-plugin-eslint-comments';
+import promise from 'eslint-plugin-promise';
+import vitest from '@vitest/eslint-plugin';
+import storybookPlugin from 'eslint-plugin-storybook';
+
+// Workspace §7.5 model: every rule is warn-level and ratcheted (lint:ratchet
+// forbids *any* error). Plugin "recommended" presets ship many rules at
+// `error`; demote them to `warn` so they ride the ratchet toward zero rather
+// than hard-blocking the commit (the established pattern for this repo).
+const demote = (rules = {}) =>
+    Object.fromEntries(
+        Object.entries(rules).map(([id, val]) => {
+            if (val === 'error' || val === 2) return [id, 'warn'];
+            if (Array.isArray(val) && (val[0] === 'error' || val[0] === 2)) return [id, ['warn', ...val.slice(1)]];
+            return [id, val];
+        }),
+    );
 
 export default [
     {
@@ -26,12 +45,10 @@ export default [
             'storybook-static/**',
             '.next/**',
             'coverage/**',
-            'src/**/*.stories.*',
             '.storybook/**',
-            'tests/**',
         ],
     },
-    js.configs.recommended,
+    { ...js.configs.recommended, rules: demote(js.configs.recommended.rules) },
     {
         files: ['**/*.{ts,tsx}'],
         languageOptions: {
@@ -40,7 +57,11 @@ export default [
                 ecmaVersion: 'latest',
                 sourceType: 'module',
                 ecmaFeatures: { jsx: true },
-                project: './tsconfig.json',
+                // Lint against a dedicated tsconfig that also includes stories
+                // and tests (the build tsconfig.json excludes *.stories.*),
+                // so type-aware rules cover them instead of hard-failing.
+                project: './tsconfig.eslint.json',
+                tsconfigRootDir: import.meta.dirname,
             },
             globals: {
                 window: 'readonly',
@@ -101,9 +122,14 @@ export default [
             react: reactPlugin,
             'react-hooks': reactHooksPlugin,
             'unused-imports': unusedImports,
+            import: importPlugin,
+            'jsx-a11y': jsxA11y,
+            'eslint-comments': eslintComments,
+            promise,
         },
         settings: {
             react: { version: 'detect' },
+            'import/resolver': { typescript: { project: './tsconfig.eslint.json' } },
         },
         rules: {
             // Errors from base recommended that are too noisy for legacy code:
@@ -139,6 +165,12 @@ export default [
             'react-hooks/exhaustive-deps': 'warn',
             'react/react-in-jsx-scope': 'off',
             'react/prop-types': 'off',
+
+            // Workspace §7.5 recommended rulesets — merged from the named
+            // plugins. All effectively warn-level via the lint ratchet.
+            ...demote(jsxA11y.configs.recommended.rules),
+            ...demote(eslintComments.configs.recommended.rules),
+            ...demote(promise.configs.recommended.rules),
 
             // Workspace §7.4 ruleset (foundry-parity). All warn-level, absorbed
             // by lint:ratchet. Existing baseline must be reseeded after the
@@ -217,8 +249,97 @@ export default [
             '@typescript-eslint/promise-function-async': 'warn',
             '@typescript-eslint/return-await': ['warn', 'in-try-catch'],
 
+            // Workspace §7.5 additional rules.
+            'no-use-before-define': 'off',
+            '@typescript-eslint/no-use-before-define': ['warn', { functions: false, classes: false }],
+            '@typescript-eslint/no-unused-expressions': 'warn',
+            '@typescript-eslint/no-implied-eval': 'warn',
+            '@typescript-eslint/explicit-function-return-type': [
+                'warn',
+                { allowExpressions: true, allowTypedFunctionExpressions: true, allowHigherOrderFunctions: true },
+            ],
+            '@typescript-eslint/explicit-module-boundary-types': 'warn',
+            'no-new-native-nonconstructor': 'warn',
+            'no-duplicate-imports': 'warn',
+            'no-loss-of-precision': 'warn',
+            'no-self-assign': 'warn',
+
+            // eslint-plugin-import rules (§7.5).
+            'import/order': [
+                'warn',
+                {
+                    groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+                    'newlines-between': 'never',
+                    alphabetize: { order: 'asc' },
+                },
+            ],
+            'import/no-cycle': ['warn', { maxDepth: 4, ignoreExternal: true }],
+            'import/no-self-import': 'warn',
+            'import/no-useless-path-segments': 'warn',
+            'import/no-duplicates': 'warn',
+            'import/newline-after-import': 'warn',
+            'import/first': 'warn',
+
+            // Naming convention — foundry-parity selector list.
+            '@typescript-eslint/naming-convention': [
+                'warn',
+                { selector: 'default', format: ['camelCase'], leadingUnderscore: 'allow', trailingUnderscore: 'allow' },
+                {
+                    selector: 'variable',
+                    format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+                    leadingUnderscore: 'allow',
+                    trailingUnderscore: 'allow',
+                },
+                { selector: 'parameter', format: ['camelCase', 'PascalCase'], leadingUnderscore: 'allow' },
+                { selector: 'function', format: ['camelCase', 'PascalCase'] },
+                { selector: 'method', format: ['camelCase', 'PascalCase'], leadingUnderscore: 'allow' },
+                { selector: 'typeMethod', format: ['camelCase', 'PascalCase'], leadingUnderscore: 'allow' },
+                { selector: 'classicAccessor', format: ['camelCase', 'UPPER_CASE'] },
+                { selector: 'memberLike', modifiers: ['private'], format: ['camelCase'], leadingUnderscore: 'allow' },
+                {
+                    selector: 'classProperty',
+                    modifiers: ['static'],
+                    format: ['UPPER_CASE', 'camelCase', 'PascalCase'],
+                    leadingUnderscore: 'allow',
+                },
+                { selector: 'typeLike', format: ['PascalCase'] },
+                { selector: 'enumMember', format: ['UPPER_CASE', 'PascalCase'] },
+                { selector: 'objectLiteralProperty', format: null },
+                { selector: 'typeProperty', format: null },
+                { selector: 'import', format: ['camelCase', 'PascalCase'] },
+            ],
+
             'no-shadow': 'off',
-            '@typescript-eslint/no-shadow': ['warn', { builtinGlobals: false, hoist: 'all' }],
+            '@typescript-eslint/no-shadow': [
+                'warn',
+                {
+                    builtinGlobals: true,
+                    hoist: 'all',
+                    allow: [
+                        'event',
+                        'name',
+                        'location',
+                        'origin',
+                        'parent',
+                        'prompt',
+                        'toolbar',
+                        'status',
+                        'length',
+                        'top',
+                        'close',
+                        'open',
+                        'stop',
+                        'history',
+                        'confirm',
+                        'document',
+                        'innerWidth',
+                        'innerHeight',
+                        'source',
+                        'selection',
+                        'match',
+                    ],
+                },
+            ],
             'no-self-compare': 'warn',
             'no-template-curly-in-string': 'warn',
             'no-unreachable-loop': 'warn',
@@ -267,6 +388,11 @@ export default [
                     selector: "TSAsExpression[typeAnnotation.type='TSAnyKeyword']",
                     message: 'Avoid `as any`. Fix the type at its source.',
                 },
+                {
+                    selector: 'TSTypeAnnotation > TSUnknownKeyword',
+                    message:
+                        '`unknown` outside `catch` is a smell. Validate at the boundary entry (Zod / type guard) and propagate the narrow type. Catch-clause variables are exempt.',
+                },
             ],
 
             'react/jsx-key': 'error',
@@ -303,6 +429,36 @@ export default [
         },
         rules: {
             'no-unused-vars': 'warn',
+        },
+    },
+    {
+        files: ['tests/**/*.{ts,tsx}', 'src/**/*.test.{ts,tsx}'],
+        plugins: { vitest },
+        // §7.5 mandates these at `error`; auth is an explicit bring-up repo
+        // (warn + ratchet toward zero, see CLAUDE.md "Current State"), so they
+        // are demoted to warn until the baseline reaches zero, then re-raised.
+        rules: demote({
+            ...vitest.configs.recommended.rules,
+            'vitest/no-focused-tests': 'error',
+            'vitest/no-disabled-tests': 'error',
+            'vitest/no-identical-title': 'error',
+            'vitest/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
+            'vitest/valid-expect': 'error',
+            'vitest/valid-title': 'error',
+            'vitest/no-conditional-tests': 'warn',
+            'vitest/no-conditional-in-test': 'warn',
+            'vitest/no-conditional-expect': 'error',
+        }),
+    },
+    {
+        files: ['src/**/*.stories.{ts,tsx}'],
+        plugins: { storybook: storybookPlugin },
+        rules: {
+            // `flat/recommended` exposes its rule object at index [1]; index [0]
+            // is plugins-only. Pin the workspace-required story-hygiene rules
+            // explicitly so the shape can't drift the config out from under us.
+            'storybook/no-redundant-story-name': 'warn',
+            'storybook/prefer-pascal-case': 'warn',
         },
     },
 ];

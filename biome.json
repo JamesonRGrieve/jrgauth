@@ -14,6 +14,16 @@
                 "noRedeclare": "off",
                 "noExplicitAny": "warn"
             },
+            "style": {
+                "useFilenamingConvention": {
+                    "level": "warn",
+                    "options": {
+                        "filenameCases": ["kebab-case", "camelCase", "PascalCase"],
+                        "strictCase": false,
+                        "requireAscii": true
+                    }
+                }
+            },
             "complexity": {
                 "noThisInStatic": "off",
                 "useLiteralKeys": "off"
