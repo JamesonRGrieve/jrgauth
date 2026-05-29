@@ -11,7 +11,7 @@
  * Output: prints the count to stdout. Writes `.animation-coverage.json` with
  * a full breakdown for the ratchet to compare against `.animation-baseline`.
  */
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const ROOT = process.cwd();

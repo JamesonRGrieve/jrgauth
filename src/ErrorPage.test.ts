@@ -16,6 +16,6 @@ describe('ErrorPage (surface)', () => {
   });
 
   it('accepts an empty props object (redirectTo is optional)', () => {
-    expectTypeOf(ErrorPage).parameter(0).toMatchTypeOf<ErrorPageProps>();
+    expectTypeOf(ErrorPage).parameter(0).toExtend<ErrorPageProps>();
   });
 });

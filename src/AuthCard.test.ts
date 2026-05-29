@@ -20,7 +20,7 @@ describe('AuthCard (surface)', () => {
   });
 
   it('requires a title and description, with optional back-button and response message', () => {
-    expectTypeOf(AuthCard).parameter(0).toMatchTypeOf<{
+    expectTypeOf(AuthCard).parameter(0).toExtend<{
       title: string;
       description: string;
       showBackButton?: boolean;
@@ -30,6 +30,6 @@ describe('AuthCard (surface)', () => {
   });
 
   it('ResponseMessage forwards HTMLDivElement attributes', () => {
-    expectTypeOf(ResponseMessage).parameter(0).toMatchTypeOf<React.HTMLAttributes<HTMLDivElement>>();
+    expectTypeOf(ResponseMessage).parameter(0).toExtend<React.HTMLAttributes<HTMLDivElement>>();
   });
 });

@@ -9,7 +9,7 @@ export default function useProducts(): SWRResponse<Product[]> {
   return useSWR<Product[]>(
     '/products',
     async () =>
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY != null && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY !== ''
         ? (
             await axios.get<Product[]>(`${process.env.NEXT_PUBLIC_API_URI}/v1/products`, {
               headers: {

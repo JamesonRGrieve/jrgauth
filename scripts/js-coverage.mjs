@@ -9,7 +9,7 @@
  * Excludes: build output, tooling/config files, generated code.
  */
 import { readdirSync, statSync, writeFileSync } from 'node:fs';
-import { extname, join, relative, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 
 const SRC = resolve(process.cwd(), 'src');
 const OUT = resolve(process.cwd(), '.js-coverage.json');

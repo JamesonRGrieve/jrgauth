@@ -40,7 +40,7 @@ describe('NavMenu items', () => {
   });
 
   it('Item type is exported and shape-accurate', () => {
-    expectTypeOf<Item>().toMatchTypeOf<{ title: string; items?: { title: string; url: string }[] }>();
+    expectTypeOf<Item>().toExtend<{ title: string; items?: { title: string; url: string }[] }>();
   });
 
   it('leaf urls under a single group are unique', () => {

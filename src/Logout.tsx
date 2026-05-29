@@ -19,7 +19,7 @@ export default function Logout({ redirectTo = '/' }: LogoutProps): ReactNode {
   }, [router, redirectTo]);
 
   // Moved the conditional rendering here, after all hooks are called
-  if (!authConfig.logout.heading) {
+  if (authConfig.logout.heading === undefined || authConfig.logout.heading === '') {
     return null;
   }
 

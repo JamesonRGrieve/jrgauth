@@ -29,7 +29,7 @@ describe('OrganizationalUnit (surface)', () => {
   });
 
   it('exports an OrganizationalUnit model with the expected fields', () => {
-    expectTypeOf<OrganizationalUnitModel>().toMatchTypeOf<{
+    expectTypeOf<OrganizationalUnitModel>().toExtend<{
       id: number;
       name: string;
       stripe_id: string;
@@ -46,6 +46,6 @@ describe('OrganizationalUnit (surface)', () => {
       seats: { available: 10, used: 3 },
       requests: { available: 1000, used: 42 },
     };
-    expectTypeOf(quotas.seats).toMatchTypeOf<{ available: number; used: number }>();
+    expectTypeOf(quotas.seats).toExtend<{ available: number; used: number }>();
   });
 });

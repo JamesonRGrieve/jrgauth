@@ -13,7 +13,7 @@ describe('Gravatar (surface)', () => {
   });
 
   it('requires an email and accepts an optional pixel size', () => {
-    expectTypeOf(Gravatar).parameter(0).toMatchTypeOf<{ email: string; size?: number }>();
+    expectTypeOf(Gravatar).parameter(0).toExtend<{ email: string; size?: number }>();
   });
 });
 

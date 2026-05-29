@@ -2,15 +2,16 @@
 
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { useRouter } from 'next/navigation';
+import type { ReactNode } from 'react';
 
 export type ErrorPageProps = {
   redirectTo?: string;
 };
 
-export default function ErrorPage({ redirectTo: _redirectTo = '/' }: ErrorPageProps) {
+export default function ErrorPage({ redirectTo: _redirectTo = '/' }: ErrorPageProps): ReactNode {
   const router = useRouter();
 
-  const logout = () => {
+  const logout = (): void => {
     router.push('/user/logout');
   };
 

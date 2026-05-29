@@ -26,6 +26,6 @@ describe('Logout (surface)', () => {
   it('renders without throwing under default args, given a no-arg invocation contract', () => {
     // We cannot invoke the function (it uses hooks) without a renderer, but we
     // can ensure the default-prop branch is at minimum well-typed.
-    expectTypeOf(Logout).parameter(0).toMatchTypeOf<LogoutProps>();
+    expectTypeOf(Logout).parameter(0).toExtend<LogoutProps>();
   });
 });

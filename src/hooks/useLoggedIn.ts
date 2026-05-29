@@ -4,12 +4,12 @@ import { getCookie } from 'cookies-next/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function useLoggedIn() {
+export default function useLoggedIn(): { isLoggedIn: boolean } {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const _router = useRouter();
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = async (): Promise<void> => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URI}/v1/user`, {
           headers: {
