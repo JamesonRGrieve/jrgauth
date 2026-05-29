@@ -311,6 +311,9 @@ export default [
             // `import * as React` is the standard namespace import; React is an
             // ambient global via the JSX runtime, so this is never a real shadow.
             'React',
+            // React type imports that collide with DOM lib global names — these
+            // are type-only imports, never a real runtime shadow.
+            'ChangeEvent',
             'event',
             'name',
             'location',
