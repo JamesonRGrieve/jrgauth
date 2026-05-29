@@ -13,46 +13,46 @@ const updateMode = process.argv.includes('--update');
 
 let output;
 try {
-    output = execSync('./node_modules/.bin/type-coverage', {
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'pipe'],
-        maxBuffer: 64 * 1024 * 1024,
-    });
+  output = execSync('./node_modules/.bin/type-coverage', {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    maxBuffer: 64 * 1024 * 1024,
+  });
 } catch (err) {
-    output = (err.stdout?.toString() || '') + (err.stderr?.toString() || '');
+  output = (err.stdout?.toString() || '') + (err.stderr?.toString() || '');
 }
 
 // Output: "12345 / 12999 95.23%"
 const match = output.match(/\(?(\d+)\s*\/\s*(\d+)\)?\s*([\d.]+)%/);
 if (!match) {
-    console.error('[type-coverage-ratchet] could not parse output');
-    console.error(output);
-    process.exit(2);
+  console.error('[type-coverage-ratchet] could not parse output');
+  console.error(output);
+  process.exit(2);
 }
 const current = parseFloat(match[3]);
 
 if (updateMode) {
-    writeFileSync(BASELINE_PATH, `${current}\n`, 'utf8');
-    console.log(`[type-coverage-ratchet] baseline updated to ${current}%`);
-    process.exit(0);
+  writeFileSync(BASELINE_PATH, `${current}\n`, 'utf8');
+  console.log(`[type-coverage-ratchet] baseline updated to ${current}%`);
+  process.exit(0);
 }
 
 if (!existsSync(BASELINE_PATH)) {
-    writeFileSync(BASELINE_PATH, `${current}\n`, 'utf8');
-    console.log(`[type-coverage-ratchet] baseline missing — initialised at ${current}%`);
-    process.exit(0);
+  writeFileSync(BASELINE_PATH, `${current}\n`, 'utf8');
+  console.log(`[type-coverage-ratchet] baseline missing — initialised at ${current}%`);
+  process.exit(0);
 }
 
 const baseline = parseFloat(readFileSync(BASELINE_PATH, 'utf8').trim());
 
 if (current < baseline) {
-    console.error(`[type-coverage-ratchet] FAIL: coverage dropped ${baseline}% -> ${current}%.`);
-    process.exit(1);
+  console.error(`[type-coverage-ratchet] FAIL: coverage dropped ${baseline}% -> ${current}%.`);
+  process.exit(1);
 }
 if (current > baseline) {
-    console.log(`[type-coverage-ratchet] OK: coverage improved ${baseline}% -> ${current}%.`);
-    console.log('Raise the baseline: pnpm type-coverage:ratchet:update');
-    process.exit(0);
+  console.log(`[type-coverage-ratchet] OK: coverage improved ${baseline}% -> ${current}%.`);
+  console.log('Raise the baseline: pnpm type-coverage:ratchet:update');
+  process.exit(0);
 }
 console.log(`[type-coverage-ratchet] OK: coverage unchanged at ${current}%.`);
 process.exit(0);

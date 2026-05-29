@@ -191,11 +191,7 @@ export const Profile = ({
     const TeamActionCell = ({ row }: CellContext<Team, unknown>): ReactElement => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant='ghost'
-            className='flex h-8 w-8 p-0'
-            onClick={() => router.push(`/team/${row.original.id}`)}
-          >
+          <Button variant='ghost' className='flex h-8 w-8 p-0' onClick={() => router.push(`/team/${row.original.id}`)}>
             <ArrowTopRightIcon />
           </Button>
         </DropdownMenuTrigger>
@@ -237,8 +233,7 @@ export const Profile = ({
         <p>Loading Current Data...</p>
       ) : error !== undefined ? (
         <p>{error.message}</p>
-      ) : data?.missing_requirements === undefined ||
-        Object.keys(data.missing_requirements).length === 0 ? (
+      ) : data?.missing_requirements === undefined || Object.keys(data.missing_requirements).length === 0 ? (
         <DynamicForm
           fields={{
             first_name: {
@@ -304,7 +299,11 @@ export const Profile = ({
           readOnlyFields={['input_tokens', 'output_tokens']}
           additionalButtons={[
             <div key='teams-table' className='col-span-4'>
-              <DataTable data={(userTeams as Team[] | undefined) ?? []} columns={user_teams_columns} meta={{ title: 'Teams' }} />
+              <DataTable
+                data={(userTeams as Team[] | undefined) ?? []}
+                columns={user_teams_columns}
+                meta={{ title: 'Teams' }}
+              />
             </div>,
           ]}
           onConfirm={async (formData: Record<string, unknown>) => {
@@ -363,11 +362,13 @@ export const Profile = ({
             );
             return (
               <>
-                {hasVerifyEmail && (
-                  <p className='text-xl'>Please check your email and verify it using the link provided.</p>
-                )}
+                {hasVerifyEmail && <p className='text-xl'>Please check your email and verify it using the link provided.</p>}
                 {verifySms !== undefined && verifySms !== null && verifySms !== false && (
-                  <VerifySMS verifiedCallback={() => { void mutate(userDataSWRKey); }} />
+                  <VerifySMS
+                    verifiedCallback={() => {
+                      void mutate(userDataSWRKey);
+                    }}
+                  />
                 )}
                 {hasOther && (
                   <DynamicForm
@@ -401,8 +402,7 @@ export const Profile = ({
                         setResponseMessage(updateResponse.detail);
                       }
                       await mutate(userDataSWRKey);
-                      const newReqs = (formData as { missing_requirements?: Record<string, unknown> })
-                        .missing_requirements;
+                      const newReqs = (formData as { missing_requirements?: Record<string, unknown> }).missing_requirements;
                       if (newReqs !== undefined && Object.keys(newReqs).length === 0) {
                         const redirect = (getCookie('href') as string | undefined) ?? '/';
                         void deleteCookie('href');

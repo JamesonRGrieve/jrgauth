@@ -85,11 +85,8 @@ export function InvitationsTable({ userId }: { userId?: string }) {
     },
   ];
 
-  return (
-    <DataTable data={invitations} columns={columns} meta={{ title: 'Invitations' }} />
-  );
+  return <DataTable data={invitations} columns={columns} meta={{ title: 'Invitations' }} />;
 }
-
 
 export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[]> {
   return useSWR<Invitation[]>(
@@ -105,15 +102,12 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[
         });
         const jwtString = typeof jwt === 'string' ? jwt : '';
         const apiBase = process.env.NEXT_PUBLIC_API_URI ?? '';
-        const response = await axios.get<{ invitations?: RawInvitationGroup[] }>(
-          `${apiBase}/v1/user/invitation`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtString}`,
-            },
-            params: { userId },
+        const response = await axios.get<{ invitations?: RawInvitationGroup[] }>(`${apiBase}/v1/user/invitation`, {
+          headers: {
+            Authorization: `Bearer ${jwtString}`,
           },
-        );
+          params: { userId },
+        });
         log(['REST useInvitationsByUserId() Response', response.data], {
           client: 3,
         });
@@ -131,7 +125,6 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<Invitation[
     { fallbackData: [] },
   );
 }
-
 
 type RawInvitee = { user_id: string; status: string; [key: string]: unknown };
 type RawInvitationGroup = {
@@ -165,4 +158,3 @@ function convertInvitationsData(invitationsData: RawInvitationGroup[], userId: s
   });
   return list;
 }
-

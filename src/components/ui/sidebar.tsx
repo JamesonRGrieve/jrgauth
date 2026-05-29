@@ -149,15 +149,17 @@ const SidebarProvider = React.forwardRef<
         },
       }),
       [
-        leftOpen, 
-        rightOpen, 
-        leftWidth, 
-        rightWidth, 
-        isMobile, 
-        leftOpenMobile, 
-        rightOpenMobile, 
-        onLeftOpenChange, 
-        onRightOpenChange, createToggleSidebar, createSetOpen
+        leftOpen,
+        rightOpen,
+        leftWidth,
+        rightWidth,
+        isMobile,
+        leftOpenMobile,
+        rightOpenMobile,
+        onLeftOpenChange,
+        onRightOpenChange,
+        createToggleSidebar,
+        createSetOpen,
       ],
     );
 
@@ -324,7 +326,9 @@ const SidebarRail = React.forwardRef<
 
   const handleResize = React.useCallback(
     (e: MouseEvent) => {
-      if (!isResizing) {return;}
+      if (!isResizing) {
+        return;
+      }
       e.preventDefault();
 
       const delta = side === 'left' ? e.pageX - startXRef.current : startXRef.current - e.pageX;

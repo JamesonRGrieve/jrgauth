@@ -20,8 +20,8 @@ export function useTeams(): SWRResponse<Team[]> {
     async (): Promise<Team[]> => {
       try {
         const query = z.array(TeamSchema).toGQL(GQLType.Query);
-        const response = await client.request<{teams:Team[]}>(query);
-        const data= response.teams.filter((team)=>team.id !== SYSTEM_TEAM_ID);
+        const response = await client.request<{ teams: Team[] }>(query);
+        const data = response.teams.filter((team) => team.id !== SYSTEM_TEAM_ID);
         if (response.teams) {
           if (!getCookie('auth-team') || !data.some((team: Team) => team.id === getCookie('auth-team'))) {
             void setCookie('auth-team', data[0].id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });

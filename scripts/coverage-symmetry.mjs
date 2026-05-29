@@ -21,23 +21,26 @@ const TEST_RE = /\.test\.(ts|tsx|js|jsx)$/;
 const SOURCE_RE = /\.(ts|tsx)$/;
 
 function walk(dir, acc = []) {
-    for (const entry of readdirSync(dir)) {
-        const p = join(dir, entry);
-        const st = statSync(p);
-        if (st.isDirectory()) {
-            if (SKIP_DIRS.has(entry)) {
-                continue;
-            }
-            walk(p, acc);
-        } else {
-            acc.push(p);
-        }
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry);
+    const st = statSync(p);
+    if (st.isDirectory()) {
+      if (SKIP_DIRS.has(entry)) {
+        continue;
+      }
+      walk(p, acc);
+    } else {
+      acc.push(p);
     }
-    return acc;
+  }
+  return acc;
 }
 
 const all = walk(ROOT);
-const sources = all.filter((p) => SOURCE_RE.test(p) && !STORY_RE.test(p) && !TEST_RE.test(p));
+// The package barrel (src/index.ts) is a pure re-export with no behavior of its
+// own — exempt it from the test-symmetry requirement, like app/ boilerplate.
+const BARREL = resolve(ROOT, 'index.ts');
+const sources = all.filter((p) => SOURCE_RE.test(p) && !STORY_RE.test(p) && !TEST_RE.test(p) && p !== BARREL);
 const stories = new Set(all.filter((p) => STORY_RE.test(p)).map((p) => p.replace(STORY_RE, '')));
 const tests = new Set(all.filter((p) => TEST_RE.test(p)).map((p) => p.replace(TEST_RE, '')));
 
@@ -45,29 +48,29 @@ const componentsMissingStories = [];
 const sourcesMissingTests = [];
 
 for (const src of sources) {
-    const stem = src.replace(SOURCE_RE, '');
-    const ext = extname(src);
-    const isComponent = ext === '.tsx';
+  const stem = src.replace(SOURCE_RE, '');
+  const ext = extname(src);
+  const isComponent = ext === '.tsx';
 
-    if (isComponent && !stories.has(stem)) {
-        componentsMissingStories.push(relative(process.cwd(), src));
-    }
-    if (!tests.has(stem)) {
-        sourcesMissingTests.push(relative(process.cwd(), src));
-    }
+  if (isComponent && !stories.has(stem)) {
+    componentsMissingStories.push(relative(process.cwd(), src));
+  }
+  if (!tests.has(stem)) {
+    sourcesMissingTests.push(relative(process.cwd(), src));
+  }
 }
 
 const report = {
-    componentsTotal: sources.filter((p) => extname(p) === '.tsx').length,
-    sourcesTotal: sources.length,
-    componentsMissingStoriesCount: componentsMissingStories.length,
-    sourcesMissingTestsCount: sourcesMissingTests.length,
-    componentsMissingStories: componentsMissingStories.sort(),
-    sourcesMissingTests: sourcesMissingTests.sort(),
+  componentsTotal: sources.filter((p) => extname(p) === '.tsx').length,
+  sourcesTotal: sources.length,
+  componentsMissingStoriesCount: componentsMissingStories.length,
+  sourcesMissingTestsCount: sourcesMissingTests.length,
+  componentsMissingStories: componentsMissingStories.sort(),
+  sourcesMissingTests: sourcesMissingTests.sort(),
 };
 
 writeFileSync(OUT, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
 console.log(
-    `[symmetry] components=${report.componentsTotal} missingStories=${report.componentsMissingStoriesCount} sources=${report.sourcesTotal} missingTests=${report.sourcesMissingTestsCount}`,
+  `[symmetry] components=${report.componentsTotal} missingStories=${report.componentsMissingStoriesCount} sources=${report.sourcesTotal} missingTests=${report.sourcesMissingTestsCount}`,
 );
 console.log(`[symmetry] wrote ${relative(process.cwd(), OUT)}`);

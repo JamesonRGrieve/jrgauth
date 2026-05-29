@@ -110,18 +110,24 @@ export const Team = () => {
   const { id } = params;
 
   const rawAuthTeam = id ?? getCookie('auth-team');
-  const authTeam =
-    typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
+  const authTeam = typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
   const teamIdString = typeof id === 'string' ? id : Array.isArray(id) ? (id[0] ?? '') : '';
   const { data: user } = useUser() as { data?: { id?: string } };
-  const { data: activeTeam, mutate: _mutate } = useTeam(teamIdString) as { data?: { id?: string; name?: string }; mutate: () => void };
+  const { data: activeTeam, mutate: _mutate } = useTeam(teamIdString) as {
+    data?: { id?: string; name?: string };
+    mutate: () => void;
+  };
   const { data: userData } = useUser() as { data?: { id?: string } };
-  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(authTeam) as { data?: Invitation[]; mutate: () => Promise<unknown> };
-  const invitationsData = invitationsList?.filter(
-    (invitation) => invitation.created_by_user_id === userData?.id,
-  ) ?? [];
+  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(authTeam) as {
+    data?: Invitation[];
+    mutate: () => Promise<unknown>;
+  };
+  const invitationsData = invitationsList?.filter((invitation) => invitation.created_by_user_id === userData?.id) ?? [];
   const [_responseMessage, _setResponseMessage] = useState('');
-  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam) as { data?: User[]; mutate: () => Promise<unknown> };
+  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam) as {
+    data?: User[];
+    mutate: () => Promise<unknown>;
+  };
   const { toast } = useToast();
   const router = useRouter();
 
@@ -267,15 +273,12 @@ export const Team = () => {
                       return;
                     }
                     try {
-                      await axios.delete(
-                        `${apiUri()}/v1/user_team/${row.original.id}`,
-                        {
-                          headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${readJwtString()}`,
-                          },
+                      await axios.delete(`${apiUri()}/v1/user_team/${row.original.id}`, {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${readJwtString()}`,
                         },
-                      );
+                      });
                       toast({
                         title: 'User deleted',
                         description: 'The user has been removed from the team.',
@@ -445,14 +448,11 @@ export const Team = () => {
                       return;
                     }
                     try {
-                      await axios.delete(
-                        `${apiUri()}/v1/invitation/${row.original.invitation_id}`,
-                        {
-                          headers: {
-                            Authorization: `Bearer ${readJwtString()}`,
-                          },
+                      await axios.delete(`${apiUri()}/v1/invitation/${row.original.invitation_id}`, {
+                        headers: {
+                          Authorization: `Bearer ${readJwtString()}`,
                         },
-                      );
+                      });
                       toast({
                         title: 'Invitation Cancelled',
                         description: 'The invitation has been cancelled.',

@@ -18,16 +18,13 @@ export default function OAuth({ overrides }: OAuthProps): ReactNode {
   const _router = useRouter();
   const oAuthProviders = useMemo(() => deepMerge(providers, overrides) as typeof providers, [overrides]);
   log(['OAuth Providers: ', oAuthProviders], { client: 3 });
-  const onOAuth2 = useCallback(
-    (_response: unknown) => {
-      document.location.href = `${process.env.NEXT_PUBLIC_APP_URI}/chat`; // This should be fixed properly just low priority.
+  const onOAuth2 = useCallback((_response: unknown) => {
+    document.location.href = `${process.env.NEXT_PUBLIC_APP_URI}/chat`; // This should be fixed properly just low priority.
 
-      // const redirect = getCookie('href') ?? '/';
-      // deleteCookie('href');
-      // router.push(redirect);
-    },
-    [],
-  );
+    // const redirect = getCookie('href') ?? '/';
+    // deleteCookie('href');
+    // router.push(redirect);
+  }, []);
   /*
   // Eventually automatically launch if it's the only provider.
   useEffect(() => {

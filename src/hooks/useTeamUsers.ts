@@ -13,16 +13,21 @@ export default function useTeamUsers(teamId: string | undefined): SWRResponse<Te
   return useSWR<TeamUser[]>(
     teamId ? [`/v1/team/${teamId}/user`, teamId] : null,
     async () => {
-      if (!teamId) {return [];}
-      const response = await axios.get<{ user_teams: TeamUser[] }>(`${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/user`, {
-        headers: {
-          Authorization:`Bearer ${getCookie('jwt')}`,
+      if (!teamId) {
+        return [];
+      }
+      const response = await axios.get<{ user_teams: TeamUser[] }>(
+        `${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/user`,
+        {
+          headers: {
+            Authorization: `Bearer ${getCookie('jwt')}`,
+          },
         },
-      });
+      );
       return response.data.user_teams;
     },
     {
       fallbackData: [],
-    }
+    },
   );
 }

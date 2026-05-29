@@ -12,11 +12,7 @@ import log from '../lib/log';
 
 export type RegisterFormProps = object;
 
-export default function VerifyEmail({
-  verifiedCallback,
-}: {
-  verifiedCallback: (verified: boolean) => void;
-}): JSX.Element {
+export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: (verified: boolean) => void }): JSX.Element {
   const { toast } = useToast();
   const [fields, setFields] = useState({
     emailCode: '',

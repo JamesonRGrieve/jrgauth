@@ -57,8 +57,7 @@ export const Team = () => {
   const params = useParams();
   const { id } = params;
   const rawAuthTeam = id ?? getCookie('auth-team');
-  const authTeam =
-    typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
+  const authTeam = typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
 
   const { data: activeTeam, mutate: _mutate } = useTeam() as { data?: { parentId?: string | null }; mutate: () => void };
   const { mutate: inviteMutate } = useInvitations(authTeam) as { mutate: () => Promise<unknown> };
@@ -66,37 +65,30 @@ export const Team = () => {
   const userDataSWRKey = '/user';
 
   type UserDataResponse = { user?: { id?: string } } & Record<string, unknown>;
-  const { data, error: _error, isLoading: _isLoading } = useSWR<UserDataResponse, Error, string>(
-    userDataSWRKey,
-    async () => {
-      const response = await axios.get<UserDataResponse>(
-        `${apiUri()}${userDataEndpoint}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${readJwtString()}`,
-          },
-          validateStatus: (status) => [200, 403].includes(status),
-        },
-      );
-      return response.data;
-    },
-  );
+  const {
+    data,
+    error: _error,
+    isLoading: _isLoading,
+  } = useSWR<UserDataResponse, Error, string>(userDataSWRKey, async () => {
+    const response = await axios.get<UserDataResponse>(`${apiUri()}${userDataEndpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${readJwtString()}`,
+      },
+      validateStatus: (status) => [200, 403].includes(status),
+    });
+    return response.data;
+  });
 
   const getUserTeams = useCallback(async (): Promise<{ teams: TeamWithExtras[] } & Record<string, unknown>> => {
-    const response = await axios.get<{ teams?: TeamWithExtras[] } & Record<string, unknown>>(
-      `${apiUri()}/v1/team`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${readJwtString()}`,
-        },
-        validateStatus: (status) => [200, 403].includes(status),
+    const response = await axios.get<{ teams?: TeamWithExtras[] } & Record<string, unknown>>(`${apiUri()}/v1/team`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${readJwtString()}`,
       },
-    );
-    const filteredTeams = response.data.teams
-      ? response.data.teams.filter((team) => team.id !== SYSTEM_TEAM_ID)
-      : [];
+      validateStatus: (status) => [200, 403].includes(status),
+    });
+    const filteredTeams = response.data.teams ? response.data.teams.filter((team) => team.id !== SYSTEM_TEAM_ID) : [];
     return { ...response.data, teams: filteredTeams };
   }, []);
 
@@ -273,7 +265,10 @@ export const RenameDialog = ({
   disabled?: boolean;
 }) => {
   const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
-  const { data: activeTeam, mutate } = useTeam() as { data?: { id?: string; name?: string }; mutate: () => Promise<unknown> };
+  const { data: activeTeam, mutate } = useTeam() as {
+    data?: { id?: string; name?: string };
+    mutate: () => Promise<unknown>;
+  };
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
 
   const handleConfirmRename = async (): Promise<void> => {
@@ -346,7 +341,13 @@ export const RenameDialog = ({
             <Button variant='outline' onClick={() => setIsRenameDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={() => { void handleConfirmRename(); }}>Rename</Button>
+            <Button
+              onClick={() => {
+                void handleConfirmRename();
+              }}
+            >
+              Rename
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

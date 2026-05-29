@@ -4,7 +4,7 @@ import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
-import { type CookieValueTypes, deleteCookie, getCookie, } from 'cookies-next';
+import { type CookieValueTypes, deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { type ChangeEvent, type ReactNode, type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { ReCAPTCHA } from 'react-google-recaptcha';
@@ -48,19 +48,20 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     let registerResponseData: RegisterPayload | undefined;
     try {
       registerResponse = await axios
-        .post<RegisterPayload>(
-          `${authConfig.authServer}${userRegisterEndpoint}`,
-          {
-            user: {
-              ...formData,
-            },
+        .post<RegisterPayload>(`${authConfig.authServer}${userRegisterEndpoint}`, {
+          user: {
+            ...formData,
           },
-        )
+        })
         .catch((exception: AxiosError<RegisterPayload>) => {
           console.error(exception);
           return exception.response;
         });
-      if (registerResponse !== null && registerResponse !== undefined && (registerResponse.status === 200 || registerResponse.status === 201)) {
+      if (
+        registerResponse !== null &&
+        registerResponse !== undefined &&
+        (registerResponse.status === 200 || registerResponse.status === 201)
+      ) {
         void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
         void deleteCookie('team', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       }
@@ -96,9 +97,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     }
   }, [submitted, authConfig.authModes.magical, additionalFields.length]);
 
-  const [invite, _setInvite] = useState<CookieValueTypes | Promise<CookieValueTypes> | undefined>(
-    getCookie('invitation'),
-  );
+  const [invite, _setInvite] = useState<CookieValueTypes | Promise<CookieValueTypes> | undefined>(getCookie('invitation'));
   const teamNameCookie = getCookie('team');
   const teamName = typeof teamNameCookie === 'string' ? teamNameCookie : '';
   // useEffect(() => {

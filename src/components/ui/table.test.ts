@@ -9,16 +9,7 @@
  * rendered tag for each subcomponent.
  */
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from './table';
+import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from './table';
 
 describe('Table subcomponent surface', () => {
   it('exports the eight primitive subcomponents', () => {

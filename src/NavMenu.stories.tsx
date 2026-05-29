@@ -24,7 +24,9 @@ const NavMenuPreview = ({ tree }: { tree: Item[] }): ReactNode => {
                     {LeafIcon ? <LeafIcon size={14} /> : null}
                     <a href={leaf.url}>{leaf.title}</a>
                     {leaf.queryParams ? (
-                      <code style={{ fontSize: 11, color: '#666' }}>?{new URLSearchParams(leaf.queryParams as Record<string, string>).toString()}</code>
+                      <code style={{ fontSize: 11, color: '#666' }}>
+                        ?{new URLSearchParams(leaf.queryParams as Record<string, string>).toString()}
+                      </code>
                     ) : null}
                   </li>
                 );

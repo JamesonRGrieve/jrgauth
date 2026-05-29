@@ -7,10 +7,7 @@ describe('deepMerge', () => {
   });
 
   it('recurses into nested object values', () => {
-    const out = deepMerge(
-      { server: { host: 'localhost', port: 80 } },
-      { server: { port: 443, tls: true } },
-    );
+    const out = deepMerge({ server: { host: 'localhost', port: 80 } }, { server: { port: 443, tls: true } });
     expect(out).toEqual({ server: { host: 'localhost', port: 443, tls: true } });
   });
 

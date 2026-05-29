@@ -14,9 +14,7 @@ interface Row {
   email: string;
 }
 
-const columns: ColumnDef<Row>[] = [
-  { accessorKey: 'email', header: 'Email' },
-];
+const columns: ColumnDef<Row>[] = [{ accessorKey: 'email', header: 'Email' }];
 
 const makeRows = (count: number): Row[] =>
   Array.from({ length: count }, (_, i) => ({ id: String(i), email: `user${i}@example.com` }));

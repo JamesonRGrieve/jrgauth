@@ -142,7 +142,7 @@ export const InvitationSchema = z
     // team: TeamSchema.nullable(),
     user: UserSchema.nullable(),
     //role: RoleSchema.nullable(),
-    userId: z.string().nullable()
+    userId: z.string().nullable(),
     // inviter: SimpleUserSchema.nullable(),
     // invitees: z.array(InviteeSchema).optional(),
   })

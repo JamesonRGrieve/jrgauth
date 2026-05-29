@@ -89,24 +89,20 @@ export const InviteDialog = ({ selectedTeam }: { selectedTeam: { id: string; nam
   const params = useParams();
   const { id } = params;
   const rawAuthTeam = id ?? getCookie('auth-team');
-  const authTeam =
-    typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
+  const authTeam = typeof rawAuthTeam === 'string' ? rawAuthTeam : Array.isArray(rawAuthTeam) ? (rawAuthTeam[0] ?? '') : '';
   const { mutate: inviteMutate } = useInvitations(authTeam);
 
   const fetchRoles = useCallback(async (): Promise<{ roles: Role[] }> => {
     if (selectedTeam === null) {
       return { roles: [] };
     }
-    const response = await axios.get<{ roles: Role[] }>(
-      `${apiUri()}/v1/team/${selectedTeam.id}/role`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${readJwtString()}`,
-        },
-        validateStatus: (status) => [200, 403].includes(status),
+    const response = await axios.get<{ roles: Role[] }>(`${apiUri()}/v1/team/${selectedTeam.id}/role`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${readJwtString()}`,
       },
-    );
+      validateStatus: (status) => [200, 403].includes(status),
+    });
     return response.data;
   }, [selectedTeam]);
 

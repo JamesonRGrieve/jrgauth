@@ -1,13 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from './sheet';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
 
 const meta: Meta<typeof Sheet> = {
   title: 'UI/Sheet',

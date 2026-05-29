@@ -10,11 +10,7 @@ function cookieString(value: ReturnType<typeof getCookie>): string {
 }
 
 export type RegisterFormProps = object;
-export default function VerifySMS({
-  verifiedCallback,
-}: {
-  verifiedCallback: (verified: boolean) => void;
-}): JSX.Element {
+export default function VerifySMS({ verifiedCallback }: { verifiedCallback: (verified: boolean) => void }): JSX.Element {
   const [fields, _setFields] = useState({
     smsCode: '',
   });

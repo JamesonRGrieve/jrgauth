@@ -1,47 +1,47 @@
 {
-    "$schema": "https://biomejs.dev/schemas/2.3.2/schema.json",
-    "assist": { "actions": { "source": { "organizeImports": "on" } } },
-    "css": {
-        "parser": {
-            "tailwindDirectives": true
-        }
-    },
-    "linter": {
-        "enabled": true,
-        "rules": {
-            "recommended": true,
-            "suspicious": {
-                "noRedeclare": "off",
-                "noExplicitAny": "warn"
-            },
-            "style": {
-                "useFilenamingConvention": {
-                    "level": "warn",
-                    "options": {
-                        "filenameCases": ["kebab-case", "camelCase", "PascalCase"],
-                        "strictCase": false,
-                        "requireAscii": true
-                    }
-                }
-            },
-            "complexity": {
-                "noThisInStatic": "off",
-                "useLiteralKeys": "off"
-            }
-        },
-        "includes": [
-            "src/**",
-            "!**/node_modules",
-            "!**/dist",
-            "!**/coverage",
-            "!**/*.test.ts",
-            "!**/*.test.tsx",
-            "!**/*.spec.ts",
-            "!**/*.stories.ts",
-            "!**/*.stories.tsx"
-        ]
-    },
-    "formatter": {
-        "enabled": false
+  "$schema": "https://biomejs.dev/schemas/2.3.2/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noRedeclare": "off",
+        "noExplicitAny": "warn"
+      },
+      "style": {
+        "useFilenamingConvention": {
+          "level": "warn",
+          "options": {
+            "filenameCases": ["kebab-case", "camelCase", "PascalCase"],
+            "strictCase": false,
+            "requireAscii": true
+          }
+        }
+      },
+      "complexity": {
+        "noThisInStatic": "off",
+        "useLiteralKeys": "off"
+      }
+    },
+    "includes": [
+      "src/**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/coverage",
+      "!**/*.test.ts",
+      "!**/*.test.tsx",
+      "!**/*.spec.ts",
+      "!**/*.stories.ts",
+      "!**/*.stories.tsx"
+    ]
+  },
+  "formatter": {
+    "enabled": false
+  }
 }

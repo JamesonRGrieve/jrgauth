@@ -6,11 +6,7 @@ export default function assert(test: boolean, message?: string): void {
   }
 }
 
-export function useAssertion(
-  assertion: boolean,
-  message: string,
-  _dependencies: readonly unknown[],
-): void {
+export function useAssertion(assertion: boolean, message: string, _dependencies: readonly unknown[]): void {
   useEffect(() => {
     assert(assertion, message);
   }, [assertion, message]);

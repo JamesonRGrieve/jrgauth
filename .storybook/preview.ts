@@ -30,8 +30,7 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
-    docs: {
-    },
+    docs: {},
   },
 };
 

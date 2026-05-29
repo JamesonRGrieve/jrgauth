@@ -25,13 +25,12 @@ function ProvidersCatalog({ filter, limit }: { filter?: string; limit?: number }
     list = list.slice(0, limit);
   }
   return (
-    <ul className='grid gap-2' style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', listStyle: 'none', padding: 0 }}>
+    <ul
+      className='grid gap-2'
+      style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', listStyle: 'none', padding: 0 }}
+    >
       {list.map((e) => (
-        <li
-          key={e.name}
-          className='flex items-center gap-2 rounded-md border p-2 text-sm'
-          style={{ minWidth: 0 }}
-        >
+        <li key={e.name} className='flex items-center gap-2 rounded-md border p-2 text-sm' style={{ minWidth: 0 }}>
           <span aria-hidden style={{ display: 'inline-flex', width: 18, height: 18 }}>
             {e.icon}
           </span>

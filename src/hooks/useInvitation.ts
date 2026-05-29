@@ -3,7 +3,7 @@ import 'zod2gql';
 import axios from 'axios';
 import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
-import type { Invitation, } from './z';
+import type { Invitation } from './z';
 /**
  * Hook to fetch and manage invitations
  * @param teamId - Optional team ID to fetch invitations for
@@ -14,7 +14,9 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
   return useSWR<Invitation[]>(
     teamId ? [`/v1/team/${teamId}/invitation`, teamId] : null,
     async (): Promise<Invitation[]> => {
-      if (!teamId) {return [];}
+      if (!teamId) {
+        return [];
+      }
       try {
         const response = await axios.get<{ invitations?: Invitation[] }>(
           `${process.env.NEXT_PUBLIC_API_URI}/v1/team/${teamId}/invitation`,
@@ -23,7 +25,7 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${getCookie('jwt')}`,
             },
-          }
+          },
         );
         // Adjust this if your API response structure is different
         return response.data?.invitations || [];
@@ -32,6 +34,6 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
         return [];
       }
     },
-    { fallbackData: [] }
+    { fallbackData: [] },
   );
 }

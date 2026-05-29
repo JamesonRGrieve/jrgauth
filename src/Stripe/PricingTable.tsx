@@ -163,7 +163,12 @@ export function PricingCard({
         {getCookie('jwt') ? (
           <>
             <Label htmlFor='quantity'>Initial Users</Label>
-            <Input id='quantity' type='number' value={quantity} onChange={(e: ChangeEvent<HTMLInputElement>) => setQuantity(Number(e.target.value))} />
+            <Input
+              id='quantity'
+              type='number'
+              value={quantity}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setQuantity(Number(e.target.value))}
+            />
 
             <Button
               className='w-full text-foreground'
