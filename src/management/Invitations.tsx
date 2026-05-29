@@ -49,7 +49,7 @@ export function InvitationsTable({ userId }: { userId?: string }) {
     }
   };
 
-  // eslint-disable-next-line react/no-unstable-nested-components -- columns must be defined inline to close over handleAccept; refactor would require lifting handler + invitation context out.
+   
   const columns: ColumnDef<Invitation>[] = [
     {
       accessorKey: 'team.name',

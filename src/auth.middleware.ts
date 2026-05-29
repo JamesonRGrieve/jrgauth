@@ -90,7 +90,7 @@ export const useAuth: MiddlewareHook = async (req) => {
         });
       } catch (exception: unknown) {
         const axiosError = exception as AxiosError;
-        if (axiosError.response !== undefined && axiosError.response.status === 409) {
+        if (axiosError.response?.status === 409) {
           // User exists
           toReturn.response = NextResponse.redirect(`${process.env.AUTH_URI}/login`, {
             headers: cookieHeaders(cookieArray),

@@ -6,7 +6,7 @@ describe('MiddlewareHook', () => {
     // Type-level assertion: a value implementing the MiddlewareHook contract
     // must produce an object with the expected shape. If the type changes
     // (e.g. activated drops to optional), this test must be updated.
-    const stub: MiddlewareHook = () =>
+    const stub: MiddlewareHook = async () =>
       Promise.resolve({
         activated: true,
         response: {} as never,
@@ -19,7 +19,7 @@ describe('MiddlewareHook', () => {
   });
 
   it('reports activated as a boolean', async () => {
-    const stub: MiddlewareHook = () =>
+    const stub: MiddlewareHook = async () =>
       Promise.resolve({
         activated: false,
         response: {} as never,

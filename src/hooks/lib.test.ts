@@ -5,12 +5,12 @@ describe('chainMutations', () => {
   it('awaits the parent mutate before invoking the original mutate', async () => {
     const order: string[] = [];
     const parent = {
-      mutate: vi.fn(() => {
+      mutate: vi.fn(async () => {
         order.push('parent');
         return Promise.resolve();
       }),
     };
-    const original = vi.fn(() => {
+    const original = vi.fn(async () => {
       order.push('original');
       return Promise.resolve('value');
     });
@@ -26,17 +26,17 @@ describe('chainMutations', () => {
 
   it('propagates rejections from the parent mutate and skips original', async () => {
     const parent = {
-      mutate: vi.fn(() => Promise.reject(new Error('parent boom'))),
+      mutate: vi.fn(async () => Promise.reject(new Error('parent boom'))),
     };
-    const original = vi.fn(() => Promise.resolve('never'));
+    const original = vi.fn(async () => Promise.resolve('never'));
 
     await expect(chainMutations(parent, original)()).rejects.toThrow(/parent boom/);
     expect(original).not.toHaveBeenCalled();
   });
 
   it('returns whatever the original mutate resolves to', async () => {
-    const parent = { mutate: vi.fn(() => Promise.resolve(undefined)) };
-    const original = vi.fn(() => Promise.resolve({ id: 1 }));
+    const parent = { mutate: vi.fn(async () => Promise.resolve(undefined)) };
+    const original = vi.fn(async () => Promise.resolve({ id: 1 }));
 
     await expect(chainMutations(parent, original)()).resolves.toEqual({ id: 1 });
   });

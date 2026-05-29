@@ -1,8 +1,8 @@
 'use client';
+import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
-import { toTitleCase } from '@jgrieve/dynamic-form/DynamicForm';
 import axios, { type AxiosError, type AxiosResponse } from 'axios';
 import { type CookieValueTypes, deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';

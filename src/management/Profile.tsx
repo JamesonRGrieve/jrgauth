@@ -1,11 +1,9 @@
 'use client';
 
+import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
-import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
 import { toast as toastUntyped } from '@jgrieve/dynamic-form/hooks/useToast';
-
-const toast = toastUntyped as (args: { title: string; description: string; variant?: string }) => void;
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import type { CellContext, Column, ColumnDef } from '@tanstack/react-table';
@@ -13,19 +11,20 @@ import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { type ReactElement, useCallback, useEffect, useMemo } from 'react';
 import { mutate } from 'swr';
-
-const readJwtString = (): string => {
-  const jwt = getCookie('jwt');
-  return typeof jwt === 'string' ? jwt : '';
-};
-
+import type { AuthenticationConfig } from '../Router';
 import { DataTable } from '../components/data/data-table';
 import { DataTableColumnHeader } from '../components/data/data-table-column-header';
 import { useTeams } from '../hooks/useTeam';
 import log from '../lib/log';
 import VerifySMS from '../mfa/SMS';
-import type { AuthenticationConfig } from '../Router';
 import { InvitationsTable } from './Invitations';
+
+const toast = toastUntyped as (args: { title: string; description: string; variant?: string }) => void;
+
+const readJwtString = (): string => {
+  const jwt = getCookie('jwt');
+  return typeof jwt === 'string' ? jwt : '';
+};
 
 type Team = {
   image_url: string | null;
@@ -114,8 +113,8 @@ export const Profile = ({
       }
 
       try {
-        const root = data as Record<string, unknown> | undefined;
-        const user = root?.user as Record<string, unknown> | undefined;
+        const root = data;
+        const user = root?.user;
         const userUser = user?.user as Record<string, unknown> | undefined;
         const userProfile = user?.profile as Record<string, unknown> | undefined;
         for (const key of candidates) {

@@ -1,6 +1,6 @@
 'use client';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import PasswordField from '@jgrieve/dynamic-form/PasswordField';
+import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import axios, { type AxiosError } from 'axios';
 import { getCookie } from 'cookies-next';
 import type { SyntheticEvent } from 'react';

@@ -255,7 +255,6 @@ export default [
       'no-new-native-nonconstructor': 'warn',
       'no-duplicate-imports': 'warn',
       'no-loss-of-precision': 'warn',
-      'no-self-assign': 'warn',
 
       // eslint-plugin-import rules (§7.5).
       'import/order': [
@@ -430,6 +429,9 @@ export default [
     // are demoted to warn until the baseline reaches zero, then re-raised.
     rules: demote({
       ...vitest.configs.recommended.rules,
+      // expectTypeOf(...) is a type-level assertion; without this the rule
+      // flags every type-surface test as "no assertions".
+      'vitest/expect-expect': ['error', { assertFunctionNames: ['expect', 'expectTypeOf'] }],
       'vitest/no-focused-tests': 'error',
       'vitest/no-disabled-tests': 'error',
       'vitest/no-identical-title': 'error',
@@ -450,6 +452,11 @@ export default [
       // explicitly so the shape can't drift the config out from under us.
       'storybook/no-redundant-story-name': 'warn',
       'storybook/prefer-pascal-case': 'warn',
+      // §7.5: story files relax type-annotation / naming / any rules.
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ];

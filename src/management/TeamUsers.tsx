@@ -5,9 +5,6 @@ import { Input } from '@jgrieve/dynamic-form/components/ui/input';
 import { Label } from '@jgrieve/dynamic-form/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
 import { useToast as useToastUntyped } from '@jgrieve/dynamic-form/hooks/useToast';
-
-type ToastFn = (args: { title: string; description: string; variant?: string }) => void;
-const useToast = useToastUntyped as () => { toast: ToastFn };
 import type { ColumnDef } from '@tanstack/react-table';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -31,6 +28,9 @@ import { useTeam } from '../hooks/useTeam';
 import useTeamUsers from '../hooks/useTeamUsers';
 import { useUser } from '../hooks/useUser';
 import log from '../lib/log';
+
+type ToastFn = (args: { title: string; description: string; variant?: string }) => void;
+const useToast = useToastUntyped as () => { toast: ToastFn };
 
 interface User {
   email: string;
