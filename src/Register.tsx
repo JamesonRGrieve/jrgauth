@@ -34,7 +34,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
   ]);
   const submitForm = async (event: SyntheticEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-    if (authConfig.recaptchaSiteKey && captcha === null) {
+    if (authConfig.recaptchaSiteKey !== undefined && authConfig.recaptchaSiteKey !== '' && captcha === null) {
       setResponseMessage('Please complete the reCAPTCHA.');
       return;
     }
@@ -57,11 +57,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
           console.error(exception);
           return exception.response;
         });
-      if (
-        registerResponse !== null &&
-        registerResponse !== undefined &&
-        (registerResponse.status === 200 || registerResponse.status === 201)
-      ) {
+      if (registerResponse !== undefined && (registerResponse.status === 200 || registerResponse.status === 201)) {
         void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
         void deleteCookie('team', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
       }
@@ -74,13 +70,13 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
     // TODO Check for status 418 which is app disabled by admin.
     setResponseMessage(registerResponseData?.detail ?? '');
     const loginParams: string[] = [];
-    if (registerResponseData?.otp_uri) {
+    if (registerResponseData?.otp_uri !== undefined && registerResponseData.otp_uri !== '') {
       loginParams.push(`otp_uri=${registerResponseData.otp_uri}`);
     }
-    if (registerResponseData?.verify_email) {
+    if (registerResponseData?.verify_email === true) {
       loginParams.push(`verify_email=true`);
     }
-    if (registerResponseData?.verify_sms) {
+    if (registerResponseData?.verify_sms === true) {
       loginParams.push(`verify_sms=true`);
     }
     if (registerResponse !== null && registerResponse !== undefined && [200, 201].includes(registerResponse.status)) {
@@ -156,7 +152,6 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
                 placeholder='Password'
                 name='password'
                 type='password'
-                autoFocus={authConfig.authModes.basic}
                 required
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   setPasswords((prev) => ({ ...prev, password: e.target.value }));
@@ -186,13 +181,12 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
                   id={field}
                   name={field}
                   type='text'
-                  autoFocus={field === 'first_name'}
                   required
                   placeholder={toTitleCase(field)}
                 />
               </div>
             ))}
-          {authConfig.recaptchaSiteKey && (
+          {authConfig.recaptchaSiteKey !== undefined && authConfig.recaptchaSiteKey !== '' && (
             <div
               style={{
                 margin: '0.8rem 0',
