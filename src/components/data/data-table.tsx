@@ -27,7 +27,13 @@ interface DataTableProps<TData, TValue> {
   rowClassName?: (row: TData) => string;
 }
 
-export function DataTable<TData, TValue>({ columns, data, meta, onRowClick, rowClassName }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  meta,
+  onRowClick,
+  rowClassName,
+}: DataTableProps<TData, TValue>): React.JSX.Element {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -75,7 +81,7 @@ export function DataTable<TData, TValue>({ columns, data, meta, onRowClick, rowC
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}

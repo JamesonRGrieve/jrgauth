@@ -15,13 +15,13 @@ interface DataTableToolbarProps<TData> {
   };
 }
 
-export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>): React.JSX.Element {
   const isFiltered = table.getState().columnFilters.length > 0;
   const title = table.options.meta?.title;
 
   return (
     <div className='flex items-center justify-end gap-2'>
-      {title && <h4 className='text-2xl font-bold mr-auto'>{title}</h4>}
+      {title !== undefined && title !== '' && <h4 className='text-2xl font-bold mr-auto'>{title}</h4>}
       {isFiltered && (
         <Button variant='ghost' onClick={() => table.resetColumnFilters()} className='h-8 px-2 lg:px-3'>
           Reset

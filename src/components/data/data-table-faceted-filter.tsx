@@ -30,7 +30,7 @@ export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
-}: DataTableFacetedFilterProps<TData, TValue>) {
+}: DataTableFacetedFilterProps<TData, TValue>): React.JSX.Element {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
 
@@ -40,7 +40,7 @@ export function DataTableFacetedFilter<TData, TValue>({
         <Button variant='outline' size='sm' className='h-8 border-dashed'>
           <PlusCircle />
           {title}
-          {selectedValues?.size > 0 && (
+          {selectedValues.size > 0 && (
             <>
               <Separator orientation='vertical' className='h-4 mx-2' />
               <Badge variant='secondary' className='px-1 font-normal rounded-sm lg:hidden'>
@@ -96,9 +96,9 @@ export function DataTableFacetedFilter<TData, TValue>({
                     </div>
                     {option.icon && <option.icon className='w-4 h-4 mr-2 text-muted-foreground' />}
                     <span>{option.label}</span>
-                    {facets?.get(option.value) && (
+                    {(facets?.get(option.value) ?? 0) > 0 && (
                       <span className='flex items-center justify-center w-4 h-4 ml-auto font-mono text-xs'>
-                        {facets.get(option.value)}
+                        {facets?.get(option.value)}
                       </span>
                     )}
                   </CommandItem>

@@ -19,7 +19,7 @@ export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
   className,
-}: DataTableColumnHeaderProps<TData, TValue>) {
+}: DataTableColumnHeaderProps<TData, TValue>): React.JSX.Element {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }

@@ -14,27 +14,27 @@ interface FilterState {
   value: string;
 }
 
-export function DataTableFilter<TData>({ table }: { table: Table<TData> }) {
+export function DataTableFilter<TData>({ table }: { table: Table<TData> }): React.JSX.Element {
   const columns = table.getAllColumns().filter((col) => col.getCanFilter());
   const [filter, setFilter] = useState<FilterState>({
     column: '',
     value: '',
   });
 
-  const updateFilter = (key: keyof FilterState, value: string) => {
+  const updateFilter = (key: keyof FilterState, value: string): void => {
     setFilter((prev) => ({
       ...prev,
       [key]: value,
     }));
   };
 
-  const applyFilter = () => {
+  const applyFilter = (): void => {
     if (filter.column) {
       table.getColumn(filter.column)?.setFilterValue(filter.value);
     }
   };
 
-  const resetFilter = () => {
+  const resetFilter = (): void => {
     setFilter({
       column: '',
       value: '',

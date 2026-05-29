@@ -9,7 +9,7 @@ type GravatarProps = {
 } & Omit<ComponentPropsWithoutRef<typeof AvatarImage>, 'src' | 'alt'>;
 
 // This component should be deleted
-const Gravatar = ({ email, size = 40, ...props }: GravatarProps) => {
+const Gravatar = ({ email, size = 40, ...props }: GravatarProps): React.JSX.Element => {
   const hash = md5(email.trim().toLowerCase());
   const gravatarUrl = `https://www.gravatar.com/avatar/${hash}?s=${String(size)}&d=404`;
 

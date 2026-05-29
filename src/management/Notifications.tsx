@@ -1,7 +1,7 @@
 'use client';
 import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 
-export const Notifications = () => {
+export const Notifications = (): React.JSX.Element => {
   return (
     <div>
       <div>

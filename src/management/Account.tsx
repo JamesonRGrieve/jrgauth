@@ -23,7 +23,7 @@ export const Account = ({
   data: Record<string, unknown>;
   userPasswordChangeEndpoint?: string;
   setResponseMessage: (message: string) => void;
-}) => {
+}): React.JSX.Element => {
   return (
     <div>
       <div>
