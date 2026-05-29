@@ -87,29 +87,12 @@ const pageConfigDefaults: AuthenticationConfig = {
   authServer: process.env.NEXT_PUBLIC_API_URI ?? '',
   authModes: {
     basic: true,
-    oauth2: Object.values(oAuth2Providers).some((provider) => !!provider.client_id),
+    oauth2: Object.values(oAuth2Providers).some((provider) => (provider.client_id ?? '') !== ''),
     magical: false,
   },
   recaptchaSiteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
   enableOU: false,
 };
-
-// Async function to retrieve search params
-async function _getSearchParamsAsync() {
-  // In a real implementation, you might fetch data based on search params
-  // This is just a placeholder to demonstrate the pattern
-  return new Promise<Record<string, string>>((resolve) => {
-    // Simulating async operation
-    setTimeout(() => {
-      const searchParams = new URLSearchParams(window.location.search);
-      const params: Record<string, string> = {};
-      searchParams.forEach((value, key) => {
-        params[key] = value;
-      });
-      resolve(params);
-    }, 0);
-  });
-}
 
 export default function AuthRouter({
   params,
@@ -121,19 +104,18 @@ export default function AuthRouter({
   searchParams?: Record<string, string> | URLSearchParams;
   corePagesConfig?: Partial<AuthenticationConfig>;
   additionalPages?: { [key: string]: ReactNode };
-}) {
+}): ReactNode {
   // Use Next.js 15 hooks for search params if not provided directly
   const routeSearchParams = useSearchParams();
 
   // Convert searchParams to a regular object
   const searchParamsObject: Record<string, string> = {};
 
-  if (searchParams instanceof URLSearchParams || routeSearchParams !== null) {
-    const paramsToUse = searchParams instanceof URLSearchParams ? searchParams : routeSearchParams;
-    paramsToUse?.forEach((value, key) => {
-      searchParamsObject[key] = value;
-    });
-  } else if (searchParams !== undefined && typeof searchParams === 'object') {
+  const paramsToUse = searchParams instanceof URLSearchParams ? searchParams : routeSearchParams;
+  paramsToUse.forEach((value, key) => {
+    searchParamsObject[key] = value;
+  });
+  if (searchParams !== undefined && !(searchParams instanceof URLSearchParams)) {
     Object.assign(searchParamsObject, searchParams);
   }
 
@@ -141,7 +123,7 @@ export default function AuthRouter({
   console.warn('AuthRouter params:', params);
 
   // Merge configs - ensure deep merge works with partial config
-  const mergedConfig = deepMerge(pageConfigDefaults, corePagesConfig ?? {}) as AuthenticationConfig;
+  const mergedConfig = deepMerge(pageConfigDefaults, corePagesConfig) as AuthenticationConfig;
 
   // Define pages with components
   const pages = {
@@ -165,11 +147,9 @@ export default function AuthRouter({
   // Safely handle slug arrays, ensuring we don't directly access properties
   // that might be undefined or pending promises
   if ('slug' in params) {
-    const slug: string | string[] | undefined = params.slug;
+    const slug = params.slug;
     if (Array.isArray(slug) && slug.length > 0) {
       path = `/${slug.join('/')}`;
-    } else if (typeof slug === 'string') {
-      path = `/${slug}`;
     }
   }
 
