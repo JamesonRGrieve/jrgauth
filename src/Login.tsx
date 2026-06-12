@@ -98,7 +98,7 @@ export default function Login({
             // }
             const invitation = getCookie('invitation');
             if (typeof invitation === 'string' && invitation !== '') {
-              void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+              void deleteCookie('invitation', process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
               window.location.href = `${process.env.NEXT_PUBLIC_APP_URI ?? ''}/invite/${invitation}`;
               return;
             }

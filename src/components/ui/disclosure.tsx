@@ -101,7 +101,7 @@ export function DisclosureTrigger({
   return (
     <>
       {React.Children.map(children, (child): React.ReactNode => {
-        if (!React.isValidElement<{ className?: string }>(child)) {
+        if (!React.isValidElement<React.HTMLAttributes<HTMLElement>>(child)) {
           return child;
         }
         return React.cloneElement(child, {

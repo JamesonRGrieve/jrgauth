@@ -411,7 +411,7 @@ export const Team = (): React.JSX.Element => {
 
   const selectNewTeam = (teamObj: TeamWithExtras): void => {
     if (teamObj.id !== '') {
-      void setCookie('auth-team', teamObj.id, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+      void setCookie('auth-team', teamObj.id, process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
       setSelected(teamObj);
       router.push(`/team/${teamObj.id}`);
       void inviteMutate();

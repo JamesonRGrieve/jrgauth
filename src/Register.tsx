@@ -58,8 +58,8 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
           return exception.response;
         });
       if (registerResponse !== undefined && (registerResponse.status === 200 || registerResponse.status === 201)) {
-        void deleteCookie('invitation', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
-        void deleteCookie('team', { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+        void deleteCookie('invitation', process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
+        void deleteCookie('team', process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
       }
       registerResponseData = registerResponse?.data;
     } catch (exception: unknown) {
@@ -103,7 +103,7 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
   //       .then((res) => (res.ok ? res.json() : null))
   //       .then((data) => {
   //         if (data && data.teamId) {
-  //           setCookie('auth-team', String(data.teamId), { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN });
+  //           setCookie('auth-team', String(data.teamId), process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
   //           setInvite(data.team && data.team.name ? String(data.team.name) : null);
   //         }
   //       });

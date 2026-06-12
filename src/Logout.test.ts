@@ -14,7 +14,7 @@ describe('Logout (surface)', () => {
   });
 
   it('accepts an optional redirectTo prop', () => {
-    expectTypeOf<LogoutProps>().toEqualTypeOf<{ redirectTo?: string }>();
+    expectTypeOf<LogoutProps>().toEqualTypeOf<{ redirectTo?: string | undefined }>();
   });
 
   it('renders to a React node', () => {

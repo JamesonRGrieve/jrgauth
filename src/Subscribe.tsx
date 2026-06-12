@@ -1,19 +1,11 @@
 'use client';
 
-import { getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next/client';
 import { Suspense } from 'react';
 import PricingTable from './Stripe/PricingTable';
 import { useAuthentication } from './useAuthentication';
 
 export type SubscribeProps = { redirectTo?: string };
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'stripe-pricing-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-    }
-  }
-}
 
 export default function Subscribe({
   searchParams,
@@ -36,11 +28,11 @@ export default function Subscribe({
             <stripe-pricing-table
               pricing-table-id={process.env.NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID}
               publishable-key={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
-              customer-session-client-secret={searchParams.customer_session as string | undefined}
+              customer-session-client-secret={searchParams['customer_session'] as string | undefined}
               customer-email={
-                searchParams.customer_session !== undefined
+                searchParams['customer_session'] !== undefined
                   ? undefined
-                  : ((searchParams.email as string | undefined) ?? getCookie('email'))
+                  : ((searchParams['email'] as string | undefined) ?? getCookie('email'))
               }
             />
           </div>

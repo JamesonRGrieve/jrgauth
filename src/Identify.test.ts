@@ -11,6 +11,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 import type Identify from './Identify';
 import type { IdentifyProps } from './Identify';
+import type { OAuthProps } from './oauth2/OAuth';
 
 describe('Identify (surface)', () => {
   it('default export is a React component function', () => {
@@ -22,7 +23,7 @@ describe('Identify (surface)', () => {
       identifyEndpoint?: string;
       redirectToOnExists?: string;
       redirectToOnNotExists?: string;
-      oAuthOverrides?: Record<string, unknown>;
+      oAuthOverrides?: OAuthProps['overrides'];
     }>();
   });
 

@@ -1,6 +1,6 @@
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next/client';
 import { useState } from 'react';
 import { LuLoader as Loader2, LuMail as Mail } from 'react-icons/lu';
 import { Disclosure, DisclosureContent, DisclosureTrigger } from '../components/ui/disclosure';

@@ -1,6 +1,6 @@
 'use client';
 
-import DynamicForm from '@jgrieve/dynamic-form/DynamicForm';
+import DynamicForm, { type DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
 import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
 import { toast as toastUntyped } from '@jgrieve/dynamic-form/hooks/useToast';
@@ -102,7 +102,7 @@ export const Profile = ({
   // Use `data` passed from parent Manage component as the authoritative user object.
   // But be resilient to different API shapes. Try several common locations for fields.
   const readUserField = useCallback(
-    (field: string) => {
+    (field: string): DynamicFormFieldValueTypes | undefined => {
       // Try several common keys and shapes to be resilient to API variations.
       const candidates: string[] = [];
       const camel = field.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
@@ -121,20 +121,20 @@ export const Profile = ({
       try {
         const root = data;
         const user = root?.user;
-        const userUser = user?.user as Record<string, unknown> | undefined;
-        const userProfile = user?.profile as Record<string, unknown> | undefined;
+        const userUser = user?.['user'] as Record<string, unknown> | undefined;
+        const userProfile = user?.['profile'] as Record<string, unknown> | undefined;
         for (const key of candidates) {
           if (user?.[key] !== undefined) {
-            return user[key];
+            return user[key] as DynamicFormFieldValueTypes;
           }
           if (root?.[key] !== undefined) {
-            return root[key];
+            return root[key] as DynamicFormFieldValueTypes;
           }
           if (userUser?.[key] !== undefined) {
-            return userUser[key];
+            return userUser[key] as DynamicFormFieldValueTypes;
           }
           if (userProfile?.[key] !== undefined) {
-            return userProfile[key];
+            return userProfile[key] as DynamicFormFieldValueTypes;
           }
         }
       } catch {
@@ -144,6 +144,23 @@ export const Profile = ({
     },
     [data],
   );
+
+  // Build the DynamicForm `toUpdate` record from the user object, keeping only
+  // values that are valid form-field values (string / number / boolean). This
+  // narrows the GQL User shape to the form's value union without casting.
+  const toUpdateData = useMemo<Record<string, DynamicFormFieldValueTypes> | undefined>(() => {
+    const user = data?.user;
+    if (user === undefined) {
+      return undefined;
+    }
+    const result: Record<string, DynamicFormFieldValueTypes> = {};
+    for (const [key, value] of Object.entries(user)) {
+      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        result[key] = value;
+      }
+    }
+    return result;
+  }, [data]);
 
   // Debug: (removed runtime console output) - kept comment for dev reference
 
@@ -260,7 +277,7 @@ export const Profile = ({
               // Prefer explicit display_name, otherwise compose from first+last if available
               value: (() => {
                 const displayName = readUserField('display_name');
-                if (displayName !== undefined && displayName !== null) {
+                if (displayName !== undefined) {
                   return displayName;
                 }
                 const first = readUserField('first_name');
@@ -289,7 +306,7 @@ export const Profile = ({
               })(),
             },
           }}
-          toUpdate={data?.user}
+          toUpdate={toUpdateData}
           submitButtonText='Update'
           excludeFields={[
             'id',

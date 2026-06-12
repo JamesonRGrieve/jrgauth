@@ -130,14 +130,14 @@ export default function AuthRouter({
     [mergedConfig.identify.path]: <User {...mergedConfig.identify.props} />,
     [mergedConfig.login.path]: <Login searchParams={searchParamsObject} {...mergedConfig.login.props} />,
     [mergedConfig.manage.path]: <Manage {...mergedConfig.manage.props} />,
-    [mergedConfig.register.path]: <Register searchParams={searchParamsObject} {...mergedConfig.register.props} />,
-    [mergedConfig.close.path]: <Close searchParams={searchParamsObject} {...mergedConfig.close.props} />,
+    [mergedConfig.register.path]: <Register {...mergedConfig.register.props} />,
+    [mergedConfig.close.path]: <Close {...mergedConfig.close.props} />,
     [mergedConfig.subscribe.path]: <Subscribe searchParams={searchParamsObject} {...mergedConfig.subscribe.props} />,
-    [mergedConfig.logout.path]: <Logout searchParams={searchParamsObject} {...mergedConfig.logout.props} />,
+    [mergedConfig.logout.path]: <Logout {...mergedConfig.logout.props} />,
     ...(mergedConfig.enableOU
       ? { [mergedConfig.ou.path]: <OrganizationalUnit searchParams={searchParamsObject} {...mergedConfig.ou.props} /> }
       : {}),
-    [mergedConfig.error.path]: <ErrorPage searchParams={searchParamsObject} {...mergedConfig.error.props} />,
+    [mergedConfig.error.path]: <ErrorPage {...mergedConfig.error.props} />,
     ...additionalPages,
   };
 

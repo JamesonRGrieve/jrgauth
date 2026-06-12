@@ -31,7 +31,7 @@ function OrganizationalUnitPage({
   organizationalUnitEndpoint = '/ou',
 }: { searchParams: Record<string, string | string[] | undefined> } & OrganizationalUnitProps): ReactNode {
   const authConfig = useAuthentication();
-  const ouParam = searchParams.ou;
+  const ouParam = searchParams['ou'];
   const ouKey = Array.isArray(ouParam) ? ouParam.join(',') : (ouParam ?? '');
   useSWR<OrganizationalUnit[]>(`/ou/${ouKey}`, async () => {
     const jwtCookie = getCookie('jwt');

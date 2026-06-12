@@ -12,7 +12,7 @@ describe('ErrorPage (surface)', () => {
   });
 
   it('accepts an optional redirectTo prop', () => {
-    expectTypeOf<ErrorPageProps>().toEqualTypeOf<{ redirectTo?: string }>();
+    expectTypeOf<ErrorPageProps>().toEqualTypeOf<{ redirectTo?: string | undefined }>();
   });
 
   it('accepts an empty props object (redirectTo is optional)', () => {

@@ -1,6 +1,6 @@
-import 'zod2gql';
 import { getCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
+import { GQLType } from 'zod2gql';
 import log from '../lib/log';
 import { createGraphQLClient } from './lib';
 import { type User, UserSchema } from './z';
@@ -19,7 +19,7 @@ export function useUser(): SWRResponse<User | null> {
         return null;
       }
       try {
-        const query = UserSchema.toGQL('query', 'GetUser');
+        const query = UserSchema.toGQL(GQLType.Query, { operationName: 'GetUser' });
         log(['GQL useUser() Query', query], {
           client: 3,
         });
@@ -32,25 +32,11 @@ export function useUser(): SWRResponse<User | null> {
         log(['GQL useUser() Error', error], {
           client: 1,
         });
-        return {
-          id: '',
-          email: '',
-          firstName: '',
-          lastName: '',
-          userTeams: [],
-          agents: [],
-        };
+        return null;
       }
     },
     {
-      fallbackData: {
-        id: '',
-        email: '',
-        firstName: '',
-        lastName: '',
-        userTeams: [],
-        agents: [],
-      },
+      fallbackData: null,
     },
   );
 }

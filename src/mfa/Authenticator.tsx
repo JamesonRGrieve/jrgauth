@@ -5,7 +5,7 @@ import { Button } from '@jgrieve/dynamic-form/components/ui/button';
 import axios from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { type ChangeEvent, type ReactElement, useEffect, useState } from 'react';
-import { LuCheckCircle, LuKey } from 'react-icons/lu';
+import { LuCircleCheck as LuCheckCircle, LuKey } from 'react-icons/lu';
 import QRCode from 'react-qr-code';
 import log from '../lib/log';
 
