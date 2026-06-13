@@ -23,18 +23,20 @@ These are tracked in `todo.json` (create one if absent).
 
 ---
 
-## Repo-Specific Direction (in addition to workspace §7.1)
+## Repo-Specific Direction (in addition to `/home/jameson/source/ai-prompts/typescript.md` + `/home/jameson/source/ai-prompts/react-next.md`)
 
-- **Auth surface is the bottleneck for every downstream app.** Breaking changes to exported component props or hook signatures need an explicit migration note in the commit body. Prefer additive prop changes; mark deprecated paths with `@deprecated` JSDoc rather than deletion.
+The canonical exported-API contract discipline (exported props/hook signatures are a contract; additive over breaking; `@deprecated` JSDoc over deletion; migration notes for breaking changes), the no-HTML-interpolation-of-external-data rule, and promise hygiene now live in `react-next.md` (§7 / §5 / §3). Auth-specific application:
+
+- **Auth surface is the bottleneck for every downstream app.** It is consumed by `client-framework` and other downstream Next.js apps, so the exported-API contract discipline above is load-bearing here in a way it is not for leaf components — a breaking prop/hook change ripples into every consumer at once.
 - **No secrets in code, ever** (workspace rule, but doubly relevant here). Auth callbacks, OAuth client IDs, and tokens come from environment / runtime config, never hardcoded.
-- **No HTML string interpolation with external data.** Sign-in error messages from upstream identity providers must be rendered as text nodes, never via `dangerouslySetInnerHTML`.
-- **Promise hygiene.** Sign-in / sign-out flows are async; every `async` call must be `await`ed, `.catch()`-ed, or explicitly marked `void`.
+- **External data here is provider error messages.** Sign-in error messages from upstream identity providers are the concrete "external data" the no-HTML-interpolation rule guards — render them as text nodes, never via `dangerouslySetInnerHTML`.
+- **Promise hygiene applies to the sign-in / sign-out flows** — these are the async surfaces in this repo that the rule covers.
 
 ---
 
 ## Path Aliases
 
-The repo's `tsconfig.json` declares `@/auth/*` etc. relative to a parent monorepo (`../../../src/...`). These aliases are correct **only when the submodule sits inside `client-framework/src/components/auth/`**. When opening this repo standalone, the aliases will not resolve — that's expected. Do not "fix" them.
+The "aliases resolve only inside the parent monorepo, and standalone non-resolution is expected — don't 'fix' it" rule is canonical in `/home/jameson/source/ai-prompts/react-next.md` §7. Auth-specific detail: this repo's `tsconfig.json` declares `@/auth/*` etc. relative to a parent monorepo (`../../../src/...`), correct **only when the submodule sits inside `client-framework/src/components/auth/`**.
 
 ---
 
