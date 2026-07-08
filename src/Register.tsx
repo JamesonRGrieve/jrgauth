@@ -58,8 +58,14 @@ export default function Register({ additionalFields = [], userRegisterEndpoint =
           return exception.response;
         });
       if (registerResponse !== undefined && (registerResponse.status === 200 || registerResponse.status === 201)) {
-        void deleteCookie('invitation', process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
-        void deleteCookie('team', process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
+        void deleteCookie(
+          'invitation',
+          process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
+        );
+        void deleteCookie(
+          'team',
+          process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
+        );
       }
       registerResponseData = registerResponse?.data;
     } catch (exception: unknown) {

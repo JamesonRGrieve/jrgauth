@@ -193,7 +193,7 @@ export const Profile = ({
             {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${readJwtString()}`,
+                'Authorization': `Bearer ${readJwtString()}`,
               },
             },
           );
@@ -347,7 +347,7 @@ export const Profile = ({
                     {
                       headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${readJwtString()}`,
+                        'Authorization': `Bearer ${readJwtString()}`,
                       },
                     },
                   )
@@ -419,7 +419,7 @@ export const Profile = ({
                             {
                               headers: {
                                 'Content-Type': 'application/json',
-                                Authorization: `Bearer ${readJwtString()}`,
+                                'Authorization': `Bearer ${readJwtString()}`,
                               },
                             },
                           )

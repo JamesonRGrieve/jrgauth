@@ -56,9 +56,11 @@
     "precommit": "npx prettier --check . && pnpm compile && pnpm check",
     "build": "pnpm compile && pnpm typecheck:ratchet",
     "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
     "storybook-build": "storybook build",
     "storybook-deploy": "storybook build && gh-pages -d storybook-static",
-    "build-storybook": "storybook build"
+    "test:storybook:integration": "sh ./scripts/run-storybook-playwright-tests.sh",
+    "check": "pnpm lint && pnpm format && pnpm typecheck && pnpm test && pnpm symmetry:ratchet"
   },
   "repository": {
     "type": "git",
@@ -148,6 +150,7 @@
     "@types/md5": "^2.3.6",
     "@types/node": "^25.8.0",
     "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@types/react-google-recaptcha": "^2.1.9",
     "@types/react-simple-oauth2-login": "^0.5.5",
     "@typescript-eslint/eslint-plugin": "^8.59.3",

@@ -1,1 +1,10 @@
-dist/*
+dist/
+node_modules/
+storybook-static/
+*.config.js
+*.config.ts
+playwright.storybook.config.ts
+postcss.config.js
+tailwind.config.js
+.storybook/
+scripts/

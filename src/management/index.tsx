@@ -56,7 +56,7 @@ export default function Manage({
     const response = await axios.get<User>(`${authConfig.authServer}${userDataEndpoint}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${bearer}`,
+        'Authorization': `Bearer ${bearer}`,
       },
       validateStatus: (status) => [200, 403].includes(status),
     });

@@ -131,7 +131,7 @@ export const RenameDialog = ({
         { team: { name: newName } },
         {
           headers: {
-            Authorization: `Bearer ${readJwtString()}`,
+            'Authorization': `Bearer ${readJwtString()}`,
             'Content-Type': 'application/json',
           },
         },
@@ -245,7 +245,7 @@ export const CreateDialog = ({
         },
         {
           headers: {
-            Authorization: `Bearer ${readJwtString()}`,
+            'Authorization': `Bearer ${readJwtString()}`,
             'Content-Type': 'application/json',
           },
         },
@@ -375,7 +375,7 @@ export const Team = (): React.JSX.Element => {
     const response = await axios.get<UserDataResponse>(`${apiUri()}${userDataEndpoint}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${readJwtString()}`,
+        'Authorization': `Bearer ${readJwtString()}`,
       },
       validateStatus: (status) => [200, 403].includes(status),
     });
@@ -386,7 +386,7 @@ export const Team = (): React.JSX.Element => {
     const response = await axios.get<{ teams?: TeamWithExtras[] } & Record<string, unknown>>(`${apiUri()}/v1/team`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${readJwtString()}`,
+        'Authorization': `Bearer ${readJwtString()}`,
       },
       validateStatus: (status) => [200, 403].includes(status),
     });
@@ -411,7 +411,11 @@ export const Team = (): React.JSX.Element => {
 
   const selectNewTeam = (teamObj: TeamWithExtras): void => {
     if (teamObj.id !== '') {
-      void setCookie('auth-team', teamObj.id, process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
+      void setCookie(
+        'auth-team',
+        teamObj.id,
+        process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
+      );
       setSelected(teamObj);
       router.push(`/team/${teamObj.id}`);
       void inviteMutate();

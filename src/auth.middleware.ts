@@ -343,7 +343,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
         }),
         headers: {
           'Content-Type': 'application/json',
-          Authorization: jwt,
+          'Authorization': jwt,
         },
       });
 

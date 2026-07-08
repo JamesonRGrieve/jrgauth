@@ -103,7 +103,7 @@ export const InviteDialog = ({
     const response = await axios.get<{ roles: Role[] }>(`${apiUri()}/v1/team/${selectedTeam.id}/role`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${readJwtString()}`,
+        'Authorization': `Bearer ${readJwtString()}`,
       },
       validateStatus: (status) => [200, 403].includes(status),
     });
@@ -184,7 +184,7 @@ export const InviteDialog = ({
       const response = await axios.post(`${apiUri()}/v1/invitation`, body, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${readJwtString()}`,
+          'Authorization': `Bearer ${readJwtString()}`,
         },
       });
 

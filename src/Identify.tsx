@@ -64,17 +64,29 @@ export default function Identify({
           email: formData.email.toLowerCase().trim(),
         },
       });
-      void setCookie('email', formData.email, process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
+      void setCookie(
+        'email',
+        formData.email,
+        process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
+      );
       router.push(`${pathname}${redirectToOnNotExists}`);
     } catch (exception: unknown) {
       const axiosError = exception as AxiosError;
       if (axiosError.response?.status === 409) {
         // User exists
-        void setCookie('email', formData.email, process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
+        void setCookie(
+          'email',
+          formData.email,
+          process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
+        );
         router.push(`${pathname}${redirectToOnExists}`);
       } else if (axiosError.response?.status === 422) {
         // User doesn't exist
-        void setCookie('email', formData.email, process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
+        void setCookie(
+          'email',
+          formData.email,
+          process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
+        );
         router.push(`${pathname}${redirectToOnNotExists}`);
       } else {
         setError('email', { type: 'server', message: axiosError.message });

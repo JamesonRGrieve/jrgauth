@@ -23,7 +23,7 @@ export function useInvitations(teamId?: string): SWRResponse<Invitation[]> {
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${getCookie('jwt')}`,
+              'Authorization': `Bearer ${getCookie('jwt')}`,
             },
           },
         );

@@ -23,7 +23,7 @@ export const Disabled: Story = {
 };
 
 export const Interaction: Story = {
-  args: { id: 'sw-toggle', 'aria-label': 'enable notifications' },
+  args: { 'id': 'sw-toggle', 'aria-label': 'enable notifications' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const sw = canvas.getByRole('switch', { name: 'enable notifications' });

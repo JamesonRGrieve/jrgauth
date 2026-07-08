@@ -23,7 +23,7 @@ export const Disabled: Story = {
 };
 
 export const Interaction: Story = {
-  args: { id: 'cb-interaction', 'aria-label': 'toggle option' },
+  args: { 'id': 'cb-interaction', 'aria-label': 'toggle option' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const box = canvas.getByRole('checkbox', { name: 'toggle option' });

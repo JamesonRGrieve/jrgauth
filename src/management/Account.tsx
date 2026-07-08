@@ -57,7 +57,7 @@ export const Account = ({
                   {
                     headers: {
                       'Content-Type': 'application/json',
-                      Authorization: `Bearer ${readJwtString()}`,
+                      'Authorization': `Bearer ${readJwtString()}`,
                     },
                   },
                 )

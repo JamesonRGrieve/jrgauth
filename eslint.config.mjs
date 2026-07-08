@@ -112,16 +112,16 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
-      react: reactPlugin,
+      'react': reactPlugin,
       'react-hooks': reactHooksPlugin,
       'unused-imports': unusedImports,
-      import: importPlugin,
+      'import': importPlugin,
       'jsx-a11y': jsxA11y,
       'eslint-comments': eslintComments,
       promise,
     },
     settings: {
-      react: { version: 'detect' },
+      'react': { version: 'detect' },
       'import/resolver': { typescript: { project: './tsconfig.eslint.json' } },
     },
     rules: {
@@ -184,7 +184,7 @@ export default [
           'ts-expect-error': 'allow-with-description',
           'ts-ignore': true,
           'ts-nocheck': true,
-          minimumDescriptionLength: 5,
+          'minimumDescriptionLength': 5,
         },
       ],
       '@typescript-eslint/dot-notation': ['warn', { allowIndexSignaturePropertyAccess: true }],
@@ -260,9 +260,9 @@ export default [
       'import/order': [
         'warn',
         {
-          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
           'newlines-between': 'never',
-          alphabetize: { order: 'asc' },
+          'alphabetize': { order: 'asc' },
         },
       ],
       'import/no-cycle': ['warn', { maxDepth: 4, ignoreExternal: true }],
@@ -361,12 +361,12 @@ export default [
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-throw-literal': 'warn',
-      eqeqeq: ['warn', 'always'],
-      curly: ['warn', 'all'],
+      'eqeqeq': ['warn', 'always'],
+      'curly': ['warn', 'all'],
       'prefer-template': 'warn',
       'no-param-reassign': ['warn', { props: false }],
       'consistent-return': 'warn',
-      complexity: ['warn', 25],
+      'complexity': ['warn', 25],
       'max-depth': ['warn', 5],
 
       'no-restricted-syntax': [

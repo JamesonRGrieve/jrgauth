@@ -105,17 +105,17 @@ export function DisclosureTrigger({
           return child;
         }
         return React.cloneElement(child, {
-          onClick: toggle,
-          role: 'button',
+          'onClick': toggle,
+          'role': 'button',
           'aria-expanded': open,
-          tabIndex: 0,
-          onKeyDown: (e: { key: string; preventDefault: () => void }) => {
+          'tabIndex': 0,
+          'onKeyDown': (e: { key: string; preventDefault: () => void }) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               toggle();
             }
           },
-          className: cn(className, child.props.className),
+          'className': cn(className, child.props.className),
           ...child.props,
         });
       })}

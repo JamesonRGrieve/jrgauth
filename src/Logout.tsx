@@ -12,7 +12,10 @@ export default function Logout({ redirectTo = '/' }: LogoutProps): ReactNode {
   const authConfig = useAuthentication();
 
   useEffect(() => {
-    void deleteCookie('jwt', process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {});
+    void deleteCookie(
+      'jwt',
+      process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
+    );
     router.refresh();
     router.replace(redirectTo);
     router.refresh();

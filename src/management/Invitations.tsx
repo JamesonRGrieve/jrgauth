@@ -32,7 +32,7 @@ export function InvitationsTable({ userId }: { userId?: string }): React.JSX.Ele
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${readJwt()}`,
+            'Authorization': `Bearer ${readJwt()}`,
           },
         },
       );

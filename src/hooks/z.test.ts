@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  AgentSchema,
-  InvitationSchema,
-  NotificationSchema,
-  RoleSchema,
-  TeamSchema,
-  UserSchema,
-  UserTeamSchema,
-} from './z';
+import { AgentSchema, InvitationSchema, NotificationSchema, RoleSchema, TeamSchema, UserSchema, UserTeamSchema } from './z';
 
 describe('RoleSchema', () => {
   it('accepts the known role literals', () => {

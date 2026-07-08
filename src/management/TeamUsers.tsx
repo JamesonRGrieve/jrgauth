@@ -276,7 +276,7 @@ export const Team = (): React.JSX.Element => {
                       await axios.delete(`${apiUri()}/v1/user_team/${row.original.id}`, {
                         headers: {
                           'Content-Type': 'application/json',
-                          Authorization: `Bearer ${readJwtString()}`,
+                          'Authorization': `Bearer ${readJwtString()}`,
                         },
                       });
                       toast({
@@ -532,7 +532,7 @@ export function InviteUsers(): React.JSX.Element {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${readJwtString()}`,
+            'Authorization': `Bearer ${readJwtString()}`,
           },
         },
       );

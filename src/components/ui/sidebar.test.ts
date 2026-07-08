@@ -122,28 +122,18 @@ describe('useSidebar contract', () => {
   // contract at the type level here; once @testing-library/react lands,
   // add a render-based assertion that the guard throws.
   it('accepts an optional side argument defaulting to a sidebar side', () => {
-    expectTypeOf(useSidebar).parameter(0).toEqualTypeOf<
-      'left' | 'right' | undefined
-    >();
+    expectTypeOf(useSidebar).parameter(0).toEqualTypeOf<'left' | 'right' | undefined>();
   });
 
   it('returns a context value exposing the open/collapsed contract', () => {
     type SidebarContextValue = ReturnType<typeof useSidebar>;
-    expectTypeOf<SidebarContextValue['state']>().toEqualTypeOf<
-      'expanded' | 'collapsed'
-    >();
+    expectTypeOf<SidebarContextValue['state']>().toEqualTypeOf<'expanded' | 'collapsed'>();
     expectTypeOf<SidebarContextValue['open']>().toEqualTypeOf<boolean>();
     expectTypeOf<SidebarContextValue['isMobile']>().toEqualTypeOf<boolean>();
     expectTypeOf<SidebarContextValue['width']>().toEqualTypeOf<number>();
-    expectTypeOf<SidebarContextValue['toggleSidebar']>().toEqualTypeOf<
-      () => void
-    >();
-    expectTypeOf<SidebarContextValue['setOpen']>().toEqualTypeOf<
-      (open: boolean) => void
-    >();
-    expectTypeOf<SidebarContextValue['setWidth']>().toEqualTypeOf<
-      (width: number) => void
-    >();
+    expectTypeOf<SidebarContextValue['toggleSidebar']>().toEqualTypeOf<() => void>();
+    expectTypeOf<SidebarContextValue['setOpen']>().toEqualTypeOf<(open: boolean) => void>();
+    expectTypeOf<SidebarContextValue['setWidth']>().toEqualTypeOf<(width: number) => void>();
   });
 });
 
@@ -151,27 +141,17 @@ describe('SidebarProvider prop contract', () => {
   type ProviderProps = React.ComponentPropsWithoutRef<typeof SidebarProvider>;
 
   it('accepts independent default-open flags for each side', () => {
-    expectTypeOf<ProviderProps['defaultLeftOpen']>().toEqualTypeOf<
-      boolean | undefined
-    >();
-    expectTypeOf<ProviderProps['defaultRightOpen']>().toEqualTypeOf<
-      boolean | undefined
-    >();
+    expectTypeOf<ProviderProps['defaultLeftOpen']>().toEqualTypeOf<boolean | undefined>();
+    expectTypeOf<ProviderProps['defaultRightOpen']>().toEqualTypeOf<boolean | undefined>();
   });
 
   it('accepts per-side controlled open-change callbacks', () => {
-    expectTypeOf<ProviderProps['onLeftOpenChange']>().toEqualTypeOf<
-      ((open: boolean) => void) | undefined
-    >();
-    expectTypeOf<ProviderProps['onRightOpenChange']>().toEqualTypeOf<
-      ((open: boolean) => void) | undefined
-    >();
+    expectTypeOf<ProviderProps['onLeftOpenChange']>().toEqualTypeOf<((open: boolean) => void) | undefined>();
+    expectTypeOf<ProviderProps['onRightOpenChange']>().toEqualTypeOf<((open: boolean) => void) | undefined>();
   });
 
   it('passes through native div attributes (className / children)', () => {
-    expectTypeOf<ProviderProps['className']>().toEqualTypeOf<
-      string | undefined
-    >();
+    expectTypeOf<ProviderProps['className']>().toEqualTypeOf<string | undefined>();
     expectTypeOf<ProviderProps>().toHaveProperty('children');
   });
 });
@@ -180,30 +160,18 @@ describe('Sidebar prop contract', () => {
   type SidebarProps = React.ComponentPropsWithoutRef<typeof Sidebar>;
 
   it('admits the side / variant / collapsible enums', () => {
-    expectTypeOf<SidebarProps['side']>().toEqualTypeOf<
-      'left' | 'right' | undefined
-    >();
-    expectTypeOf<SidebarProps['variant']>().toEqualTypeOf<
-      'sidebar' | 'floating' | 'inset' | undefined
-    >();
-    expectTypeOf<SidebarProps['collapsible']>().toEqualTypeOf<
-      'offcanvas' | 'icon' | 'none' | undefined
-    >();
+    expectTypeOf<SidebarProps['side']>().toEqualTypeOf<'left' | 'right' | undefined>();
+    expectTypeOf<SidebarProps['variant']>().toEqualTypeOf<'sidebar' | 'floating' | 'inset' | undefined>();
+    expectTypeOf<SidebarProps['collapsible']>().toEqualTypeOf<'offcanvas' | 'icon' | 'none' | undefined>();
   });
 });
 
 describe('SidebarMenuButton prop contract', () => {
-  type MenuButtonProps = React.ComponentPropsWithoutRef<
-    typeof SidebarMenuButton
-  >;
+  type MenuButtonProps = React.ComponentPropsWithoutRef<typeof SidebarMenuButton>;
 
   it('exposes the active-state and asChild composition flags', () => {
-    expectTypeOf<MenuButtonProps['isActive']>().toEqualTypeOf<
-      boolean | undefined
-    >();
-    expectTypeOf<MenuButtonProps['asChild']>().toEqualTypeOf<
-      boolean | undefined
-    >();
+    expectTypeOf<MenuButtonProps['isActive']>().toEqualTypeOf<boolean | undefined>();
+    expectTypeOf<MenuButtonProps['asChild']>().toEqualTypeOf<boolean | undefined>();
   });
 
   it('accepts the size / variant style discriminators', () => {
@@ -212,21 +180,15 @@ describe('SidebarMenuButton prop contract', () => {
   });
 
   it('targets the per-side context via an optional side prop', () => {
-    expectTypeOf<MenuButtonProps['side']>().toEqualTypeOf<
-      'left' | 'right' | undefined
-    >();
+    expectTypeOf<MenuButtonProps['side']>().toEqualTypeOf<'left' | 'right' | undefined>();
   });
 });
 
 describe('SidebarMenuSkeleton prop contract', () => {
-  type SkeletonProps = React.ComponentPropsWithoutRef<
-    typeof SidebarMenuSkeleton
-  >;
+  type SkeletonProps = React.ComponentPropsWithoutRef<typeof SidebarMenuSkeleton>;
 
   it('toggles the leading icon placeholder via showIcon', () => {
-    expectTypeOf<SkeletonProps['showIcon']>().toEqualTypeOf<
-      boolean | undefined
-    >();
+    expectTypeOf<SkeletonProps['showIcon']>().toEqualTypeOf<boolean | undefined>();
   });
 });
 

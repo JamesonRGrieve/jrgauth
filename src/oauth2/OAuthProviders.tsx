@@ -51,35 +51,35 @@ import {
 } from 'react-icons/ri';
 
 const providers = {
-  AOL: {
+  'AOL': {
     client_id: process.env.NEXT_PUBLIC_AOL_CLIENT_ID,
     scope: 'profile email',
     uri: 'https://api.screenname.aol.com/auth/authorize',
     params: {},
     icon: <EmailOutlined />,
   },
-  Amazon: {
+  'Amazon': {
     client_id: process.env.NEXT_PUBLIC_AMAZON_CLIENT_ID,
     scope: 'profile',
     uri: 'https://www.amazon.com/ap/oa',
     params: {},
     icon: <ShoppingCartOutlined />,
   },
-  Apple: {
+  'Apple': {
     client_id: process.env.NEXT_PUBLIC_APPLE_CLIENT_ID,
     scope: 'name email',
     uri: 'https://appleid.apple.com/auth/authorize',
     params: {},
     icon: <Apple />,
   },
-  Tesla: {
+  'Tesla': {
     client_id: process.env.NEXT_PUBLIC_TESLA_CLIENT_ID,
     scope: 'openid offline_access user_data vehicle_device_data vehicle_cmds vehicle_charging_cmds vehicle_location',
     uri: 'https://auth.tesla.com/oauth2/v3/authorize',
     params: {},
     icon: <GiTesla />,
   },
-  Autodesk: {
+  'Autodesk': {
     client_id: process.env.NEXT_PUBLIC_AUTODESK_CLIENT_ID,
     scope: 'data:read data:write data:create bucket:create account:read',
     uri: 'https://developer.api.autodesk.com/authentication/1/authorize',
@@ -93,35 +93,35 @@ const providers = {
     params: {},
     icon: <GamepadOutlined />,
   },
-  Basecamp: {
+  'Basecamp': {
     client_id: process.env.NEXT_PUBLIC_BASECAMP_CLIENT_ID,
     scope: 'access',
     uri: 'https://launchpad.37signals.com/authorization/new',
     params: {},
     icon: <WorkOutlineOutlined />,
   },
-  Bitbucket: {
+  'Bitbucket': {
     client_id: process.env.NEXT_PUBLIC_BITBUCKET_CLIENT_ID,
     scope: 'email',
     uri: 'https://bitbucket.org/site/oauth2/authorize',
     params: {},
     icon: <CodeOutlined />,
   },
-  bitly: {
+  'bitly': {
     client_id: process.env.NEXT_PUBLIC_BITLY_CLIENT_ID,
     scope: 'default',
     uri: 'https://bitly.com/oauth/authorize',
     params: {},
     icon: <LinkOutlined />,
   },
-  Box: {
+  'Box': {
     client_id: process.env.NEXT_PUBLIC_BOX_CLIENT_ID,
     scope: 'root_readwrite',
     uri: 'https://account.box.com/api/oauth2/authorize',
     params: {},
     icon: <FolderOutlined />,
   },
-  ClearScore: {
+  'ClearScore': {
     client_id: process.env.NEXT_PUBLIC_CLEARSCORE_CLIENT_ID,
     scope: 'accounts:read kyc:read',
     uri: 'https://api.clearscore.com/oauth/authorize',
@@ -135,7 +135,7 @@ const providers = {
     params: {},
     icon: <CloudOutlined />,
   },
-  Dailymotion: {
+  'Dailymotion': {
     client_id: process.env.NEXT_PUBLIC_DAILYMOTION_CLIENT_ID,
     scope: 'email',
     uri: 'https://www.dailymotion.com/oauth/authorize',
@@ -149,77 +149,77 @@ const providers = {
     params: {},
     icon: <PhoneAndroidOutlined />,
   },
-  deviantART: {
+  'deviantART': {
     client_id: process.env.NEXT_PUBLIC_DEVIANTART_CLIENT_ID,
     scope: 'browse basicdata email',
     uri: 'https://www.deviantart.com/oauth2/draft15/authorize',
     params: {},
     icon: <BrushOutlined />,
   },
-  Discord: {
+  'Discord': {
     client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
     scope: 'identify email',
     uri: 'https://discord.com/api/oauth2/authorize',
     params: {},
     icon: <HeadsetMicOutlined />,
   },
-  Dropbox: {
+  'Dropbox': {
     client_id: process.env.NEXT_PUBLIC_DROPBOX_CLIENT_ID,
     scope: 'account_info.read files.metadata.read files.content.read',
     uri: 'https://www.dropbox.com/oauth2/authorize',
     params: {},
     icon: <CloudUploadOutlined />,
   },
-  Facebook: {
+  'Facebook': {
     client_id: process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID,
     scope: 'email',
     uri: 'https://www.facebook.com/v16.0/dialog/oauth',
     params: {},
     icon: <FacebookOutlined />,
   },
-  FatSecret: {
+  'FatSecret': {
     client_id: process.env.NEXT_PUBLIC_FATSECRET_CLIENT_ID,
     scope: 'basic',
     uri: 'https://www.fatsecret.com/oauth2/authorize',
     params: {},
     icon: <RestaurantOutlined />,
   },
-  Fitbit: {
+  'Fitbit': {
     client_id: process.env.NEXT_PUBLIC_FITBIT_CLIENT_ID,
     scope: 'activity heartrate location nutrition profile settings sleep view_activity',
     uri: 'https://www.fitbit.com/oauth2/authorize',
     params: {},
     icon: <FitnessCenterOutlined />,
   },
-  Formstack: {
+  'Formstack': {
     client_id: process.env.NEXT_PUBLIC_FORMSTACK_CLIENT_ID,
     scope: 'openid',
     uri: 'https://auth.formstack.com/authorize',
     params: {},
     icon: <CheckBoxOutlined />,
   },
-  Foursquare: {
+  'Foursquare': {
     client_id: process.env.NEXT_PUBLIC_FOURSQUARE_CLIENT_ID,
     scope: 'email',
     uri: 'https://foursquare.com/oauth2/authenticate',
     params: {},
     icon: <PinDropOutlined />,
   },
-  GitHub: {
+  'GitHub': {
     client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
     scope: process.env.NEXT_PUBLIC_GITHUB_SCOPES ?? 'user:email',
     uri: 'https://github.com/login/oauth/authorize',
     params: {},
     icon: <GitHub />,
   },
-  GitLab: {
+  'GitLab': {
     client_id: process.env.NEXT_PUBLIC_GITLAB_CLIENT_ID,
     scope: 'read_user',
     uri: 'https://gitlab.com/oauth/authorize',
     params: {},
     icon: <CodeOutlined />,
   },
-  Google: {
+  'Google': {
     client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
     scope: process.env.NEXT_PUBLIC_GOOGLE_SCOPES ?? 'profile email https://www.googleapis.com/auth/gmail.send',
     uri: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -228,21 +228,21 @@ const providers = {
     },
     icon: <Google />,
   },
-  Huddle: {
+  'Huddle': {
     client_id: process.env.NEXT_PUBLIC_HUDDLE_CLIENT_ID,
     scope: 'user:email user:profile:full user:content:full',
     uri: 'https://huddle.eu/login',
     params: {},
     icon: <SupervisorAccountOutlined />,
   },
-  Imgur: {
+  'Imgur': {
     client_id: process.env.NEXT_PUBLIC_IMGUR_CLIENT_ID,
     scope: 'email',
     uri: 'https://api.imgur.com/oauth2/authorize',
     params: {},
     icon: <ImageOutlined />,
   },
-  Instagram: {
+  'Instagram': {
     client_id: process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID,
     scope: 'user_profile,user_media',
     uri: 'https://api.instagram.com/oauth/authorize',
@@ -256,28 +256,28 @@ const providers = {
     params: {},
     icon: <CloudOutlined />,
   },
-  Jive: {
+  'Jive': {
     client_id: process.env.NEXT_PUBLIC_JIVE_CLIENT_ID,
     scope: 'read',
     uri: 'https://acmeprod.jiveon.com/api/core/v3/authorize',
     params: {},
     icon: <ForumOutlined />,
   },
-  Keycloak: {
+  'Keycloak': {
     client_id: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID,
     scope: 'openid',
     uri: 'https://keycloak.example.com/auth/realms/myrealm/protocol/openid-connect/auth',
     params: {},
     icon: <LockOutlined />,
   },
-  LinkedIn: {
+  'LinkedIn': {
     client_id: process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID,
     scope: 'r_emailaddress r_liteprofile',
     uri: 'https://www.linkedin.com/oauth/v2/authorization',
     params: {},
     icon: <LinkedIn />,
   },
-  Microsoft: {
+  'Microsoft': {
     client_id: process.env.NEXT_PUBLIC_MICROSOFT_CLIENT_ID,
     scope:
       process.env.NEXT_PUBLIC_MICROSOFT_SCOPES ??
@@ -286,42 +286,42 @@ const providers = {
     params: {},
     icon: <Microsoft />,
   },
-  NetIQ: {
+  'NetIQ': {
     client_id: process.env.NEXT_PUBLIC_NETIQ_CLIENT_ID,
     scope: 'openid profile email',
     uri: 'https://idp.netiq.com/nidp/app/login',
     params: {},
     icon: <LockOutlined />,
   },
-  Okta: {
+  'Okta': {
     client_id: process.env.NEXT_PUBLIC_OKTA_CLIENT_ID,
     scope: 'openid profile email',
     uri: 'https://acme.oktapreview.com/oauth2/v1/authorize',
     params: {},
     icon: <FingerprintOutlined />,
   },
-  OpenAM: {
+  'OpenAM': {
     client_id: process.env.NEXT_PUBLIC_OPENAM_CLIENT_ID,
     scope: 'fr:idm:*',
     uri: 'https://openam.example.com/oauth2/authorize.jsp',
     params: {},
     icon: <LockOpenOutlined />,
   },
-  OpenStreetMap: {
+  'OpenStreetMap': {
     client_id: process.env.NEXT_PUBLIC_OPENSTREETMAP_CLIENT_ID,
     scope: 'read_prefs',
     uri: 'https://www.openstreetmap.org/oauth2/authorize',
     params: {},
     icon: <MapOutlined />,
   },
-  ORCID: {
+  'ORCID': {
     client_id: process.env.NEXT_PUBLIC_ORCID_CLIENT_ID,
     scope: '/read-public',
     uri: 'https://orcid.org/oauth/authorize',
     params: {},
     icon: <AccountBoxOutlined />,
   },
-  PayPal: {
+  'PayPal': {
     client_id: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
     scope: 'openid email https://uri.paypal.com/services/paypalattributes',
     uri: 'https://www.paypal.com/signin/authorize',
@@ -335,21 +335,21 @@ const providers = {
     params: {},
     icon: <FingerprintOutlined />,
   },
-  Pixiv: {
+  'Pixiv': {
     client_id: process.env.NEXT_PUBLIC_PIXIV_CLIENT_ID,
     scope: 'user:read',
     uri: 'https://accounts.pixiv.net/oauth2/authorize',
     params: {},
     icon: <PaletteOutlined />,
   },
-  Reddit: {
+  'Reddit': {
     client_id: process.env.NEXT_PUBLIC_REDDIT_CLIENT_ID,
     scope: 'identity',
     uri: 'https://www.reddit.com/api/v1/authorize',
     params: {},
     icon: <Reddit />,
   },
-  Salesforce: {
+  'Salesforce': {
     client_id: process.env.NEXT_PUBLIC_SALESFORCE_CLIENT_ID,
     scope: 'api refresh_token',
     uri: 'https://login.salesforce.com/services/oauth2/authorize',
@@ -363,14 +363,14 @@ const providers = {
     params: {},
     icon: <ShareOutlined />,
   },
-  Slack: {
+  'Slack': {
     client_id: process.env.NEXT_PUBLIC_SLACK_CLIENT_ID,
     scope: 'users:read users:read.email',
     uri: 'https://slack.com/oauth/v2/authorize',
     params: {},
     icon: <MessageOutlined />,
   },
-  Spotify: {
+  'Spotify': {
     client_id: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
     scope:
       'user-read-email user-read-private user-read-currently-playing user-read-playback-state user-modify-playback-state user-read-recently-played',
@@ -385,63 +385,63 @@ const providers = {
     params: {},
     icon: <QuestionAnswerOutlined />,
   },
-  Steam: {
+  'Steam': {
     client_id: process.env.NEXT_PUBLIC_STEAM_CLIENT_ID,
     scope: 'openid',
     uri: 'https://steamcommunity.com/openid/login',
     params: {},
     icon: <GamepadOutlined />,
   },
-  Strava: {
+  'Strava': {
     client_id: process.env.NEXT_PUBLIC_STRAVA_CLIENT_ID,
     scope: 'activity:read_all',
     uri: 'https://www.strava.com/oauth/authorize',
     params: {},
     icon: <DirectionsRunOutlined />,
   },
-  Stripe: {
+  'Stripe': {
     client_id: process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID,
     scope: 'read_write',
     uri: 'https://connect.stripe.com/oauth/authorize',
     params: {},
     icon: <CreditCardOutlined />,
   },
-  Twitch: {
+  'Twitch': {
     client_id: process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
     scope: 'user:read:email',
     uri: 'https://id.twitch.tv/oauth2/authorize',
     params: {},
     icon: <VideoCallOutlined />,
   },
-  Viadeo: {
+  'Viadeo': {
     client_id: process.env.NEXT_PUBLIC_VIADEO_CLIENT_ID,
     scope: 'access',
     uri: 'https://www.viadeo.com/oauth-provider/authorize2',
     params: {},
     icon: <WorkOutlineOutlined />,
   },
-  Vimeo: {
+  'Vimeo': {
     client_id: process.env.NEXT_PUBLIC_VIMEO_CLIENT_ID,
     scope: 'public',
     uri: 'https://api.vimeo.com/oauth/authorize',
     params: {},
     icon: <VideoCallOutlined />,
   },
-  VK: {
+  'VK': {
     client_id: process.env.NEXT_PUBLIC_VK_CLIENT_ID,
     scope: 'email',
     uri: 'https://oauth.vk.com/authorize',
     params: {},
     icon: <DeviceUnknownOutlined />,
   },
-  WeChat: {
+  'WeChat': {
     client_id: process.env.NEXT_PUBLIC_WECHAT_CLIENT_ID,
     scope: 'snsapi_login',
     uri: 'https://open.weixin.qq.com/connect/qrconnect',
     params: {},
     icon: <ChatOutlined />,
   },
-  Withings: {
+  'Withings': {
     client_id: process.env.NEXT_PUBLIC_WITHINGS_CLIENT_ID,
     scope: 'user.info',
     uri: 'https://account.withings.com/oauth2_user/authorize2',
@@ -455,56 +455,56 @@ const providers = {
     params: {},
     icon: <FingerprintOutlined />,
   },
-  X: {
+  'X': {
     client_id: process.env.NEXT_PUBLIC_X_CLIENT_ID,
     scope: 'users.read tweet.read tweet.write offline.access',
     uri: 'https://twitter.com/i/oauth2/authorize',
     params: {},
     icon: <Twitter />,
   },
-  Xero: {
+  'Xero': {
     client_id: process.env.NEXT_PUBLIC_XERO_CLIENT_ID,
     scope: 'openid email profile offline_access',
     uri: 'https://login.xero.com/identity/connect/authorize',
     params: {},
     icon: <AttachMoneyOutlined />,
   },
-  XING: {
+  'XING': {
     client_id: process.env.NEXT_PUBLIC_XING_CLIENT_ID,
     scope: 'openid',
     uri: 'https://login.xing.com/authorize',
     params: {},
     icon: <WorkOutlineOutlined />,
   },
-  Yahoo: {
+  'Yahoo': {
     client_id: process.env.NEXT_PUBLIC_YAHOO_CLIENT_ID,
     scope: 'openid sdx-r email',
     uri: 'https://api.login.yahoo.com/oauth2/request_auth',
     params: {},
     icon: <EmailOutlined />,
   },
-  Yammer: {
+  'Yammer': {
     client_id: process.env.NEXT_PUBLIC_YAMMER_CLIENT_ID,
     scope: 'user_details',
     uri: 'https://www.yammer.com/oauth2/authorize',
     params: {},
     icon: <ForumOutlined />,
   },
-  Yandex: {
+  'Yandex': {
     client_id: process.env.NEXT_PUBLIC_YANDEX_CLIENT_ID,
     scope: 'login:email',
     uri: 'https://oauth.yandex.com/authorize',
     params: {},
     icon: <DeviceUnknownOutlined />,
   },
-  Yelp: {
+  'Yelp': {
     client_id: process.env.NEXT_PUBLIC_YELP_CLIENT_ID,
     scope: 'email',
     uri: 'https://www.yelp.com/oauth2/authorize',
     params: {},
     icon: <RestaurantOutlined />,
   },
-  Zendesk: {
+  'Zendesk': {
     client_id: process.env.NEXT_PUBLIC_ZENDESK_CLIENT_ID,
     scope: 'read',
     uri: 'https://YOURSUBDOMAIN.zendesk.com/oauth/authorize',

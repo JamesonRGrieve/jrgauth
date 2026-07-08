@@ -36,8 +36,8 @@ describe('Skeleton', () => {
   });
 
   it('forwards arbitrary HTML props to the div', () => {
-    const el: React.ReactElement<{ id?: string; 'aria-busy'?: boolean }> = Skeleton({
-      id: 'avatar-skeleton',
+    const el: React.ReactElement<{ 'id'?: string; 'aria-busy'?: boolean }> = Skeleton({
+      'id': 'avatar-skeleton',
       'aria-busy': true,
     });
     expect(el.props.id).toBe('avatar-skeleton');
