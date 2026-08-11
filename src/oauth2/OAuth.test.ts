@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for the OAuth component. OAuth renders one button per
  * configured provider in oAuth2Providers (filtered by client_id) and
  * delegates to react-simple-oauth2-login for the popup flow.
  *
  * Uses `import type` to avoid loading the runtime module — OAuth
- * imports `@jgrieve/dynamic-form/*` directly.
+ * imports `@jgrieve/forms/*` directly.
  */
 import { describe, expectTypeOf, it } from 'vitest';
 import type OAuth from './OAuth';

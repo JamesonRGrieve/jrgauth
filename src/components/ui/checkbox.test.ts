@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Checkbox primitive. It's a Radix Checkbox.Root
  * re-export with className composition; behavioural coverage

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Disclosure family — a context-driven open/closed
  * wrapper around motion/react's AnimatePresence. The motion-driven

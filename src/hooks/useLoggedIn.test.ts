@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * useLoggedIn is a Next.js client-side hook that fires an axios GET
  * against `${API_URI}/v1/user` once on mount and stores the boolean

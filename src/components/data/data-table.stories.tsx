@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type { Meta, StoryObj } from '@storybook/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from './data-table';

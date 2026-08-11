@@ -1,7 +1,8 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Input } from '@jgrieve/dynamic-form/components/ui/input';
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Input } from '@jgrieve/forms/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -10,8 +11,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@jgrieve/dynamic-form/components/ui/select';
-import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
+} from '@jgrieve/forms/components/ui/select';
+import { useToast } from '@jgrieve/forms/hooks/useToast';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useParams } from 'next/navigation';

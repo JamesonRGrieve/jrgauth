@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for the Identify component. The component drives a
  * react-hook-form + axios flow that needs a Next router + happy-dom
@@ -5,7 +6,7 @@
  * downstream apps cannot have it widened/narrowed silently.
  *
  * Uses `import type` to avoid loading the runtime module — Identify
- * transitively imports `@jgrieve/dynamic-form/*`, which does not resolve
+ * transitively imports `@jgrieve/forms/*`, which does not resolve
  * when the auth repo is opened standalone.
  */
 import { describe, expectTypeOf, it } from 'vitest';

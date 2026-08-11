@@ -1,8 +1,9 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Input } from '@jgrieve/dynamic-form/components/ui/input';
-import { Label } from '@jgrieve/dynamic-form/components/ui/label';
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Input } from '@jgrieve/forms/components/ui/input';
+import { Label } from '@jgrieve/forms/components/ui/label';
 import axios, { type AxiosError } from 'axios';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';

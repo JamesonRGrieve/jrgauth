@@ -1,6 +1,6 @@
-# Claude Code Instructions — @jgrieve/auth
+# Claude Code Instructions — @zephyrex/auth
 
-This is a **React/Next.js auth UI submodule**, consumed by `client-framework` and other downstream Next.js apps. Workspace-level TS/JS standards (Direction, Casting, Ratchets, ESLint, TS, Test, Pre-commit, Hard Rules) live in `../CLAUDE.md` §7 and apply here. This file documents the rules **specific** to this repo.
+This is a **React/Next.js auth UI submodule**, consumed by `zephyrex` and other downstream Next.js apps. Workspace-level TS/JS standards (Direction, Casting, Ratchets, ESLint, TS, Test, Pre-commit, Hard Rules) live in `../CLAUDE.md` §7 and apply here. This file documents the rules **specific** to this repo.
 
 Package manager: **pnpm**. Toolchain: TypeScript + Storybook + ESLint + Prettier.
 
@@ -23,11 +23,11 @@ These are tracked in `todo.json` (create one if absent).
 
 ---
 
-## Repo-Specific Direction (in addition to `/home/jameson/source/ai-prompts/typescript.md` + `/home/jameson/source/ai-prompts/react-next.md`)
+## Repo-Specific Direction (in addition to `/home/jameson/Source/ai-prompts/typescript.md` + `/home/jameson/Source/ai-prompts/react-next.md`)
 
 The canonical exported-API contract discipline (exported props/hook signatures are a contract; additive over breaking; `@deprecated` JSDoc over deletion; migration notes for breaking changes), the no-HTML-interpolation-of-external-data rule, and promise hygiene now live in `react-next.md` (§7 / §5 / §3). Auth-specific application:
 
-- **Auth surface is the bottleneck for every downstream app.** It is consumed by `client-framework` and other downstream Next.js apps, so the exported-API contract discipline above is load-bearing here in a way it is not for leaf components — a breaking prop/hook change ripples into every consumer at once.
+- **Auth surface is the bottleneck for every downstream app.** It is consumed by `zephyrex` and other downstream Next.js apps, so the exported-API contract discipline above is load-bearing here in a way it is not for leaf components — a breaking prop/hook change ripples into every consumer at once.
 - **No secrets in code, ever** (workspace rule, but doubly relevant here). Auth callbacks, OAuth client IDs, and tokens come from environment / runtime config, never hardcoded.
 - **External data here is provider error messages.** Sign-in error messages from upstream identity providers are the concrete "external data" the no-HTML-interpolation rule guards — render them as text nodes, never via `dangerouslySetInnerHTML`.
 - **Promise hygiene applies to the sign-in / sign-out flows** — these are the async surfaces in this repo that the rule covers.
@@ -36,7 +36,7 @@ The canonical exported-API contract discipline (exported props/hook signatures a
 
 ## Path Aliases
 
-The "aliases resolve only inside the parent monorepo, and standalone non-resolution is expected — don't 'fix' it" rule is canonical in `/home/jameson/source/ai-prompts/react-next.md` §7. Auth-specific detail: this repo's `tsconfig.json` declares `@/auth/*` etc. relative to a parent monorepo (`../../../src/...`), correct **only when the submodule sits inside `client-framework/src/components/auth/`**.
+The "aliases resolve only inside the parent monorepo, and standalone non-resolution is expected — don't 'fix' it" rule is canonical in `/home/jameson/Source/ai-prompts/react-next.md` §7. Auth-specific detail: this repo's `tsconfig.json` declares `@/auth/*` etc. relative to a parent monorepo (`../../../src/...`), correct **only when the submodule sits inside `zephyrex/src/components/auth/`**.
 
 ---
 

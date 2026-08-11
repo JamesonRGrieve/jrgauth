@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { describe, expectTypeOf, it } from 'vitest';
 import type { MiddlewareHook } from './MiddlewareHook';
 

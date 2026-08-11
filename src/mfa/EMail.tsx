@@ -1,8 +1,9 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-import Field from '@jgrieve/dynamic-form/Field';
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { useToast } from '@jgrieve/dynamic-form/hooks/useToast';
+import Field from '@jgrieve/forms/Field';
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { useToast } from '@jgrieve/forms/hooks/useToast';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { CheckCircle } from 'lucide-react';

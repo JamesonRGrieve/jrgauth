@@ -1,8 +1,9 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Input } from '@jgrieve/dynamic-form/components/ui/input';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Input } from '@jgrieve/forms/components/ui/input';
+import { Separator } from '@jgrieve/forms/components/ui/separator';
 import { ViewVerticalIcon } from '@radix-ui/react-icons';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';

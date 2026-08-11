@@ -1,4 +1,5 @@
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { Button } from '@jgrieve/forms/components/ui/button';
 import type { Column } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from 'lucide-react';
 import { cn } from '../../lib/utils';

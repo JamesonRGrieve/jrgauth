@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * ErrorPage renders a "something went wrong" view with a "Try again" /
  * "Logout" button pair. Without a happy-dom + Next router renderer we

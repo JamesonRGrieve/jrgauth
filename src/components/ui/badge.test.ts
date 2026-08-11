@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * The Badge component itself is a thin presentational wrapper, but its
  * `badgeVariants` cva builder is pure and fully testable without a DOM —

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * OAuthProviders exports a static map of provider configs keyed by display
  * name. Every entry must declare a `scope`, an authorization `uri`, an empty

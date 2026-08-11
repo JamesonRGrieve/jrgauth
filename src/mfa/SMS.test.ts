@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * VerifySMS is a stub component currently rendering only the heading +
  * an unavailability notice (the verification form is commented out).

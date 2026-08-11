@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for the Login component. Login drives an axios POST to
  * `${authServer}${userLoginEndpoint}` using a Basic auth header, manages
@@ -6,7 +7,7 @@
  * the prop type surface that downstream apps depend on.
  *
  * Uses `import type` to avoid loading the runtime module — Login
- * transitively imports `@jgrieve/dynamic-form/*`, which does not resolve
+ * transitively imports `@jgrieve/forms/*`, which does not resolve
  * when the auth repo is opened standalone.
  */
 import { describe, expectTypeOf, it } from 'vitest';

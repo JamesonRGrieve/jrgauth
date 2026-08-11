@@ -1,7 +1,7 @@
 {
-  "name": "@jgrieve/auth",
-  "version": "0.0.0",
-  "description": "Components developed by Jameson R Grieve for use in React/NextJS projects.",
+  "name": "@zephyrex/auth",
+  "version": "1.0.0-alpha.1",
+  "description": "Authentication components for Zephyrex Framework — login, register, OAuth2, MFA, user/team management.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -72,7 +72,7 @@
     "components"
   ],
   "author": "Jameson R Grieve",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/JamesonRGrieve/auth/issues"
   },

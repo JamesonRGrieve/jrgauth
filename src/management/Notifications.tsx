@@ -1,5 +1,6 @@
 'use client';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { Separator } from '@jgrieve/forms/components/ui/separator';
 
 export const Notifications = (): React.JSX.Element => {
   return (

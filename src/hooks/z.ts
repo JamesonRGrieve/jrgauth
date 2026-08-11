@@ -1,4 +1,5 @@
-import z from 'zod2gql';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import z from '@zephyrex/zod2gql';
 
 export const RoleSchema = z.enum(['user', 'system', 'assistant', 'function']);
 

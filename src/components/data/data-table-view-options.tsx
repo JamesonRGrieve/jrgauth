@@ -1,6 +1,7 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Button } from '@jgrieve/forms/components/ui/button';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import type { Table } from '@tanstack/react-table';
 import { Settings2 } from 'lucide-react';

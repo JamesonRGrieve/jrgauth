@@ -1,10 +1,11 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Input } from '@jgrieve/dynamic-form/components/ui/input';
-import { Label } from '@jgrieve/dynamic-form/components/ui/label';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Input } from '@jgrieve/forms/components/ui/input';
+import { Label } from '@jgrieve/forms/components/ui/label';
+import { Separator } from '@jgrieve/forms/components/ui/separator';
 import axios, { type AxiosError } from 'axios';
 import { setCookie } from 'cookies-next';
 import { usePathname, useRouter } from 'next/navigation';

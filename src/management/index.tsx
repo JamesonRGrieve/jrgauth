@@ -1,6 +1,7 @@
 'use client';
-import type { DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import type { DynamicFormFieldValueTypes } from '@jgrieve/forms/DynamicForm';
+import { Button } from '@jgrieve/forms/components/ui/button';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';

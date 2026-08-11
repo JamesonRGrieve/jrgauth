@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * useAuthentication is a thin hook that reads the AuthenticationContext
  * and asserts the context's `authModes` invariants. Without a React

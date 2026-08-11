@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for the OAuth Close component. The effect calls
  * window.close() on mount, which we cannot exercise without a DOM env.

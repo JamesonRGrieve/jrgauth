@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type { Meta, StoryObj } from '@storybook/react';
 import { type ReactNode, useContext } from 'react';
 import { AuthenticationContext } from './AuthenticationContext';

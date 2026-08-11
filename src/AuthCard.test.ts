@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * AuthCard wraps shadcn Card primitives with a heading, description, and
  * optional back-button / response message. The component is heavy on JSX

@@ -1,4 +1,5 @@
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { Button } from '@jgrieve/forms/components/ui/button';
 import { LuArrowLeft as ArrowLeft } from 'react-icons/lu';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { cn } from './lib/utils';

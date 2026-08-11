@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Tooltip primitive bundle. Five exports:
  *   - Tooltip wraps Radix Root with a 600ms default delayDuration

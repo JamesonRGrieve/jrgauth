@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * NavMenu exports a static `items` array describing the auth-submodule's
  * navigation tree. The tests pin the shape of the data so a future edit

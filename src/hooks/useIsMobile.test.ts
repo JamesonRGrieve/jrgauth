@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * useIsMobile is a React hook that depends on window.matchMedia, which is
  * unavailable in our current node-only Vitest environment (no jsdom/happy-dom

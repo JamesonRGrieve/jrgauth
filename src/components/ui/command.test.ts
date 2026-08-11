@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Command (cmdk-based command palette) primitive
  * bundle. The interactive search / filter behaviour requires the cmdk

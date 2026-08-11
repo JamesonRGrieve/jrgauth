@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 type PlainObject = Record<string, unknown>;
 
 export function deepMergeJSON(...objects: PlainObject[]): PlainObject {

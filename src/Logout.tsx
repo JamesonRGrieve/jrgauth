@@ -1,4 +1,5 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { deleteCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';

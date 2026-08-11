@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Switch primitive. Without a DOM environment we
  * can't click it; what we can do is pin the public prop contract that

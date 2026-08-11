@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * AuthenticationContext is a thin React context with an `undefined` default.
  * We exercise the public surface: identity, default value, displayName

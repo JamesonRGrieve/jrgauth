@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for the Manage sub-router. Manage owns the active page
  * tab state and delegates to Profile / Team / ConnectedServices /
  * Account. Endpoint props let downstream apps redirect SWR keys.
  *
  * Uses `import type` to avoid loading the runtime module — Manage
- * imports `@jgrieve/dynamic-form/*`.
+ * imports `@jgrieve/forms/*`.
  */
 import { describe, expectTypeOf, it } from 'vitest';
 import type Manage from './index';

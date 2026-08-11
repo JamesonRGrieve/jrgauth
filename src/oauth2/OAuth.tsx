@@ -1,6 +1,7 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+import { Button } from '@jgrieve/forms/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useCallback, useMemo } from 'react';
 import OAuth2Login from 'react-simple-oauth2-login';

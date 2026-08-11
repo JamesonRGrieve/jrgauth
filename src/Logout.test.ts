@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Logout is a `'use client'` component that wires `next/navigation`,
  * `cookies-next`, and the AuthenticationContext together. Without a Next

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import useSWR, { type BareFetcher } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useInvitations } from './useInvitation';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * OU (OrganizationalUnit) is an SWR-backed `'use client'` component. Without
  * a happy-dom + auth-context renderer we cannot exercise the fetch path, so

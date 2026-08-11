@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { UserRound } from 'lucide-react';
 import md5 from 'md5';
 import type { ComponentPropsWithoutRef } from 'react';

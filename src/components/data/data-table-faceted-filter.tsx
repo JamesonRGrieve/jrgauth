@@ -1,5 +1,6 @@
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Separator } from '@jgrieve/forms/components/ui/separator';
 import type { Column } from '@tanstack/react-table';
 import { Check, PlusCircle } from 'lucide-react';
 import type * as React from 'react';

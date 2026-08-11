@@ -1,11 +1,12 @@
-// Public entry point for @jgrieve/auth.
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Public entry point for @zephyrex/auth.
 //
 // Curated barrel of the package's primary surface. Consumers may import the
 // common components, hooks, and helpers from the package root, e.g.
-// `import { Login, useUser } from '@jgrieve/auth'`. Less-common modules
+// `import { Login, useUser } from '@zephyrex/auth'`. Less-common modules
 // (management tables, mfa, oauth2, the server middleware, NavMenu config) remain
-// available via their existing subpath exports (`@jgrieve/auth/management/Team`,
-// `@jgrieve/auth/auth.middleware`, …) and are intentionally NOT re-exported here
+// available via their existing subpath exports (`@zephyrex/auth/management/Team`,
+// `@zephyrex/auth/auth.middleware`, …) and are intentionally NOT re-exported here
 // to avoid name collisions (e.g. `Team` is exported by two management modules)
 // and to keep the server middleware out of the client-facing root.
 

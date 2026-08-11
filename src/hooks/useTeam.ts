@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { getCookie, setCookie } from 'cookies-next/client';
 import useSWR, { type SWRResponse } from 'swr';
-import z, { GQLType } from 'zod2gql';
+import z, { GQLType } from '@zephyrex/zod2gql';
 import log from '../lib/log';
 import { chainMutations, createGraphQLClient } from './lib';
 import { type Team, TeamSchema } from './z';

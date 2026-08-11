@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for useTeamUsers. The hook delegates to axios + SWR;
  * exercising the fetch requires a DOM env + axios mock. Here we lock

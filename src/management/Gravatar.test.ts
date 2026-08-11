@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Gravatar resolves an email to a Gravatar avatar URL. The business logic
  * is the md5(trim(lower(email))) transform plus the size + d=404 fallback;

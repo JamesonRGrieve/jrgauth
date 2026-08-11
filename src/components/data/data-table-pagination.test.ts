@@ -1,9 +1,10 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for DataTablePagination. The component renders the
  * page-size + page-number controls bound to a TanStack Table instance.
  *
  * Uses `import type` to avoid loading the runtime module — the source
- * imports `@jgrieve/dynamic-form/*` for its button + select.
+ * imports `@jgrieve/forms/*` for its button + select.
  */
 import { describe, expectTypeOf, it } from 'vitest';
 import type { DataTablePagination } from './data-table-pagination';

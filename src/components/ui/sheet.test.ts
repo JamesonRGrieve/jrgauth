@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Sheet (side-drawer dialog) primitive bundle.
  * Sheet wraps Radix Dialog with a class-variance-authority `side`

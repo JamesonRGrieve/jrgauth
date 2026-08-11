@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Dialog primitive bundle. The Radix dialog uses
  * a portal, which we can't fully exercise without a DOM env (tracked

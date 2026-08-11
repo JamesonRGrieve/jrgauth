@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for DataTableColumnHeader. The component wires a TanStack
  * Column to a shadcn dropdown menu with asc / desc / hide actions. The
@@ -5,7 +6,7 @@
  * signature.
  *
  * Uses `import type` to avoid loading the runtime module — the source
- * imports `@jgrieve/dynamic-form/*` for its button + dropdown menu.
+ * imports `@jgrieve/forms/*` for its button + dropdown menu.
  */
 import type { Column } from '@tanstack/react-table';
 import { describe, expectTypeOf, it } from 'vitest';

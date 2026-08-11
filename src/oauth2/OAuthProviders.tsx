@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { GiTesla } from 'react-icons/gi';
 import {
   RiUserLine as AccountBoxOutlined,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { getCookie, setCookie } from 'cookies-next/client';
 import useSWR, { type BareFetcher, type Key } from 'swr';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

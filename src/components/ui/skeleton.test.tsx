@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Skeleton is a presentational shim around a single div that composes
  * the caller's className with the base animate-pulse / rounded /

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the DropdownMenu primitive bundle. The fifteen
  * exports mirror Radix's Menu surface plus a styled Shortcut + Sub

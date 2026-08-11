@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * usePathname wraps next/navigation's usePathname inside a useState/useEffect
  * pair so the consumer always sees the latest pathname even across Next.js

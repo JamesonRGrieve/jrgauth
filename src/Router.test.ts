@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for the AuthRouter component. Router dispatches across
  * Identify / Login / Register / Logout / Manage / Subscribe / Close / OU
@@ -6,7 +7,7 @@
  * shape that downstream apps construct.
  *
  * Uses `import type` to avoid loading the runtime module — AuthRouter
- * transitively imports `@jgrieve/dynamic-form/*` via its sub-pages,
+ * transitively imports `@jgrieve/forms/*` via its sub-pages,
  * which does not resolve when the auth repo is opened standalone.
  */
 import { describe, expectTypeOf, it } from 'vitest';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Card primitive family. Card / CardHeader /
  * CardTitle etc. are all forwardRef wrappers around a single HTML tag

@@ -1,6 +1,7 @@
 'use client';
-import PasswordField from '@jgrieve/dynamic-form/PasswordField';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import PasswordField from '@jgrieve/forms/PasswordField';
+import { Separator } from '@jgrieve/forms/components/ui/separator';
 import axios, { type AxiosError } from 'axios';
 import { getCookie } from 'cookies-next';
 import type { SyntheticEvent } from 'react';

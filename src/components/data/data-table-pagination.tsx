@@ -1,5 +1,6 @@
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/forms/components/ui/select';
 import type { Table } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 

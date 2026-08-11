@@ -1,9 +1,10 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-import DynamicForm, { type DynamicFormFieldValueTypes } from '@jgrieve/dynamic-form/DynamicForm';
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Separator } from '@jgrieve/dynamic-form/components/ui/separator';
-import { toast as toastUntyped } from '@jgrieve/dynamic-form/hooks/useToast';
+import DynamicForm, { type DynamicFormFieldValueTypes } from '@jgrieve/forms/DynamicForm';
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Separator } from '@jgrieve/forms/components/ui/separator';
+import { toast as toastUntyped } from '@jgrieve/forms/hooks/useToast';
 import { DropdownMenu, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import type { CellContext, Column, ColumnDef } from '@tanstack/react-table';

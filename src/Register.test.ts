@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface test for the Register component. Register drives a multi-step
  * react-hook-form flow with reCAPTCHA, additional fields, and a final
  * axios POST. The full flow needs a Next router + happy-dom harness.
  *
  * Uses `import type` to avoid loading the runtime module — Register
- * transitively imports `@jgrieve/dynamic-form/*`, which does not resolve
+ * transitively imports `@jgrieve/forms/*`, which does not resolve
  * when the auth repo is opened standalone.
  */
 import { describe, expectTypeOf, it } from 'vitest';

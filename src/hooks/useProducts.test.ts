@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * useProducts wraps an axios GET behind SWR. The real network behaviour
  * needs a happy-dom env + axios mock (tracked in todo.json). For now we

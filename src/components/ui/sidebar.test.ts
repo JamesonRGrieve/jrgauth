@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Sidebar primitive family — a shadcn-style,
  * context-driven sidebar bundle (left/right sides, mobile sheet

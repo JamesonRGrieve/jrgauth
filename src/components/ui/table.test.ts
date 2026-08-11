@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Table primitive family. Every subcomponent is a
  * forwardRef wrapper around a single native HTML table tag (table,

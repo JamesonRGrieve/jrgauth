@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Notifications is a near-empty heading/separator placeholder for a future
  * notification preferences pane. Surface tests pin the named export so a

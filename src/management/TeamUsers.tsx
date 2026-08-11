@@ -1,10 +1,11 @@
 'use client';
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /* eslint-disable react/no-unstable-nested-components -- column cell renderers close over component state; canonical tanstack pattern. */
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
-import { Input } from '@jgrieve/dynamic-form/components/ui/input';
-import { Label } from '@jgrieve/dynamic-form/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/dynamic-form/components/ui/select';
-import { useToast as useToastUntyped } from '@jgrieve/dynamic-form/hooks/useToast';
+import { Button } from '@jgrieve/forms/components/ui/button';
+import { Input } from '@jgrieve/forms/components/ui/input';
+import { Label } from '@jgrieve/forms/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@jgrieve/forms/components/ui/select';
+import { useToast as useToastUntyped } from '@jgrieve/forms/hooks/useToast';
 import type { ColumnDef } from '@tanstack/react-table';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';

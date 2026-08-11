@@ -1,5 +1,6 @@
 'use client';
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { Button } from '@jgrieve/forms/components/ui/button';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';

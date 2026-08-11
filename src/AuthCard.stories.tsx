@@ -1,4 +1,5 @@
-import { Button } from '@jgrieve/dynamic-form/components/ui/button';
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import { Button } from '@jgrieve/forms/components/ui/button';
 import React from 'react';
 import AuthCard from './AuthCard';
 

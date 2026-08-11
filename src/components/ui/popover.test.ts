@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Surface tests for the Popover primitive. Popover uses a Radix portal
  * that we can't fully render without a DOM env; here we lock the public
