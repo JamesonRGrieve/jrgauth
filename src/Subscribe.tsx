@@ -6,6 +6,24 @@ import { Suspense } from 'react';
 import PricingTable from './Stripe/PricingTable';
 import { useAuthentication } from './useAuthentication';
 
+declare module 'react' {
+  interface HTMLAttributes<T> {
+    'pricing-table-id'?: string;
+    'publishable-key'?: string;
+    'customer-session-client-secret'?: string;
+    'customer-email'?: string;
+  }
+}
+
+declare module 'react/jsx-runtime' {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      'stripe-pricing-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+    }
+  }
+}
+
 export type SubscribeProps = { redirectTo?: string };
 
 export default function Subscribe({

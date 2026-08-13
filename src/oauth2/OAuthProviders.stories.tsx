@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import type { Meta, StoryObj } from '@storybook/react';
+import type React from 'react';
 import providers from './OAuthProviders';
 
 type ProviderEntry = {
   name: string;
   scope: string;
   uri: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 };
 
 const entries: ProviderEntry[] = Object.entries(providers).map(([name, p]) => ({

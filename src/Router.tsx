@@ -20,7 +20,7 @@ export { useAuthentication } from './useAuthentication';
 
 type RouterPageProps = {
   path: string;
-  heading?: string;
+  heading?: string | undefined;
 };
 
 export type AuthenticationConfig = {
@@ -41,7 +41,7 @@ export type AuthenticationConfig = {
   authServer: string;
   appName: string;
   authBaseURI: string;
-  recaptchaSiteKey?: string;
+  recaptchaSiteKey?: string | undefined;
   enableOU: boolean;
 };
 
@@ -76,7 +76,6 @@ const pageConfigDefaults: AuthenticationConfig = {
   },
   logout: {
     path: '/logout',
-    props: undefined,
     heading: '',
   },
   error: {

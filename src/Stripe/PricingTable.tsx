@@ -103,9 +103,11 @@ export default function PricingTable(): React.JSX.Element {
           <p className='mt-1 text-muted-foreground'>Whatever your status, our offers evolve according to your needs.</p>
 
           <div className='flex flex-col items-center max-w-4xl gap-4 px-3 mx-auto my-10 md:items-end md:flex-row'>
-            {pricingData.map((product: Product) => (
-              <PricingCard key={product.name} price={product.prices[0]} {...product} /> //isAnnual={isAnnual}
-            ))}
+            {(pricingData as Product[]).map((product) => {
+              const price = product.prices[0];
+              if (!price) return null;
+              return <PricingCard key={product.name} price={price} {...product} />;
+            })}
           </div>
         </>
       )}

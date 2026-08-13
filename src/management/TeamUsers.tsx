@@ -62,10 +62,10 @@ const apiUri = (): string => process.env.NEXT_PUBLIC_API_URI ?? '';
 const appUri = (): string => process.env.NEXT_PUBLIC_APP_URI ?? '';
 
 export interface Invitee {
-  invitation_id: string;
-  invitation: Record<string, unknown> | null;
-  user_id: string | null;
-  user: Record<string, unknown> | null;
+  invitation_id?: string | undefined;
+  invitation?: Record<string, unknown> | null | undefined;
+  user_id?: string | null | undefined;
+  user?: Record<string, unknown> | null | undefined;
   updated_at: string;
   updated_by_user_id: string | null;
   id: string;
@@ -74,11 +74,11 @@ export interface Invitee {
   email: string;
   declined_at: string | null;
   accepted_at: string | null;
-  status: 'pending' | 'accepted';
-  role_id?: string | null;
-  team?: { name?: string } | null;
-  team_id?: string;
-  code?: string;
+  status?: 'pending' | 'accepted' | undefined;
+  role_id: string;
+  team?: { name?: string } | null | undefined;
+  team_id: string;
+  code: string;
 }
 
 export interface Invitation {
@@ -119,13 +119,13 @@ export const Team = (): React.JSX.Element => {
     mutate: () => void;
   };
   const { data: userData } = useUser() as { data?: { id?: string } };
-  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(authTeam) as {
+  const { data: invitationsList, mutate: mutateInvitations } = useInvitations(authTeam) as unknown as {
     data?: Invitation[];
     mutate: () => Promise<unknown>;
   };
   const invitationsData = invitationsList?.filter((invitation) => invitation.created_by_user_id === userData?.id) ?? [];
   const [_responseMessage, _setResponseMessage] = useState('');
-  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam) as {
+  const { data: users, mutate: teamUsersMutate } = useTeamUsers(authTeam) as unknown as {
     data?: User[];
     mutate: () => Promise<unknown>;
   };

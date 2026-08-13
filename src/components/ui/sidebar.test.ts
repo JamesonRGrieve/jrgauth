@@ -84,7 +84,7 @@ describe('Sidebar export surface', () => {
 
 describe('Sidebar forwardRef displayNames (devtools / snapshot stability)', () => {
   it('pins a stable displayName for every forwardRef wrapper', () => {
-    const named: ReadonlyArray<readonly [{ displayName?: string }, string]> = [
+    const named: ReadonlyArray<readonly [{ displayName?: string | undefined }, string]> = [
       [SidebarProvider, 'SidebarProvider'],
       [Sidebar, 'Sidebar'],
       [SidebarTrigger, 'SidebarTrigger'],

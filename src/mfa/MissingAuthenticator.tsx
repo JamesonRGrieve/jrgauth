@@ -21,7 +21,7 @@ export const AuthenticatorHelp = (): React.JSX.Element => {
       },
       {
         headers: {
-          Authorization: getCookie('jwt'),
+          Authorization: getCookie('jwt')?.toString() ?? '',
         },
       },
     );

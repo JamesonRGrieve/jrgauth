@@ -106,7 +106,7 @@ export const Profile = ({
     (field: string): DynamicFormFieldValueTypes | undefined => {
       // Try several common keys and shapes to be resilient to API variations.
       const candidates: string[] = [];
-      const camel = field.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+      const camel = field.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
       candidates.push(field, camel, field.replace(/_/g, ''), field.replace('_name', ''), 'name');
       // Common identity keys
       if (field === 'first_name') {
@@ -262,19 +262,19 @@ export const Profile = ({
             first_name: {
               type: 'text',
               display: 'First Name',
-              validation: (value: string) => value.length > 0,
+              validation: (value) => typeof value === 'string' && value.length > 0,
               value: readUserField('first_name') ?? '',
             },
             last_name: {
               type: 'text',
               display: 'Last Name',
-              validation: (value: string) => value.length > 0,
+              validation: (value) => typeof value === 'string' && value.length > 0,
               value: readUserField('last_name') ?? '',
             },
             display_name: {
               type: 'text',
               display: 'Display Name',
-              validation: (value: string) => value.length > 0,
+              validation: (value) => typeof value === 'string' && value.length > 0,
               // Prefer explicit display_name, otherwise compose from first+last if available
               value: (() => {
                 const displayName = readUserField('display_name');
@@ -294,7 +294,7 @@ export const Profile = ({
             timezone: {
               type: 'text',
               display: 'Timezone',
-              validation: (value: string) => value.length > 0,
+              validation: (value) => typeof value === 'string' && value.length > 0,
               // Use server value if present; otherwise fall back to browser timezone or UTC.
               value: (() => {
                 const tz = readUserField('timezone');
@@ -401,7 +401,7 @@ export const Profile = ({
                     fields={Object.entries(reqsRecord).reduce<Record<string, { type: DynamicFormFieldType }>>(
                       (acc, [, value]) => {
                         const v = value as Record<string, unknown>;
-                        const fieldKey = Object.keys(v)[0];
+                        const fieldKey = Object.keys(v)[0] ?? '';
                         const rawType = Object.values(v)[0];
                         acc[fieldKey] = { type: typeof rawType === 'string' ? toFieldType(rawType) : 'text' };
                         return acc;

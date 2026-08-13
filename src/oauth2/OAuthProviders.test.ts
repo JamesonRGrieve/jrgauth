@@ -31,9 +31,9 @@ describe('OAuthProviders', () => {
   });
 
   it('Google entry requests offline access via params.access_type', () => {
-    const google = (providers as Record<string, { params: Record<string, unknown> }>).Google;
+    const google = (providers as Record<string, { params: Record<string, unknown> }>)['Google'];
     expect(google).toBeDefined();
-    expect(google.params.access_type).toBe('offline');
+    expect(google!.params['access_type']).toBe('offline');
   });
 
   it('uses unique authorization URIs across providers', () => {
@@ -50,9 +50,10 @@ describe('OAuthProviders', () => {
   });
 
   it('Tesla scope opts into the location + commands surfaces (smoke)', () => {
-    const tesla = (providers as Record<string, { scope: string }>).Tesla;
-    expect(tesla.scope).toMatch(/vehicle_location/);
-    expect(tesla.scope).toMatch(/vehicle_cmds/);
+    const tesla = (providers as Record<string, { scope: string }>)['Tesla'];
+    expect(tesla).toBeDefined();
+    expect(tesla!.scope).toMatch(/vehicle_location/);
+    expect(tesla!.scope).toMatch(/vehicle_cmds/);
   });
 
   it('client_id is either a non-empty string or undefined (env-sourced)', () => {

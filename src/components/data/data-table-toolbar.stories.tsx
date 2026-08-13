@@ -27,8 +27,8 @@ const ToolbarHarness = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    meta: title !== undefined && title !== '' ? { title } : undefined,
-    initialState: preFilter ? { columnFilters: [{ id: preFilter.columnId, value: preFilter.value }] } : undefined,
+    ...(title !== undefined && title !== '' ? { meta: { title } } : {}),
+    ...(preFilter ? { initialState: { columnFilters: [{ id: preFilter.columnId, value: preFilter.value }] } } : {}),
   });
   return (
     <div style={{ padding: 16 }}>

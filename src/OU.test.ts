@@ -47,6 +47,6 @@ describe('OrganizationalUnit (surface)', () => {
       seats: { available: 10, used: 3 },
       requests: { available: 1000, used: 42 },
     };
-    expectTypeOf(quotas.seats).toExtend<{ available: number; used: number }>();
+    expectTypeOf(quotas['seats']).toExtend<{ available: number; used: number } | undefined>();
   });
 });

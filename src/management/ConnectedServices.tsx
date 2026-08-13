@@ -66,7 +66,7 @@ export const ConnectedServices = (): ReactNode => {
   const fetchConnections = useCallback(async (): Promise<void> => {
     setLoading(true);
     const baseServices = Object.keys(oAuth2Providers)
-      .filter((key) => oAuth2Providers[key].client_id !== undefined && oAuth2Providers[key].client_id !== '')
+      .filter((key) => oAuth2Providers[key]?.client_id !== undefined && oAuth2Providers[key]?.client_id !== '')
       .map((key) => ({ provider: key, connected: false }));
 
     setConnectedServices(baseServices);
@@ -158,6 +158,7 @@ export const ConnectedServices = (): ReactNode => {
       <div className='grid gap-4'>
         {connectedServices.map((service) => {
           const provider = oAuth2Providers[service.provider];
+          if (!provider) return null;
           return (
             <div key={service.provider} className='flex flex-col space-y-4 p-4 border rounded-lg'>
               <div className='flex items-center justify-between'>

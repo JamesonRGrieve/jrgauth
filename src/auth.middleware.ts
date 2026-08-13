@@ -94,18 +94,18 @@ const resolveVerifiedJWTOutcome = (params: {
  * invite cookies attached. Extracted from `useAuth` to keep its complexity low.
  */
 const handleInviteRegistration = async (queryParams: Record<string, string | undefined>): Promise<NextResponse> => {
-  const email = queryParams.email ?? '';
-  const code = queryParams.code ?? '';
+  const email = queryParams['email'] ?? '';
+  const code = queryParams['code'] ?? '';
   console.warn(
-    `DETECTED INVITE - ${process.env.AUTH_URI}/register - SETTINGS COOKIES ${email} ${code} ${queryParams.team_id}`,
+    `DETECTED INVITE - ${process.env.AUTH_URI}/register - SETTINGS COOKIES ${email} ${code} ${queryParams['team_id']}`,
   );
   const cookieArray = [
     generateCookieString('email', email, (86400).toString().toLowerCase()),
     generateCookieString('invitation', code, (86400).toString()),
-    generateCookieString('team', (queryParams.team ?? '').replaceAll('+', ' '), (86400).toString()),
+    generateCookieString('team', (queryParams['team'] ?? '').replaceAll('+', ' '), (86400).toString()),
   ];
-  if (queryParams.company !== undefined && queryParams.company !== '') {
-    cookieArray.push(generateCookieString('team_id', queryParams.team_id ?? '', (86400).toString()));
+  if (queryParams['company'] !== undefined && queryParams['company'] !== '') {
+    cookieArray.push(generateCookieString('team_id', queryParams['team_id'] ?? '', (86400).toString()));
   }
 
   try {
@@ -219,13 +219,13 @@ export const useAuth: MiddlewareHook = async (req) => {
         response,
       };
     }
-    if (hasNonEmpty(queryParams.verify_email, queryParams.email)) {
-      console.warn('VERIFYING EMAIL: ', queryParams.email, queryParams.verify_email);
+    if (hasNonEmpty(queryParams['verify_email'], queryParams['email'])) {
+      console.warn('VERIFYING EMAIL: ', queryParams['email'], queryParams['verify_email']);
       await fetch(`${process.env.API_URI}/v1/user/verify/email`, {
         method: 'POST',
         body: JSON.stringify({
-          email: queryParams.email,
-          code: queryParams.verify_email,
+          email: queryParams['email'],
+          code: queryParams['verify_email'],
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -234,7 +234,7 @@ export const useAuth: MiddlewareHook = async (req) => {
     }
     console.warn('-Query Params-');
     console.warn(queryParams);
-    if (hasNonEmpty(queryParams.code, queryParams.email)) {
+    if (hasNonEmpty(queryParams['code'], queryParams['email'])) {
       toReturn.response = await handleInviteRegistration(queryParams);
       toReturn.activated = true;
     }
@@ -289,9 +289,9 @@ export const useAuth: MiddlewareHook = async (req) => {
           console.warn('JWT is valid and no guard clauses tripped.');
         }
         console.warn('JWT is valid (or server was unable to verify it).');
-        if (queryParams.code !== undefined && queryParams.email !== undefined) {
-          const redirect = new URL(`${process.env.APP_URI}/invite/${queryParams.code}`);
-          const teamParam = (queryParams.team ?? '').replaceAll('+', ' ');
+        if (queryParams['code'] !== undefined && queryParams['email'] !== undefined) {
+          const redirect = new URL(`${process.env.APP_URI}/invite/${queryParams['code']}`);
+          const teamParam = (queryParams['team'] ?? '').replaceAll('+', ' ');
           toReturn.response = NextResponse.redirect(redirect, {
             headers: cookieHeaders([generateCookieString('team', teamParam, (86400).toString())]),
           });
@@ -319,25 +319,25 @@ export const useAuth: MiddlewareHook = async (req) => {
 };
 
 export const useOAuth2: MiddlewareHook = async (req) => {
-  const provider = req.nextUrl.pathname.split('?')[0].split('/').pop();
+  const provider = req.nextUrl.pathname.split('?')[0]?.split('/').pop() ?? '';
   const redirect = new URL(`${process.env.AUTH_URI}/close/${provider}`);
   let toReturn = {
     activated: false,
     response: NextResponse.redirect(redirect),
   };
   const queryParams = getQueryParams(req);
-  if (queryParams.code !== undefined && queryParams.code !== '') {
-    const oAuthEndpoint = `${(process.env.API_URI ?? '').replace('localhost', (process.env.SERVERSIDE_API_URI ?? '').split(',')[0])}/v1/oauth2/${provider}`;
+  if (queryParams['code'] !== undefined && queryParams['code'] !== '') {
+    const oAuthEndpoint = `${(process.env.API_URI ?? '').replace('localhost', (process.env.SERVERSIDE_API_URI ?? '').split(',')[0] ?? '')}/v1/oauth2/${provider}`;
 
     // Use the state parameter as the JWT if present
-    const jwt = queryParams.state ?? getJWT(req);
+    const jwt = queryParams['state'] ?? getJWT(req);
     console.warn('Using JWT from state:', jwt);
 
     try {
       const response = await fetch(oAuthEndpoint, {
         method: 'POST',
         body: JSON.stringify({
-          code: queryParams.code,
+          code: queryParams['code'],
           referrer: redirect.toString(),
           state: jwt,
           invitation: req.cookies.get('invitation')?.value,
@@ -377,7 +377,7 @@ export const useOAuth2: MiddlewareHook = async (req) => {
 // eslint-disable-next-line @typescript-eslint/require-await
 export const useJWTQueryParam: MiddlewareHook = async (req) => {
   const queryParams = getQueryParams(req);
-  const jwtValue = queryParams.token ?? queryParams.jwt ?? '';
+  const jwtValue = queryParams['token'] ?? queryParams['jwt'] ?? '';
   const weekSeconds = (86400 * 7).toString();
   const toReturn = {
     activated: false,
@@ -393,7 +393,7 @@ export const useJWTQueryParam: MiddlewareHook = async (req) => {
           ]),
         }),
   };
-  if (queryParams.token !== undefined || queryParams.jwt !== undefined) {
+  if (queryParams['token'] !== undefined || queryParams['jwt'] !== undefined) {
     toReturn.activated = true;
   }
   return toReturn;

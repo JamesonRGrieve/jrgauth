@@ -122,7 +122,7 @@ export default function Login({
       console.error(exception);
     }
   };
-  const otpUri = searchParams.otp_uri;
+  const otpUri = searchParams['otp_uri'];
   return (
     <AuthCard title='Login' description='Please login to your account.' showBackButton>
       <form

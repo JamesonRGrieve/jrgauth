@@ -100,7 +100,7 @@ export default function VerifyAuthenticator({
               label='MFA Code'
               //autoComplete='one-time-code'
               value={fields.token}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setFields({ ...fields, token: e.target.value })}
+              onChange={(e) => setFields({ ...fields, token: (e.target as HTMLInputElement).value })}
               //submit={null}
               //error={errors.token}
             />

@@ -30,7 +30,7 @@ const HeaderHarness = ({
     columns: buildColumn({ enableSorting }),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    initialState: initialSort ? { sorting: [{ id: 'email', desc: initialSort === 'desc' }] } : undefined,
+    ...(initialSort ? { initialState: { sorting: [{ id: 'email', desc: initialSort === 'desc' }] } } : {}),
   });
   const column = table.getColumn('email');
   if (!column) {

@@ -72,7 +72,7 @@ export const Default: Story = {
 
 export const Collapsed: Story = {
   render: () => (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultLeftOpen={false} defaultRightOpen={false}>
       <DemoSidebar />
       <SidebarInset>
         <header className='flex h-10 items-center border-b px-2'>

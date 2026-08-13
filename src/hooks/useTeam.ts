@@ -26,7 +26,7 @@ export function useTeams(): SWRResponse<Team[]> {
         if (authTeam === undefined || authTeam === '' || !data.some((team: Team) => team.id === authTeam)) {
           setCookie(
             'auth-team',
-            data[0].id,
+            data[0]?.id ?? '',
             process.env.NEXT_PUBLIC_COOKIE_DOMAIN !== undefined ? { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN } : {},
           );
         }

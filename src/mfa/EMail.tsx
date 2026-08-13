@@ -77,7 +77,7 @@ export default function VerifyEmail({ verifiedCallback }: { verifiedCallback: (v
               label='EMail Code'
               //autoComplete='email-code'
               value={fields.emailCode}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setFields({ ...fields, emailCode: e.target.value })}
+              onChange={(e) => setFields({ ...fields, emailCode: (e.target as HTMLInputElement).value })}
               //submit={null}
               //error={errors.emailCode}
             />

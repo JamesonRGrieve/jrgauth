@@ -134,10 +134,10 @@ export function useInvitationsByUserId(userId?: string): SWRResponse<DisplayInvi
  * both keeps the column renderers type-safe without an `as Invitation` cast.
  */
 type DisplayInvitation = Partial<Invitation> & {
-  team?: { name?: string } | null;
-  role_id?: string | null;
-  role?: string | null;
-  created_at?: string;
+  team?: { name?: string } | null | undefined;
+  role_id?: string | null | undefined;
+  role?: string | null | undefined;
+  created_at?: string | undefined;
   user_id?: string;
   status?: string;
 } & Record<string, unknown>;

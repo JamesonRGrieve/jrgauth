@@ -87,7 +87,7 @@ export const InviteDialog = ({
 }): React.JSX.Element => {
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [email, setEmail] = useState('');
-  const [roleId, setRoleId] = useState(ROLES[1].id);
+  const [roleId, setRoleId] = useState(ROLES[1]?.id ?? '');
   const [roles, setRoles] = useState(ROLES);
   const { toast } = useToast() as { toast: (args: { title: string; description: string; variant?: string }) => void };
 
@@ -166,7 +166,7 @@ export const InviteDialog = ({
     if (emailArray.length === 1) {
       body = {
         invitation: {
-          email: emailArray[0].trim(),
+          email: (emailArray[0] ?? '').trim(),
           role_id: roleId,
           team_id: selectedTeam.id,
         },
@@ -215,7 +215,7 @@ export const InviteDialog = ({
         <SidebarMenuButton
           onClick={() => {
             setEmail('');
-            setRoleId(ROLES[1].id);
+            setRoleId(ROLES[1]?.id ?? '');
             setIsInviteDialogOpen(true);
           }}
           tooltip='Invite Member'
