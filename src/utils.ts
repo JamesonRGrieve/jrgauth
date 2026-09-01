@@ -58,9 +58,7 @@ export const getQueryParams = (req: NextRequest): Record<string, string | undefi
   req.url.includes('?')
     ? (Object.assign(
         {},
-        ...(req.url.split('?')[1] ?? '')
-          .split('&')
-          .map((param) => ({ [param.split('=')[0] ?? '']: param.split('=')[1] })),
+        ...(req.url.split('?')[1] ?? '').split('&').map((param) => ({ [param.split('=')[0] ?? '']: param.split('=')[1] })),
       ) as Record<string, string | undefined>)
     : {};
 

@@ -4,7 +4,6 @@ import {
   BookOpen,
   GraduationCap,
   HelpCircle,
-  type LucideIcon,
   Puzzle,
   RefreshCcw,
   Rocket,
@@ -15,18 +14,24 @@ import {
   VenetianMask,
   Workflow,
 } from 'lucide-react';
+import type { ComponentType } from 'react';
+
+// Version-agnostic icon type: lucide icons satisfy this, but the shared `Item`
+// type is not pinned to a specific lucide-react/@types/react instance (so
+// downstream consumers on a different lucide version still type-check).
+export type IconComponent = ComponentType<{ className?: string; size?: string | number }>;
 
 export type Item = {
   title: string;
   url?: string;
   visible?: boolean;
-  icon?: LucideIcon;
+  icon?: IconComponent;
   isActive?: boolean;
   queryParams?: object;
   items?: {
     max_role?: number;
     title: string;
-    icon?: LucideIcon;
+    icon?: IconComponent;
     url: string;
     queryParams?: object;
   }[];

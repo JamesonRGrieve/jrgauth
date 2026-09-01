@@ -29,6 +29,7 @@ src/
 ### Auth Flow
 
 Three modes (set by comparing `AUTH_URI` with `APP_URI`):
+
 1. **MagicalAuth** — integrated auth (`AUTH_URI` = `APP_URI/user`)
 2. **GTAuth** — separate auth server
 3. **None** — no auth
